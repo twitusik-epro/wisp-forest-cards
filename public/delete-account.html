@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuń konto — Wisp: Forest Cards</title>
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://cards.wispplay.com/delete-account.html">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#040a04;color:#c0d8b0;font-family:'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.7;min-height:100vh;display:flex;flex-direction:column;}
+.wrap{max-width:420px;margin:0 auto;flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 20px 40px;}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;}
+.back{color:#6abf5e;text-decoration:none;font-size:13px;align-self:flex-start;margin-bottom:14px;}
+.back:hover{color:#90df70;}
+.lang-switcher{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:36px;align-self:flex-start;}
+.lang-btn{background:#0d1a0d;border:1px solid #2a4a2a;color:#6a9a6a;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .15s;}
+.lang-btn.active,.lang-btn:hover{background:#1a3a1a;color:#b0e090;border-color:#4a7a4a;}
+#delete-btn{width:100%;padding:18px;background:#0d2a0d;color:#90e870;border:2px solid #8a1010;border-radius:12px;font-size:17px;font-weight:bold;cursor:pointer;transition:all .2s;}
+#delete-btn:hover:not(:disabled){background:#1a3a1a;border-color:#cc2020;color:#b0f090;}
+#delete-btn:disabled{background:#0a180a;color:#3a6a3a;border-color:#3a1010;cursor:default;}
+#msg{margin-top:16px;font-size:14px;color:#a08080;text-align:center;min-height:22px;}
+.wisp-wrap{margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:.85;}
+.branch{font-size:22px;letter-spacing:4px;}
+footer{text-align:center;padding:20px 16px;border-top:1px solid #1a3a1a;font-size:12px;color:#4a7a4a;}
+footer a{color:#4a7a4a;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" class="back" id="lbl-back">← Wisp: Forest Cards</a>
+  <div class="lang-switcher">
+    <button class="lang-btn" onclick="setLang('pl')">🇵🇱 PL</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
+    <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+    <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
+  </div>
+
+  <div class="center">
+  <button id="delete-btn"></button>
+  <div id="msg"></div>
+
+  <div class="wisp-wrap">
+    <svg width="90" height="104" viewBox="0 0 96 110" xmlns="http://www.w3.org/2000/svg">
+      <!-- glow -->
+      <ellipse cx="48" cy="58" rx="38" ry="44" fill="#80ee60" opacity="0.12"/>
+      <!-- body -->
+      <ellipse cx="48" cy="54" rx="34" ry="40" fill="#80ee60"/>
+      <!-- tail -->
+      <ellipse cx="36" cy="91" rx="10" ry="6" fill="#60cc40" transform="rotate(-20,36,91)"/>
+      <ellipse cx="58" cy="94" rx="8" ry="5" fill="#60cc40" transform="rotate(15,58,94)"/>
+      <!-- eyes -->
+      <ellipse cx="36" cy="46" rx="8" ry="8" fill="#0a200a"/>
+      <ellipse cx="60" cy="46" rx="8" ry="8" fill="#0a200a"/>
+      <circle cx="38" cy="43" r="3.5" fill="white"/>
+      <circle cx="62" cy="43" r="3.5" fill="white"/>
+      <!-- sad mouth -->
+      <path d="M 36 64 Q 48 58 60 64" stroke="#0a200a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- sad brows -->
+      <path d="M 29 38 Q 36 34 42 37" stroke="#0a200a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M 54 37 Q 60 34 67 38" stroke="#0a200a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- teardrops -->
+      <ellipse cx="33" cy="56" rx="2.5" ry="3.5" fill="#a0ddff" opacity="0.8"/>
+      <ellipse cx="63" cy="56" rx="2.5" ry="3.5" fill="#a0ddff" opacity="0.8"/>
+    </svg>
+    <div class="branch">🌿 · 🍃 · 🌿</div>
+  </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 ePro sp. z o.o. &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; <a href="/delete-account.html" id="lbl-footer-del">Usuń konto</a> &nbsp;·&nbsp; <a href="/">Forest Cards</a>
+</footer>
+
+<script>
+const T = {
+  pl: {
+    back: '← Wisp: Forest Cards',
+    btn: '🗑 Usuń moje konto na zawsze',
+    confirm: 'Jesteś pewien? Konto, postęp i wszystkie postęp i grzyby zostaną trwale usunięte.',
+    deleting: 'Usuwanie...',
+    done_btn: '✓ Konto usunięte',
+    done_msg: 'Twoje konto zostało trwale usunięte. Do widzenia!',
+    not_logged: 'Nie jesteś zalogowany — nie masz konta do usunięcia.',
+    error: 'Coś poszło nie tak. Spróbuj ponownie.',
+    footer_del: 'Usuń konto',
+    title: 'Usuń konto — Wisp: Forest Cards',
+  },
+  en: {
+    back: '← Wisp: Forest Cards',
+    btn: '🗑 Delete my account permanently',
+    confirm: 'Are you sure? Your account, progress, and progress and mushrooms will be permanently deleted.',
+    deleting: 'Deleting...',
+    done_btn: '✓ Account deleted',
+    done_msg: 'Your account has been permanently deleted. Goodbye!',
+    not_logged: 'You are not logged in — you have no account to delete.',
+    error: 'Something went wrong. Please try again.',
+    footer_del: 'Delete Account',
+    title: 'Delete Account — Wisp: Forest Cards',
+  },
+  de: {
+    back: '← Wisp: Forest Cards',
+    btn: '🗑 Konto dauerhaft löschen',
+    confirm: 'Bist du sicher? Dein Konto, Fortschritt und Fortschritt und Pilze werden dauerhaft gelöscht.',
+    deleting: 'Wird gelöscht...',
+    done_btn: '✓ Konto gelöscht',
+    done_msg: 'Dein Konto wurde dauerhaft gelöscht. Auf Wiedersehen!',
+    not_logged: 'Du bist nicht eingeloggt — du hast kein Konto zum Löschen.',
+    error: 'Etwas ist schiefgelaufen. Bitte versuche es erneut.',
+    footer_del: 'Konto löschen',
+    title: 'Konto löschen — Wisp: Forest Cards',
+  },
+  es: {
+    back: '← Wisp: Forest Cards',
+    btn: '🗑 Eliminar mi cuenta permanentemente',
+    confirm: '¿Estás seguro? Tu cuenta, progreso y el progreso y las setas se eliminarán permanentemente.',
+    deleting: 'Eliminando...',
+    done_btn: '✓ Cuenta eliminada',
+    done_msg: 'Tu cuenta ha sido eliminada permanentemente. ¡Adiós!',
+    not_logged: 'No has iniciado sesión — no tienes cuenta que eliminar.',
+    error: 'Algo salió mal. Por favor, inténtalo de nuevo.',
+    footer_del: 'Eliminar cuenta',
+    title: 'Eliminar cuenta — Wisp: Forest Cards',
+  },
+  fr: {
+    back: '← Wisp: Forest Cards',
+    btn: '🗑 Supprimer mon compte définitivement',
+    confirm: 'Êtes-vous sûr ? Votre compte, progression et la progression et les champignons seront définitivement supprimés.',
+    deleting: 'Suppression...',
+    done_btn: '✓ Compte supprimé',
+    done_msg: 'Votre compte a été définitivement supprimé. Au revoir !',
+    not_logged: 'Vous n\'êtes pas connecté — vous n\'avez pas de compte à supprimer.',
+    error: 'Une erreur est survenue. Veuillez réessayer.',
+    footer_del: 'Supprimer le compte',
+    title: 'Supprimer le compte — Wisp: Forest Cards',
+  },
+};
+
+const btn = document.getElementById('delete-btn');
+const msg = document.getElementById('msg');
+const token = localStorage.getItem('fc_jwt');
+let currentLang = 'en';
+
+function setLang(code) {
+  currentLang = code;
+  const t = T[code] || T.en;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => { if(b.textContent.toLowerCase().includes(code)) b.classList.add('active'); });
+  document.getElementById('lbl-back').textContent = t.back;
+  document.getElementById('lbl-footer-del').textContent = t.footer_del;
+  document.title = t.title;
+  if (!token) {
+    btn.disabled = true;
+    btn.textContent = t.btn;
+    msg.textContent = t.not_logged;
+    msg.style.color = '#6a8a6a';
+  } else {
+    btn.disabled = false;
+    btn.textContent = t.btn;
+    msg.textContent = '';
+  }
+}
+
+btn.addEventListener('click', async () => {
+  if (!token) return;
+  const t = T[currentLang] || T.en;
+  if (!confirm(t.confirm)) return;
+  btn.disabled = true;
+  btn.textContent = t.deleting;
+  try {
+    const r = await fetch('/api/account', {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (r.ok) {
+      localStorage.removeItem('fc_jwt');
+      btn.textContent = t.done_btn;
+      msg.textContent = t.done_msg;
+      msg.style.color = '#6abf5e';
+      setTimeout(() => { location.href = '/'; }, 3000);
+    } else {
+      btn.disabled = false;
+      btn.textContent = t.btn;
+      msg.textContent = t.error;
+      msg.style.color = '#c08080';
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = t.btn;
+    msg.textContent = t.error;
+    msg.style.color = '#c08080';
+  }
+});
+
+const urlLang  = new URLSearchParams(window.location.search).get('lang');
+const gameLang = (()=>{ try{ return localStorage.getItem('fc_lang'); }catch(e){ return null; } })();
+const browser  = (navigator.language || 'en').slice(0,2).toLowerCase();
+const supported = ['pl','en','de','es','fr'];
+const lang = supported.includes(urlLang) ? urlLang
+           : supported.includes(gameLang) ? gameLang
+           : supported.includes(browser)  ? browser : 'en';
+setLang(lang);
+</script>
+</body>
+</html>

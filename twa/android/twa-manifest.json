@@ -1,0 +1,50 @@
+{
+  "packageId": "com.epro.wisp",
+  "host": "wispplay.com",
+  "name": "Wisp — Duch Lasu",
+  "launcherName": "Wisp",
+  "display": "standalone",
+  "themeColor": "#040A04",
+  "themeColorDark": "#000000",
+  "navigationColor": "#030803",
+  "navigationColorDark": "#030803",
+  "navigationDividerColor": "#1A3A1A",
+  "navigationDividerColorDark": "#1A3A1A",
+  "backgroundColor": "#060E06",
+  "enableNotifications": false,
+  "startUrl": "/game.html",
+  "iconUrl": "https://wispplay.com/icon-512.png",
+  "maskableIconUrl": "https://wispplay.com/icon-512.png",
+  "monochromeIconUrl": "https://wispplay.com/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "/opt/wisp-twa/wisp-release.keystore",
+    "alias": "wisp"
+  },
+  "appVersionName": "1.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://wispplay.com/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://wispplay.com/",
+  "minSdkVersion": 19,
+  "orientation": "portrait",
+  "fingerprints": [
+    {
+      "name": "release",
+      "value": "F1:E6:31:67:CE:88:AE:8C:31:20:5B:E5:17:EF:45:AC:93:8C:C2:94:45:B6:FB:4E:CE:0F:08:0F:D9:E8:26:E7"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "displayOverride": [],
+  "appVersion": "1.0"
+}

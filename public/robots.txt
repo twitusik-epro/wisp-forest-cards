@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cards.wispplay.com/sitemap.xml

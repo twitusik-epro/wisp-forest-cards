@@ -1,0 +1,4142 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🌿 Forest Cards</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a3a1a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<!-- Paddle.js -->
+<meta name="paddle-env" content="production">
+<meta name="paddle-token" content="live_2379064e4093798aaef64cc9d4f">
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<style>
+:root {
+  --bg: #060e06;
+  --bg2: #0c180c;
+  --bg3: #111f11;
+  --green: #80ee60;
+  --green2: #4a9a2a;
+  --gold: #ffd060;
+  --red: #ff6060;
+  --blue: #60c0ff;
+  --purple: #df80ff;
+  --fire: #ff9040;
+  --shadow: rgba(0,0,0,0.7);
+  --c-common: #888;
+  --c-rare: #40aa40;
+  --c-epic: #6060ff;
+  --c-legendary: #cc80ff;
+  --c-mythic: #ffaa00;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Crimson Pro',serif; color:#fff; touch-action:none; }
+
+/* ── SCREENS ── */
+#app { width:100%; height:100%; position:relative; display:flex; flex-direction:column; align-items:center; max-width:480px; margin:0 auto; }
+.screen { position:absolute; inset:0; display:none; flex-direction:column; align-items:center; overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ── MENU ── */
+#menu { background: radial-gradient(ellipse at 50% 30%, #1a3a0a 0%, #060e06 70%); justify-content:center; padding:0 20px; overflow-y:auto; }
+.menu-particles { position:absolute; inset:0; pointer-events:none; width:100%; height:100%; }
+@keyframes floatWisp { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+/* Wisp brand ponad tytułem */
+.menu-wisp-brand { display:flex; align-items:center; gap:8px; margin-bottom:4px; position:relative; z-index:1; }
+.menu-wisp-logo { flex-shrink:0; filter:drop-shadow(0 0 8px rgba(80,220,40,.5)); animation:floatWisp 3s ease-in-out infinite; }
+.menu-wisp-name { font-family:'Cinzel',cursive; font-size:16px; color:#80ee60; letter-spacing:2px; opacity:.8; }
+/* Logo */
+.menu-logo-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; position:relative; z-index:1; }
+.menu-title-text { font-family:'Cinzel',cursive; font-size:36px; font-weight:700; color:var(--green); text-shadow:0 0 30px rgba(80,220,40,.6); letter-spacing:2px; }
+.menu-subtitle { font-style:italic; font-size:14px; color:#5a8a5a; margin-bottom:12px; text-align:center; line-height:1.5; position:relative; z-index:1; }
+.menu-choosediff { font-family:'Cinzel',cursive; font-size:12px; color:#5a8a5a; margin-bottom:8px; letter-spacing:1px; position:relative; z-index:1; }
+
+/* Przyciski trudności — identyczne jak w Wisp */
+.diff-row { display:flex; gap:8px; margin-bottom:14px; width:100%; position:relative; z-index:1; }
+.diff-btn { flex:1; padding:10px 6px; border-radius:14px; border:2px solid transparent; font-family:'Cinzel',cursive; font-size:12px; cursor:pointer; transition:all .2s; text-align:center; line-height:1.5; }
+.diff-btn .diff-icon { font-size:22px; display:block; margin-bottom:3px; }
+.diff-btn .diff-lives { font-size:10px; font-style:italic; opacity:.8; display:block; margin-top:2px; font-family:'Crimson Pro',serif; }
+.diff-btn.easy { background:rgba(20,60,20,.8); border-color:#4a8a3a; color:#a0e080; }
+.diff-btn.easy:hover, .diff-btn.easy.selected { background:rgba(40,100,30,.9); border-color:#80cc50; box-shadow:0 0 14px rgba(80,200,50,.4); }
+.diff-btn.medium { background:rgba(50,40,10,.8); border-color:#8a6a20; color:#e0b060; }
+.diff-btn.medium:hover, .diff-btn.medium.selected { background:rgba(90,65,10,.9); border-color:#ccaa30; box-shadow:0 0 14px rgba(200,160,40,.4); }
+.diff-btn.hard { background:rgba(60,10,10,.8); border-color:#8a2020; color:#e08080; }
+.diff-btn.hard:hover, .diff-btn.hard.selected { background:rgba(100,15,15,.9); border-color:#cc3030; box-shadow:0 0 14px rgba(220,50,50,.4); }
+.diff-btn.selected { transform:scale(1.05); }
+
+/* Przyciski główne */
+.btn { display:block; text-align:center; cursor:pointer; border-radius:12px; font-family:'Cinzel',cursive; letter-spacing:1px; transition:all .2s; border:none; }
+.btn-green { background:linear-gradient(135deg,#1e5a1e,#2d8a2d); color:#b8ffa0; border:1px solid #4a9a3a; box-shadow:0 0 16px rgba(60,180,40,.3); padding:13px 0; width:100%; font-size:16px; margin-bottom:6px; position:relative; z-index:1; }
+.btn-green:hover { transform:scale(1.02); box-shadow:0 0 24px rgba(60,180,40,.5); }
+.btn-gold { background:linear-gradient(135deg,#4a3000,#7a5000); color:#ffe090; border:1px solid #aa7a20; padding:11px 0; width:100%; font-size:13px; margin-bottom:6px; position:relative; z-index:1; }
+.btn-gold:hover { transform:scale(1.02); }
+.fc-play-btn, .fc-continue-btn { width:100%; }
+
+/* Pasek ikon — mały rząd jak w Wisp */
+.menu-icon-row { display:flex; gap:5px; margin-top:8px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
+.menu-icon-btn { background:rgba(20,40,20,.7); color:#80c070; border:1px solid #2a6a2a; border-radius:8px; padding:5px 8px; font-size:11px; cursor:pointer; font-family:'Crimson Pro',serif; transition:all .15s; }
+.menu-icon-btn:hover { background:rgba(30,60,30,.9); }
+
+/* Info i footer */
+.menu-lives { display:flex; align-items:center; gap:6px; margin-top:10px; font-size:12px; color:#5a8a5a; position:relative; z-index:1; flex-wrap:wrap; justify-content:center; }
+.menu-controls { font-size:10px; color:#2a5a2a; margin-top:6px; position:relative; z-index:1; }
+.menu-footer { margin-top:8px; font-size:10px; color:#2a4a2a; position:relative; z-index:1; }
+.menu-footer a { color:#2a5a2a; text-decoration:none; }
+.menu-footer a:hover { color:#4a8a4a; }
+
+/* Stare klasy zachowane dla kompatybilności */
+.menu-title { font-family:'Cinzel',cursive; font-size:36px; font-weight:700; color:var(--green); }
+.menu-sub { font-style:italic; font-size:14px; color:#5a8a5a; }
+.menu-wisp { font-size:38px; animation:floatWisp 3s ease-in-out infinite; }
+.menu-btn { width:100%; padding:12px 0; border-radius:12px; font-family:'Cinzel',cursive; font-size:13px; cursor:pointer; border:none; margin:4px 0; letter-spacing:1px; transition:all .2s; }
+.btn-play { background:linear-gradient(135deg,#1e5a1e,#2d8a2d); color:#b8ffa0; border:1px solid #4a9a3a; }
+.btn-coll { background:rgba(20,40,20,.8); color:#7aaa6a; border:1px solid #2a5a2a; }
+.btn-shop { background:linear-gradient(135deg,#5a3a00,#8a5a00); color:#ffe080; border:1px solid #aa8020; }
+
+/* ── CANVAS rysowania kart ── */
+.card-canvas { border-radius:12px; display:block; }
+
+/* ── BATTLE SCREEN ── */
+#battle { background:#040a04; }
+.battle-bg { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%, #0a2a0a 0%, #040a04 60%); }
+.battle-ui { position:relative; width:100%; height:100%; display:flex; flex-direction:column; }
+
+/* ── Vitality / Life bars ── */
+.hp-bar-wrap { padding:5px 10px 4px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.hp-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; border:2px solid; flex-shrink:0; }
+.hp-info { flex:1; }
+.hp-name { font-family:'Cinzel',cursive; font-size:13px; letter-spacing:1px; }
+.hp-bar-bg { height:8px; background:rgba(255,255,255,.1); border-radius:4px; margin-top:4px; overflow:hidden; }
+.hp-bar-fill { height:100%; border-radius:4px; transition:width .5s ease; }
+.hp-enemy .hp-avatar { border-color:#ff6060; background:rgba(80,10,10,.5); }
+.hp-enemy .hp-bar-fill { background:linear-gradient(90deg,#cc2020,#ff4040); }
+.hp-player .hp-avatar { border-color:var(--green); background:rgba(10,40,10,.5); }
+.hp-player .hp-bar-fill { background:linear-gradient(90deg,#2aaa20,#60ee40); }
+
+.field-enemy { display:flex; gap:6px; justify-content:center; width:100%; padding:0 10px; box-sizing:border-box; }
+.field-player { display:flex; gap:6px; }
+.battle-log { font-style:italic; font-size:clamp(13px,4.5vw,22px); color:#8acc7a; text-align:center; padding:4px 16px; line-height:1.3; min-height:2.6em; display:flex; flex-direction:column; justify-content:center; }
+.section-label { font-size:clamp(10px,3vw,15px); color:#5a8a5a; letter-spacing:1px; text-align:center; font-family:'Cinzel',cursive; }
+.lives-bar { padding:4px 14px 4px; display:flex; align-items:center; gap:4px; flex-shrink:0; }
+.life-heart { font-size:16px; }
+
+/* Battle field — bez pustki, justify-content: stretch */
+.battle-field { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-around; position:relative; min-height:0; padding:2px 0; }
+
+/* ── CARD COMPONENT ── */
+.card { border-radius:8px; cursor:pointer; position:relative; transition:transform .2s, box-shadow .2s; flex-shrink:0; }
+.hand-area { padding:4px 10px 8px; display:flex; gap:6px; justify-content:center; flex-shrink:0; flex-wrap:nowrap; width:100%; box-sizing:border-box; }
+.card:hover { transform:translateY(-6px); }
+.card.selected { transform:translateY(-12px); box-shadow:0 0 20px rgba(128,238,96,.7); }
+.card.attacking { animation:cardAttack .4s ease; }
+.card.shake { animation:cardShake .3s ease; }
+.card.enemy-card { cursor:default; }
+.card.enemy-card:hover { transform:none; }
+@keyframes cardAttack { 0%{transform:translateY(-12px)} 40%{transform:translateY(-50px) scale(1.1)} 100%{transform:translateY(-12px)} }
+@keyframes cardShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+@keyframes cardRecoil { 0%{transform:translateY(0)} 35%{transform:translateY(14px) scale(.96)} 65%{transform:translateY(-4px)} 100%{transform:translateY(0)} }
+@keyframes cardDie { 0%{opacity:1;transform:scale(1) rotate(0deg)} 40%{opacity:.6;transform:scale(1.05) rotate(-4deg)} 100%{opacity:0;transform:scale(.4) rotate(12deg) translateY(30px)} }
+@keyframes cardHit { 0%,100%{filter:brightness(1)} 30%{filter:brightness(2) saturate(0)} }
+@keyframes aimBounce { from{transform:translateX(-50%) translateY(0)} to{transform:translateX(-50%) translateY(-5px)} }
+@keyframes enemyPulse { 0%,100%{box-shadow:0 0 8px rgba(255,80,80,.3)} 50%{box-shadow:0 0 20px rgba(255,80,80,.7)} }
+
+/* Card rarity borders */
+.card.common  { border:2px solid var(--c-common); }
+.card.rare    { border:2px solid var(--c-rare); box-shadow:0 0 6px rgba(64,170,64,.3); }
+.card.epic    { border:2px solid var(--c-epic); box-shadow:0 0 8px rgba(96,96,255,.4); }
+.card.legendary { border:2px solid var(--c-legendary); box-shadow:0 0 12px rgba(204,128,255,.5); }
+.card.mythic  { border:2px solid var(--c-mythic); box-shadow:0 0 14px rgba(255,170,0,.5); }
+
+/* ── COLLECTION ── */
+#collection { background:var(--bg); flex-direction:column; }
+.coll-header { width:100%; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(80,160,40,.2); flex-shrink:0; }
+.coll-title { font-family:'Cinzel',cursive; font-size:16px; color:var(--green); }
+.back-btn { background:rgba(20,50,20,.8); border:1px solid #2a5a2a; color:#7aaa6a; padding:6px 14px; border-radius:20px; cursor:pointer; font-family:'Crimson Pro',serif; font-size:13px; }
+.coll-grid { flex:1; overflow-y:auto; padding:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.coll-card-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
+.coll-count { font-size:10px; color:#5a8a5a; font-style:italic; }
+
+/* ── SHOP ── */
+#shop { background:linear-gradient(160deg,#100800,#060e06); flex-direction:column; }
+.shop-header { width:100%; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(180,120,0,.2); flex-shrink:0; }
+.shop-title { font-family:'Cinzel',cursive; font-size:16px; color:var(--gold); }
+.shop-packs { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:14px; }
+.pack-item { background:rgba(30,20,0,.8); border:1px solid rgba(150,100,0,.3); border-radius:14px; padding:16px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all .2s; }
+.pack-item:hover { border-color:var(--gold); transform:scale(1.02); }
+.pack-icon { font-size:36px; flex-shrink:0; }
+.pack-info { flex:1; }
+.pack-name { font-family:'Cinzel',cursive; font-size:14px; color:var(--gold); }
+.pack-desc { font-size:12px; color:#8a7a5a; margin-top:3px; font-style:italic; }
+.pack-price { font-family:'Cinzel',cursive; font-size:16px; color:#ffe080; flex-shrink:0; }
+.pack-guarantee { font-size:10px; color:#6a9a5a; margin-top:4px; }
+
+/* ── PACK OPENING ── */
+#pack-open { background:radial-gradient(ellipse at 50% 50%, #1a1000 0%, #060e06 70%); flex-direction:column; align-items:center; justify-content:center; }
+.pack-open-title { font-family:'Cinzel',cursive; font-size:20px; color:var(--gold); margin-bottom:24px; }
+.pack-cards-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:10px; }
+.pack-card-slot { opacity:0; transform:rotateY(180deg); transition:all .4s; }
+.pack-card-slot.revealed { opacity:1; transform:rotateY(0deg); }
+.pack-continue { margin-top:24px; padding:12px 36px; background:linear-gradient(135deg,#1e5a1e,#2d8a2d); color:#b8ffa0; border:1px solid #4a9a3a; border-radius:30px; font-family:'Cinzel',cursive; font-size:14px; cursor:pointer; }
+
+/* ── RESULT OVERLAY ── */
+#result-overlay { position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,.92); z-index:60; }
+#result-overlay.show { display:flex; }
+.result-title { font-family:'Cinzel',cursive; font-size:32px; margin-bottom:10px; }
+.result-sub { font-style:italic; font-size:15px; color:#7aaa6a; margin-bottom:20px; }
+.result-score { font-family:'Cinzel',cursive; font-size:20px; color:var(--gold); margin-bottom:20px; }
+.result-btn { padding:12px 32px; border-radius:30px; font-family:'Cinzel',cursive; font-size:14px; cursor:pointer; margin:6px; border:none; }
+.btn-next { background:linear-gradient(135deg,#1e5a1e,#2d8a2d); color:#b8ffa0; border:1px solid #4a9a3a; }
+.btn-menu { background:rgba(20,40,20,.8); color:#7aaa6a; border:1px solid #2a5a2a; }
+
+/* ── DAMAGE FLOAT ── */
+.dmg-float { position:absolute; font-family:'Cinzel',cursive; font-size:22px; font-weight:700; pointer-events:none; animation:floatDmg .8s ease forwards; z-index:100; }
+@keyframes floatDmg { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-60px) scale(1.4)} }
+
+/* ── TYPE BADGES ── */
+.type-badge { font-size:8px; padding:2px 6px; border-radius:6px; font-family:'Cinzel',cursive; letter-spacing:.5px; }
+.type-earth  { background:#1a3a0a; color:#80ff60; }
+.type-water  { background:#0a1a3a; color:#60c0ff; }
+.type-fire   { background:#3a1a0a; color:#ffa060; }
+.type-wind   { background:#1a2a1a; color:#c0e060; }
+.type-shadow { background:#0a0a2a; color:#c0c0ff; }
+.type-magic  { background:#2a0a3a; color:#df80ff; }
+
+/* ── LIVES DISPLAY ── */
+.lives-bar { width:100%; padding:4px 16px 8px; display:flex; align-items:center; gap:4px; flex-shrink:0; }
+.life-heart { font-size:14px; }
+.life-heart.lost { opacity:.2; }
+.lives-label { font-size:11px; color:#5a7a5a; margin-left:4px; font-style:italic; }
+
+/* ── GUIDE ── */
+.guide-section { background:rgba(10,25,10,.7); border:1px solid rgba(60,120,60,.3); border-radius:14px; padding:14px; }
+.guide-h { font-family:'Cinzel',cursive; font-size:15px; color:#90e080; margin-bottom:10px; letter-spacing:.5px; }
+.guide-text { font-family:'Crimson Pro',serif; font-size:14px; color:#7aaa6a; line-height:1.6; }
+.guide-step { display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; }
+.guide-num { background:rgba(60,140,40,.3); border:1px solid #4a8a3a; color:#90e080; font-family:'Cinzel',cursive; font-size:12px; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.guide-step span:last-child { font-family:'Crimson Pro',serif; font-size:14px; color:#7aaa6a; line-height:1.5; }
+.guide-stat-row { display:flex; gap:12px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(60,100,60,.2); font-size:14px; }
+.guide-stat-row span:first-child { font-family:'Cinzel',cursive; font-size:13px; width:90px; flex-shrink:0; }
+.guide-stat-row span:last-child { color:#6a9a6a; font-family:'Crimson Pro',serif; }
+.type-adv-row { display:flex; align-items:center; gap:6px; padding:5px 0; }
+.type-pill { font-size:11px; padding:3px 8px; border-radius:12px; font-family:'Cinzel',cursive; font-weight:500; }
+.type-pill.water  { background:#0a1a3a; color:#60c0ff; border:1px solid #2060aa; }
+.type-pill.fire   { background:#3a1a0a; color:#ffa060; border:1px solid #aa4010; }
+.type-pill.wind   { background:#1a2a1a; color:#c0e060; border:1px solid #4a6a20; }
+.type-pill.earth  { background:#0a1a0a; color:#80ff60; border:1px solid #2a6a20; }
+.type-pill.shadow { background:#0a0a2a; color:#c0c0ff; border:1px solid #3030aa; }
+.type-pill.magic  { background:#2a0a3a; color:#df80ff; border:1px solid #6020aa; }
+.adv-arrow { font-size:12px; color:#aa7040; font-family:'Cinzel',cursive; flex-shrink:0; }
+.guide-rarity-row { display:flex; gap:12px; align-items:center; padding:5px 0; border-bottom:1px solid rgba(60,100,60,.15); }
+.guide-rarity-row span:first-child { font-family:'Cinzel',cursive; font-size:11px; width:110px; flex-shrink:0; }
+.guide-rarity-row span:last-child { font-family:'Crimson Pro',serif; font-size:13px; color:#6a8a6a; }
+
+@keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(-10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(80,160,40,.3); border-radius:2px; }
+
+/* ── PAUZA ── */
+.pause-btn { width:220px; padding:14px 0; border-radius:20px; font-family:'Cinzel',cursive; font-size:14px; cursor:pointer; background:rgba(10,30,10,.9); border:1px solid #2a6a2a; color:#b8ffa0; letter-spacing:1px; transition:all .2s; }
+.pause-btn:hover { transform:scale(1.04); background:rgba(20,50,20,.9); }
+
+/* ── RANKING ── */
+.rank-row { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:12px; background:rgba(15,25,5,.8); border:1px solid rgba(80,140,20,.2); }
+.rank-num { font-family:'Cinzel',cursive; font-size:18px; width:32px; text-align:center; flex-shrink:0; }
+.rank-name { flex:1; font-family:'Cinzel',cursive; font-size:14px; color:#c0e0a0; }
+.rank-score { font-family:'Cinzel',cursive; font-size:15px; color:#ffd060; }
+.rank-wins { font-size:11px; color:#5a8a4a; font-family:'Crimson Pro',serif; font-style:italic; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- MENU -->
+  <div id="menu" class="screen active">
+    <canvas class="menu-particles" id="menuCanvas"></canvas>
+
+    <!-- Napis Wisp nad tytułem -->
+    <div class="menu-wisp-brand">
+      <div class="menu-wisp-logo">
+        <svg width="40" height="40" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <!-- Brak tła — tylko poświata i twarz -->
+          <ellipse cx="26" cy="27" rx="12" ry="14" fill="#80ee60" filter="url(#glow)"/>
+          <circle cx="22" cy="23" r="3" fill="#0a200a"/>
+          <circle cx="30" cy="23" r="3" fill="#0a200a"/>
+          <circle cx="22.8" cy="22.2" r="1.2" fill="white"/>
+          <circle cx="30.8" cy="22.2" r="1.2" fill="white"/>
+          <defs>
+            <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <span class="menu-wisp-name">🌿 Wisp</span>
+    </div>
+
+    <!-- Tytuł gry -->
+    <div class="menu-logo-row">
+      <span class="menu-title-text">Forest Cards</span>
+    </div>
+    <div class="menu-subtitle" id="fc-subtitle"></div>
+
+    <!-- Wybór trudności -->
+    <div class="menu-choosediff" id="fc-choosediff"></div>
+    <div class="diff-row">
+      <div class="diff-btn easy selected" id="fc-diff-easy" onclick="selectDifficulty('easy')">
+        <span class="diff-icon">😊</span><span id="fc-diff-easy-lbl"></span><span class="diff-lives" id="fc-diff-easy-lives"></span>
+      </div>
+      <div class="diff-btn medium" id="fc-diff-medium" onclick="selectDifficulty('medium')">
+        <span class="diff-icon">😐</span><span id="fc-diff-med-lbl"></span><span class="diff-lives" id="fc-diff-med-lives"></span>
+      </div>
+      <div class="diff-btn hard" id="fc-diff-hard" onclick="selectDifficulty('hard')">
+        <span class="diff-icon">💀</span><span id="fc-diff-hard-lbl"></span><span class="diff-lives" id="fc-diff-hard-lives"></span>
+      </div>
+    </div>
+
+    <!-- Zagraj -->
+    <button class="btn btn-green fc-play-btn" id="fc-play-btn" onclick="startCampaign()"></button>
+
+    <!-- Kontynuuj (jeśli jest zapis) -->
+    <button class="btn btn-gold fc-continue-btn" id="fc-btn-continue" style="display:none;" onclick="continueCampaign()"></button>
+
+    <!-- Reset zapisu -->
+    <div id="fc-reset-link" style="display:none;font-size:11px;color:#3a6a3a;margin-top:4px;cursor:pointer;text-decoration:underline;" onclick="resetSaveConfirm()" id="fc-reset-lbl">🗑</div>
+
+    <!-- Pasek ikon -->
+    <div class="menu-icon-row">
+      <button class="menu-icon-btn" id="fc-btn-guide" onclick="showScreen('guide')"></button>
+      <button class="menu-icon-btn" id="fc-btn-ranking" onclick="showScreen('ranking')" style="color:#ffd060;border-color:#806020;"></button>
+      <button class="menu-icon-btn" id="fc-btn-deck" onclick="showScreen('deckbuilder')" style="color:#80c0ff;border-color:#205080;"></button>
+      <button class="menu-icon-btn" id="fc-btn-shop" onclick="showScreen('shop')" style="color:#ffcc60;border-color:#806020;"></button>
+    </div>
+
+    <!-- Grzybki + Życia -->
+    <div style="display:flex;align-items:center;gap:16px;margin-top:8px;position:relative;z-index:1;">
+      <div id="mushroomCount" style="font-family:'Cinzel',cursive;font-size:16px;color:#ffcc60;cursor:pointer;letter-spacing:1px;" onclick="showScreen('shop')">🍄 0</div>
+    </div>
+
+    <!-- Panel logowania -->
+    <div id="auth-panel" style="margin-top:8px;position:relative;z-index:1;"></div>
+
+    <!-- Kontrolki -->
+
+
+    <!-- Footer -->
+    <div class="menu-footer">
+      <a href="/privacy.html" target="_blank" id="fc-privacy-lnk"></a>
+      &nbsp;·&nbsp;
+      <a href="/terms.html" target="_blank" id="fc-terms-lnk"></a>
+    </div>
+
+    <button onclick="toggleFCLang()" id="fc-lang-btn" class="menu-icon-btn" style="margin-top:6px;color:#c0e0c0;border-color:#4a7a4a;">🌍 EN</button>
+  </div>
+  <!-- EKRAN WYBORU KART przed walką -->
+  <div id="prebattle" class="screen" style="flex-direction:column;align-items:center;justify-content:flex-start;padding:14px 12px;overflow-y:auto;">
+
+    <div style="font-family:'Cinzel',cursive;font-size:17px;color:#80ee60;margin-bottom:8px;text-shadow:0 0 20px rgba(80,220,40,.4);" id="fc-pb-title"></div>
+
+    <!-- Przeciwnik — karty widoczne -->
+    <div style="width:100%;background:rgba(80,10,10,.15);border:1px solid rgba(180,40,40,.2);border-radius:12px;padding:10px;margin-bottom:12px;">
+      <div id="prebattleEnemyName" style="font-family:'Cinzel',cursive;font-size:13px;color:#ff8080;text-align:center;margin-bottom:6px;"></div>
+      <div style="font-family:'Cinzel',cursive;font-size:11px;color:#cc4040;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-enemy-lbl"></div>
+      <div id="prebattleEnemyCards" style="display:flex;gap:6px;justify-content:center;"></div>
+    </div>
+
+    <!-- Karty gracza -->
+    <div style="width:100%;background:rgba(10,60,10,.2);border:1px solid rgba(40,140,40,.2);border-radius:12px;padding:10px;margin-bottom:10px;">
+      <div style="font-family:'Cinzel',cursive;font-size:11px;color:#5a9a5a;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-your-lbl"></div>
+      <div id="prebattleSelected" style="display:flex;gap:6px;justify-content:center;min-height:90px;align-items:center;"></div>
+      <div id="prebattleInfo" style="font-size:11px;color:#5a8a6a;font-style:italic;margin-top:6px;text-align:center;"></div>
+    </div>
+
+    <!-- Kolekcja do wyboru (tryb ręczny) -->
+    <div id="prebattleCollection" style="display:none;width:100%;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;max-height:180px;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:8px;padding:8px;"></div>
+
+    <!-- Przyciski trybu -->
+    <div style="display:flex;gap:8px;margin-bottom:10px;width:100%;">
+      <button id="fc-pb-random-btn" onclick="prebattleRandom()"
+        style="flex:1;padding:10px;border-radius:12px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);border:2px solid #3a8a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:12px;cursor:pointer;">
+      </button>
+      <button id="fc-pb-manual-btn" onclick="prebattleManual()"
+        style="flex:1;padding:10px;border-radius:12px;background:rgba(20,30,50,.8);border:1px solid #3a5a8a;color:#80c0ff;font-family:'Cinzel',cursive;font-size:12px;cursor:pointer;">
+      </button>
+    </div>
+
+    <button id="fc-pb-start-btn" onclick="prebattleStart()"
+      style="width:100%;padding:13px;border-radius:16px;background:linear-gradient(135deg,#1a4a1a,#2a7a2a);border:2px solid #4a9a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:15px;cursor:pointer;letter-spacing:1px;display:none;">
+    </button>
+    <button onclick="showScreen('menu')" id="fc-pb-back-btn" style="margin-top:6px;background:none;border:none;color:#3a5a3a;font-size:11px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
+  </div>
+
+
+  <!-- BATTLE -->
+  <div id="battle" class="screen">
+    <div class="battle-bg"></div>
+    <!-- Canvas pioruna — fixed overlay na całym viewport -->
+    <canvas id="lightningCanvas" style="position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;"></canvas>
+    <div class="battle-ui">
+
+      <!-- Enemy vitality -->
+      <div class="hp-bar-wrap hp-enemy">
+        <div class="hp-avatar" id="enemyAvatar">👾</div>
+        <div class="hp-info">
+          <div class="hp-name" id="enemyName">Strażnik Lasu</div>
+          <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemyHP" style="width:100%"></div></div>
+        </div>
+        <div style="font-family:'Cinzel',cursive;font-size:14px;color:#ff8080;white-space:nowrap;" id="enemyHPText">❤️ 30/30</div>
+      </div>
+
+      <!-- Battle field — ściśnięte, bez pustki -->
+      <div class="battle-field" style="position:relative;">
+        <div class="section-label" id="fc-bt-enemy-lbl"></div>
+        <div class="field-enemy" id="enemyField"></div>
+        <div class="battle-log" id="battleLog"></div>
+        <div class="section-label" id="fc-bt-hand-lbl"></div>
+        <div class="hand-area" id="handArea"></div>
+      </div>
+
+      <!-- Player vitality -->
+      <div class="hp-bar-wrap hp-player" style="flex-direction:row-reverse">
+        <div class="hp-avatar" id="playerAvatar">🌿</div>
+        <div class="hp-info" style="text-align:right">
+          <div class="hp-name" id="playerName"></div>
+          <div class="hp-bar-bg"><div class="hp-bar-fill" id="playerHP" style="width:100%"></div></div>
+        </div>
+        <div style="font-family:'Cinzel',cursive;font-size:14px;color:#80ee60;white-space:nowrap;" id="playerHPText">❤️ 30/30</div>
+      </div>
+
+      <!-- Lives -->
+      <div style="padding:4px 14px;flex-shrink:0;">
+        <div class="lives-bar" id="livesBar" style="padding:0;"></div>
+      </div>
+      <div id="selectedLabel" style="display:none;"></div>
+
+      <!-- Dolny pasek — tylko dźwięk i pauza -->
+      <div style="padding:4px 12px 14px;display:flex;gap:6px;flex-shrink:0;justify-content:flex-end;">
+        <button onclick="toggleMute()" id="muteBtn"
+          style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;">
+          🔊
+        </button>
+        <button onclick="openPause()"
+          style="padding:12px 14px;border-radius:16px;background:rgba(20,30,40,.7);border:1px solid #2a4a6a;color:#80b0e0;font-family:'Cinzel',cursive;font-size:16px;cursor:pointer;">
+          ⏸
+        </button>
+      </div>
+    </div>
+
+    <!-- PAUZA overlay -->
+    <div id="pause-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.82);z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;">
+      <div style="font-family:'Cinzel',cursive;font-size:26px;color:#80c0ff;margin-bottom:8px;text-shadow:0 0 20px rgba(80,160,255,.5);" id="fc-pause-title"></div>
+      <button class="pause-btn" id="fc-pause-resume" onclick="closePause()"></button>
+      <button class="pause-btn" id="fc-pause-ranking" onclick="closePause();showScreen('ranking')" style="color:#ffd060;border-color:#6a5010;"></button>
+      <button class="pause-btn" id="fc-pause-menu" onclick="closePause();showScreen('menu')" style="color:#ff8080;border-color:#6a2020;"></button>
+      <div id="pauseLivesInfo" style="font-family:'Crimson Pro',serif;font-size:13px;color:#5a8a6a;font-style:italic;margin-top:8px;text-align:center;"></div>
+    </div>
+
+    <!-- Result overlay -->
+    <div id="result-overlay">
+      <canvas id="fireworksCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></canvas>
+      <div class="result-title" id="resultTitle" style="position:relative;z-index:2;"></div>
+      <div class="result-sub" id="resultSub" style="position:relative;z-index:2;"></div>
+      <div class="result-score" id="resultScore" style="position:relative;z-index:2;"></div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;position:relative;z-index:2;">
+        <button class="result-btn btn-next" id="btnNext" onclick="nextBattle()"></button>
+        <button class="result-btn btn-menu" id="fc-result-menu" onclick="showScreen('menu')"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECK BUILDER -->
+  <div id="deckbuilder" class="screen" style="flex-direction:column;">
+    <div class="coll-header" style="border-color:rgba(80,140,200,.2);">
+      <div class="coll-title" style="color:#80c0ff;" id="fc-deck-title"></div>
+      <button onclick="toggleFCLang()" id="fc-lang-deck" class="menu-icon-btn" style="font-size:11px;padding:4px 8px;color:#80c0ff;border-color:#2060a0;"></button>
+      <button class="back-btn" id="fc-deck-back" onclick="showScreen('menu')"></button>
+    </div>
+
+    <!-- Zablokowana dla nowych graczy -->
+    <div id="deckLocked" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;gap:16px;">
+      <div style="font-size:48px;">🔒</div>
+      <div style="font-family:'Cinzel',cursive;font-size:18px;color:#80c0ff;" id="fc-deck-locked-title"></div>
+      <div style="font-size:14px;color:#5a8aaa;font-style:italic;line-height:1.6;" id="fc-deck-locked-sub"></div>
+      <button onclick="showScreen('menu')" id="fc-deck-play-now" style="margin-top:8px;padding:12px 28px;border-radius:20px;background:linear-gradient(135deg,#1e5a1e,#2d8a2d);border:1px solid #4a9a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:14px;cursor:pointer;"></button>
+    </div>
+
+    <!-- Edytor talii — dwie kolumny -->
+    <div id="deckEditor" style="flex:1;display:flex;flex-direction:column;min-height:0;">
+      <!-- Pasek info -->
+      <div style="padding:6px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(80,140,200,.15);flex-shrink:0;">
+        <div style="font-size:11px;color:#5a8aaa;font-style:italic;" id="fc-deck-hint"></div>
+        <div id="deckCount" style="font-family:'Cinzel',cursive;font-size:13px;color:#80c0ff;">0/20</div>
+      </div>
+      <div style="padding:4px 12px 2px;font-size:10px;color:#4a7a9a;flex-shrink:0;" id="deckList"></div>
+
+      <!-- Dwie kolumny -->
+      <div style="flex:1;display:flex;gap:0;min-height:0;overflow:hidden;">
+
+        <!-- LEWA: Kolekcja -->
+        <div style="flex:1;display:flex;flex-direction:column;border-right:1px solid rgba(80,140,200,.15);">
+          <div style="padding:6px 8px;font-family:'Cinzel',cursive;font-size:10px;color:#5a8aaa;letter-spacing:1px;flex-shrink:0;" id="fc-coll-panel-lbl"></div>
+          <div id="collectionPanel" style="flex:1;overflow-y:auto;padding:6px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;"></div>
+        </div>
+
+        <!-- PRAWA: Talia — strefa upuszczania -->
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div style="padding:6px 8px;font-family:'Cinzel',cursive;font-size:10px;color:#5a8aaa;letter-spacing:1px;flex-shrink:0;" id="fc-deck-panel-lbl"></div>
+          <div id="deckPanel"
+            style="flex:1;overflow-y:auto;padding:6px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;
+              border:2px dashed rgba(80,140,200,.2);border-radius:8px;margin:0 6px 6px;transition:border-color .2s;"
+            ondragover="event.preventDefault();this.style.borderColor='rgba(80,200,255,.6)'"
+            ondragleave="this.style.borderColor='rgba(80,140,200,.2)'"
+            ondrop="onDropToDeck(event)">
+            <div id="deckEmptyHint" style="width:100%;text-align:center;color:#3a6a8a;font-style:italic;font-size:12px;padding:20px 0;pointer-events:none;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- COLLECTION -->
+  <div id="collection" class="screen">
+    <div class="coll-header">
+      <div class="coll-title" id="fc-coll-title"></div>
+      <button class="back-btn" id="fc-coll-back" onclick="showScreen('menu')"></button>
+    </div>
+    <div class="coll-grid" id="collGrid"></div>
+  </div>
+
+  <!-- SHOP -->
+  <div id="shop" class="screen" style="flex-direction:column;">
+    <div class="coll-header" style="border-color:rgba(180,120,0,.2);">
+      <div class="coll-title" style="color:#ffcc60;" id="fc-shop-title"></div>
+      <button onclick="toggleFCLang()" id="fc-lang-shop" class="menu-icon-btn" style="font-size:11px;padding:4px 8px;color:#d0b060;border-color:#6a5010;"></button>
+      <button class="back-btn" id="fc-shop-back" onclick="showScreen('menu')" style="border-color:#5a4010;color:#aa8040;"></button>
+    </div>
+
+    <!-- Stan grzybków + doładowanie -->
+    <div style="padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(180,120,0,.15);flex-shrink:0;">
+      <div id="shopMushroomCount" style="font-family:'Cinzel',cursive;font-size:18px;color:#ffcc60;flex-shrink:0;"></div>
+      <div style="flex:1;"></div>
+      <button onclick="showTopup()" style="padding:7px 20px;border-radius:12px;background:linear-gradient(135deg,#3a2a00,#6a4a00);border:1px solid #aa8020;color:#ffd060;font-family:'Cinzel',cursive;font-size:12px;cursor:pointer;flex-shrink:0;" id="fc-shop-buy-btn">
+      </button>
+    </div>
+
+    <!-- Zakładki: Karty / Doładowanie -->
+    <div id="shopCards" style="flex:1;overflow-y:auto;padding:10px;">
+      <div style="font-size:11px;color:#7a6a3a;font-style:italic;margin-bottom:10px;text-align:center;" id="fc-shop-hint"></div>
+      <div id="shopCardGrid" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
+    </div>
+
+    <!-- Overlay doładowania -->
+    <div id="topupOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.92);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;">
+      <div style="font-family:'Cinzel',cursive;font-size:20px;color:#ffd060;margin-bottom:4px;" id="fc-topup-title"></div>
+      <div style="font-size:12px;color:#8a7a4a;font-style:italic;margin-bottom:8px;" id="fc-topup-sub"></div>
+
+      <div onclick="buyMushrooms(10,'0.99')" style="width:100%;max-width:300px;padding:16px;border-radius:14px;background:rgba(60,40,0,.8);border:1px solid #6a5020;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-family:'Cinzel',cursive;font-size:16px;color:#ffd060;">🍄 ×10</div>
+          <div style="font-size:11px;color:#8a7a4a;margin-top:2px;" id="fc-pack-small-lbl"></div>
+        </div>
+        <div style="font-family:'Cinzel',cursive;font-size:18px;color:#80ee60;">0,99 €</div>
+      </div>
+
+      <div onclick="buyMushrooms(25,'1.99')" style="width:100%;max-width:300px;padding:16px;border-radius:14px;background:rgba(60,40,0,.8);border:2px solid #aa8020;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-family:'Cinzel',cursive;font-size:16px;color:#ffd060;">🍄 ×25 <span style="font-size:11px;color:#80ee60;" id="fc-pack-popular"></span></div>
+          <div style="font-size:11px;color:#8a7a4a;margin-top:2px;" id="fc-pack-med-lbl"></div>
+        </div>
+        <div style="font-family:'Cinzel',cursive;font-size:18px;color:#80ee60;">1,99 €</div>
+      </div>
+
+      <div onclick="buyMushrooms(50,'3.99')" style="width:100%;max-width:300px;padding:16px;border-radius:14px;background:linear-gradient(135deg,rgba(80,50,0,.9),rgba(120,80,0,.9));border:1px solid #cc9a30;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-family:'Cinzel',cursive;font-size:16px;color:#ffd060;">🍄 ×50 <span style="font-size:11px;color:#ffaa40;" id="fc-pack-best"></span></div>
+          <div style="font-size:11px;color:#8a7a4a;margin-top:2px;" id="fc-pack-large-lbl"></div>
+        </div>
+        <div style="font-family:'Cinzel',cursive;font-size:18px;color:#ffd060;">3,99 €</div>
+      </div>
+
+      <button onclick="hideTopup()" id="fc-topup-cancel" style="margin-top:8px;background:none;border:none;color:#5a4a2a;font-size:13px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
+    </div>
+  </div>
+
+  <!-- INSTRUKCJA -->
+  <div id="guide" class="screen" style="background:linear-gradient(160deg,#040e04,#060c10);flex-direction:column;">
+    <div class="coll-header" style="border-color:rgba(80,140,200,.2);">
+      <div class="coll-title" style="color:#90c0e0;" id="fc-guide-title"></div>
+      <button onclick="toggleFCLang()" id="fc-lang-guide" class="menu-icon-btn" style="font-size:11px;padding:4px 8px;color:#c0e0c0;border-color:#4a7a4a;"></button>
+      <button class="back-btn" id="fc-guide-back" onclick="showScreen('menu')"></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:18px;">
+
+      <div id="fc-guide-content"></div>
+
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div id="ranking" class="screen" style="background:linear-gradient(160deg,#080a00,#060e06);flex-direction:column;">
+    <div class="coll-header" style="border-color:rgba(200,160,0,.25);">
+      <div class="coll-title" style="color:#ffd060;" id="fc-rank-title"></div>
+      <button onclick="toggleFCLang()" id="fc-lang-ranking" class="menu-icon-btn" style="font-size:11px;padding:4px 8px;color:#d0b060;border-color:#6a5010;"></button>
+      <button class="back-btn" id="fc-rank-back" onclick="showScreen('menu')" style="border-color:#5a4010;color:#aa8040;"></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;" id="rankingList"></div>
+  </div>
+
+  <!-- PACK OPENING -->
+  <div id="pack-open" class="screen">
+    <div class="pack-open-title" id="packOpenTitle"></div>
+    <div class="pack-cards-row" id="packCardsRow"></div>
+    <button class="pack-continue" id="fc-pack-continue" onclick="showScreen('collection')"></button>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  FOREST CARDS v1.0  —  Świat Wispa
+// ═══════════════════════════════════════════════
+
+// ── AUTH & API ────────────────────────────────────
+const FC_TOKEN_KEY = 'fc_jwt';
+const FC_USER_KEY  = 'fc_user';
+
+function getToken() { try { return localStorage.getItem(FC_TOKEN_KEY); } catch(e){ return null; } }
+function getUser()  { try { const d=localStorage.getItem(FC_USER_KEY); return d?JSON.parse(d):null; } catch(e){ return null; } }
+function setToken(t){ try { localStorage.setItem(FC_TOKEN_KEY, t); } catch(e){} }
+function setUser(u) { try { localStorage.setItem(FC_USER_KEY, JSON.stringify(u)); } catch(e){} }
+function clearAuth(){ try { localStorage.removeItem(FC_TOKEN_KEY); localStorage.removeItem(FC_USER_KEY); } catch(e){} }
+
+function authHeaders(){ return { 'Authorization':'Bearer '+getToken(), 'Content-Type':'application/json' }; }
+
+async function apiGet(path){
+  const r = await fetch(path, { headers: authHeaders() });
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+async function apiPost(path, body){
+  const r = await fetch(path, { method:'POST', headers: authHeaders(), body: JSON.stringify(body) });
+  if(!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function syncMe(){
+  try {
+    const u = await apiGet('/auth/me');
+    setUser(u);
+    return u;
+  } catch(e) { return null; }
+}
+
+async function syncProgressFromServer(){
+  // Pobierz postęp z serwera i scal z lokalnym (wyższe wygrywa)
+  try {
+    const sv = await apiGet('/api/progress');
+    const localTs = Math.floor((parseInt(localStorage.getItem('fc_progressTs')||'0')));
+    if(sv.progress_ts >= localTs){
+      // Serwer ma nowszy lub równy zapis — użyj go
+      GS.mushrooms    = sv.mushrooms    ?? GS.mushrooms;
+      GS.wins         = Math.max(GS.wins,         sv.wins ?? 0);
+      GS.battleLevel  = Math.max(GS.battleLevel,  sv.battle_level ?? 1);
+      if(Array.isArray(sv.collection) && sv.collection.length > GS.collection.length){
+        GS.collection = sv.collection;
+      }
+      saveSave();
+    }
+    // Zawsze wyślij lokalny stan (wins, score, collection) do serwera po syncu
+    await pushProgressToServer();
+  } catch(e) {}
+}
+
+async function pushProgressToServer(){
+  try {
+    await apiPost('/api/progress', {
+      mushrooms:    GS.mushrooms    || 0,
+      wins:         GS.wins         || 0,
+      battle_level: GS.battleLevel  || 1,
+      score:        (GS.wins||0)*200 + (GS.battleLevel||1)*50,
+      collection:   GS.collection   || [],
+      ts:           Date.now(),
+    });
+    localStorage.setItem('fc_progressTs', String(Math.floor(Date.now()/1000)));
+  } catch(e) {}
+}
+
+function getDeviceId(){
+  try {
+    const KEY = 'fc_device_id';
+    let id = localStorage.getItem(KEY);
+    if(!id){
+      id = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c/4).toString(16));
+      localStorage.setItem(KEY, id);
+    }
+    return id;
+  } catch(e){ return null; }
+}
+
+async function pushScoreToServer(){
+  const score        = (GS.wins||0)*200 + (GS.battleLevel||1)*50;
+  const wins         = GS.wins        || 0;
+  const battle_level = GS.battleLevel || 1;
+
+  if(getToken()){
+    // Zalogowany → /api/score
+    try {
+      await apiPost('/api/score', { score, wins, battle_level });
+    } catch(e) {}
+  } else {
+    // Gość → /api/score/guest z device_id
+    try {
+      const nick = FCLANG.rankYou||'Guest';
+      fetch('/api/score/guest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nick, score, wins, battle_level, device_id: getDeviceId() }),
+      }).catch(()=>{});
+    } catch(e) {}
+  }
+}
+
+// ── PADDLE INIT ───────────────────────────────────
+(function initPaddle(){
+  if(typeof Paddle === 'undefined') return;
+  const token = document.querySelector('meta[name="paddle-token"]')?.content;
+  if(token){
+    Paddle.Initialize({ token });
+  }
+})();
+
+// ── AUTH UI ───────────────────────────────────────
+function updateAuthUI(){
+  const user  = getUser();
+  const panel = document.getElementById('auth-panel');
+  if(!panel) return;
+
+  if(user && getToken()){
+    const avatar = user.avatar_url
+      ? `<img src="${user.avatar_url}" style="width:22px;height:22px;border-radius:50%;flex-shrink:0;">`
+      : '';
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#90d090;
+        background:rgba(0,60,0,.4);border:1px solid #306030;border-radius:8px;padding:5px 12px;">
+        ${avatar}
+        <span>${user.nick || user.email || FCLANG.rankYou||'Player'}</span>
+        <button onclick="FCAuth.changeNick()" style="padding:3px 8px;font-size:10px;
+          background:rgba(20,60,20,.7);color:#90d090;border:1px solid #306030;border-radius:6px;cursor:pointer;">
+          ${FCLANG.nickBtn||'✏️ Nick'}
+        </button>
+        <button onclick="FCAuth.logout()" style="padding:3px 8px;font-size:10px;
+          background:rgba(80,20,20,.7);color:#e09090;border:1px solid #602020;border-radius:6px;cursor:pointer;">
+          ${FCLANG.logoutBtn||'✕ Sign Out'}
+        </button>
+      </div>`;
+  } else {
+    panel.innerHTML = `
+      <button onclick="FCAuth.login()" style="padding:6px 16px;font-size:12px;
+        background:rgba(255,255,255,.12);color:#c0e0c0;border:1px solid #4a7a4a;
+        border-radius:8px;cursor:pointer;font-family:'Cinzel',cursive;">
+        ${FCLANG.loginBtn||'🔑 Sign in'}
+      </button>`;
+  }
+}
+
+const FCAuth = {
+  login()  { window.location.href = '/auth/google'; },
+  logout() {
+    clearAuth();
+    updateAuthUI();
+    showToast(FCLANG.loggedOut||'Signed out.');
+  },
+  async changeNick(){
+    const nick = prompt(FCLANG.nickPrompt||'New nick (max 20 chars):');
+    if(!nick || !nick.trim()) return;
+    try {
+      await apiPost('/api/account/nick', { nick: nick.trim() });
+      const u = getUser();
+      if(u){ u.nick = nick.trim(); setUser(u); }
+      updateAuthUI();
+      showToast(FCLANG.nickChanged||'✅ Nick updated!');
+    } catch(e) { showToast(FCLANG.nickError||'Error changing nick.'); }
+  },
+};
+
+// ── GAME STATE (musi być przed wszystkim) ────────
+var GS = {
+  lives: 3,
+  wins: 0,
+  battleLevel: 1,
+  collection: [],
+  deck: [],
+  mushrooms: 5,    // 🍄 startowe grzybki
+  lastLogin: '',   // data ostatniego logowania (YYYY-MM-DD)
+};
+var STARTER_DECK = ['fairy','mushroom','thorn','wolf'];
+
+// ── CARD DEFINITIONS ────────────────────────────
+const CARD_DB = [
+  // id, name, type, atk, def, hp, rarity, avatar
+  {id:'wisp',       name:'Wisp',           type:'magic',  atk:12,def:10,hp:24, rarity:'legendary', emoji:'🌿'},
+  {id:'oak',        name:'Duch Dębu',       type:'earth',  atk:5, def:7, hp:20, rarity:'rare',      emoji:'🌳'},
+  {id:'fairy',      name:'Leśna Wróżka',    type:'earth',  atk:3, def:2, hp:12, rarity:'common',    emoji:'🧚'},
+  {id:'fog',        name:'Strażnik Mgły',   type:'shadow', atk:8, def:6, hp:18, rarity:'epic',      emoji:'👻'},
+  {id:'heart',      name:'Serce Lasu',      type:'fire',   atk:15,def:13,hp:28, rarity:'mythic',    emoji:'❤️'},
+  {id:'wolf',       name:'Wilczy Duch',     type:'wind',   atk:7, def:3, hp:14, rarity:'rare',      emoji:'🐺'},
+  {id:'mushroom',   name:'Grzybol',         type:'earth',  atk:2, def:5, hp:16, rarity:'common',    emoji:'🍄'},
+  {id:'river',      name:'Duch Rzeki',      type:'water',  atk:6, def:4, hp:15, rarity:'rare',      emoji:'💧'},
+  {id:'night',      name:'Nocny Łowca',     type:'shadow', atk:10,def:5, hp:16, rarity:'epic',      emoji:'🦉'},
+  {id:'frost',      name:'Mróz',            type:'water',  atk:9, def:8, hp:20, rarity:'epic',      emoji:'❄️'},
+  {id:'seed',       name:'Ziarnko Nadziei', type:'earth',  atk:1, def:1, hp:8,  rarity:'common',    emoji:'🌱'},
+  {id:'storm',      name:'Burza',           type:'wind',   atk:11,def:4, hp:14, rarity:'epic',      emoji:'⚡'},
+  {id:'bear',       name:'Niedźwiedź Lasu', type:'earth',  atk:8, def:9, hp:22, rarity:'rare',      emoji:'🐻'},
+  {id:'firefly',    name:'Świetlik',        type:'magic',  atk:4, def:2, hp:10, rarity:'common',    emoji:'✨'},
+  {id:'crow',       name:'Czarny Kruk',     type:'shadow', atk:6, def:3, hp:12, rarity:'rare',      emoji:'🦅'},
+  {id:'thorn',      name:'Cierń',           type:'earth',  atk:5, def:6, hp:14, rarity:'common',    emoji:'🌵'},
+  {id:'moonspirit', name:'Duch Księżyca',   type:'magic',  atk:9, def:7, hp:18, rarity:'legendary', emoji:'🌙'},
+  {id:'lava',       name:'Lawa',            type:'fire',   atk:13,def:5, hp:16, rarity:'epic',      emoji:'🌋'},
+];
+
+// Type advantages: type -> beats -> []
+const TYPE_ADV = {
+  water:  ['fire'],
+  fire:   ['wind'],
+  wind:   ['earth'],
+  earth:  ['shadow'],
+  shadow: ['magic'],
+  magic:  ['water'],
+};
+
+const RARITY_COLORS = {
+  common:'#888', rare:'#40aa40', epic:'#6060ff', legendary:'#cc80ff', mythic:'#ffaa00'
+};
+const RARITY_BG = {
+  common:'#1a1a1a', rare:'#0a1a0a', epic:'#0a0a2a', legendary:'#1a0a2a', mythic:'#1a0800'
+};
+const TYPE_COLORS = {
+  earth:'#80ff60', water:'#60c0ff', fire:'#ffa060', wind:'#c0e060', shadow:'#c0c0ff', magic:'#df80ff'
+};
+// TYPE_NAMES is now language-dependent — see FCLANG.typeNames
+const TYPE_NAMES = { earth:'Earth', water:'Water', fire:'Fire', wind:'Wind', shadow:'Shadow', magic:'Magic' }; // fallback EN
+
+// ═══════════════════════════════════════════════
+//  INTERNATIONALISATION — Forest Cards
+// ═══════════════════════════════════════════════
+const FC_LANGS = {
+  pl: {
+    subtitle: 'Świat Wispa — w Twoich rękach.<br>Zbierz talię. Ocal las.',
+    chooseDiff: 'Wybierz poziom trudności:',
+    easy:'Łatwy', easyLives:'5 żyć · 40 poziomów',
+    medium:'Średni', mediumLives:'3 życia · 40 poziomów',
+    hard:'Trudny', hardLives:'1 życie · 40 poziomów',
+    play:'▶ ZAGRAJ',
+    continueBtn:(lvl,sc)=>`▶ Kontynuuj (Poziom ${lvl}, ⭐${sc})`,
+    resetSave:'🗑 Usuń zapis i zacznij od nowa',
+    guide:'❓ Instrukcja', ranking:'🏆 Ranking', deck:'⚔️ Talia', shop:'🍄 Sklep',
+    privacy:'Polityka prywatności', terms:'Regulamin',
+    back:'↩ Wróć',
+    // Pre-battle
+    pbTitle:'⚔️ Nadchodzi walka!', pbEnemyLbl:'⚔️ KARTY PRZECIWNIKA',
+    pbYourLbl:'🌿 TWOJE KARTY', pbRandom:'🎲 Losuj ponownie',
+    pbManual:'🧠 Wybierz ręcznie', pbStart:'▶ DO WALKI!', pbBack:'↩ Wróć do menu',
+    pbRandInfo:'🎲 Wylosowano 4 karty — możesz zacząć lub wylosować ponownie',
+    pbManInfo:'🧠 Kliknij karty aby wybrać dokładnie 4',
+    pbNoCards:'Brak wybranych kart',
+    pb4cards:'✅ Masz 4 karty — gotowy do walki!',
+    pbNcards:(n)=>`🧠 Wybrano ${n}/4 kart — dodaj jeszcze ${4-n}`,
+    pbMax4:'⚠️ Możesz wybrać maksymalnie 4 karty!',
+    // Battle
+    enemyCardsLbl:'⚔ KARTY PRZECIWNIKA ⚔',
+    yourHandLbl:'🌿 TWOJA RĘKA 🌿',
+    battleLog:'👇 Kliknij kartę → ⚔️ ATAKUJ!',
+    playerName:'Ty',
+    pauseTitle:'⏸ Pauza', resume:'▶ Graj dalej', mainMenu:'↩ Menu główne',
+    cardsLbl:(n,t)=>`❤️ ${n}/${t} kart`,
+    selectCard:'\n👇 Wybierz swoją kartę',
+    yourTurn:'\n👇 Twoja tura! Wybierz kartę',
+    clickEnemy:`👆 Teraz kliknij kartę przeciwnika!`,
+    typeAdv:'✨ Masz przewagę!',
+    typeAdvMsg:'✨ Przewaga typu!',
+    counterattack:'💥 kontratakuje za',
+    directHit:'💥 uderza bezpośrednio za',
+    skipTurn:'Pominięto turę...',
+    dmgSuffix:' obrażeń!',
+    // Result
+    win:'⚔️ Zwycięstwo!', winSub:'Las jest bezpieczny... na razie.',
+    winScore:(lvl,wins)=>`⭐ Poziom ${lvl} ukończony! Wygrane: ${wins}`,
+    lose:'💀 Porażka...', loseSub:'Ciemność pochłonęła las.',
+    loseLives:(n)=>`Pozostało żyć: ${n} ❤️`,
+    nextBattle:'▶ Następna walka', retry:'↺ Spróbuj ponownie',
+    completed:'🏆 Ukończono!', resultMenu:'↩ Menu',
+    campaignDone:'🏆 Kampania ukończona!',
+    campaignSub:'Ocaliłeś zaczarowany las. Jesteś mistrzem Forest Cards!',
+    campaignScore:(sc,w)=>`⭐ Wynik: ${sc} pkt · ${w} zwycięstw`,
+    playAgain:'🔄 Zagraj od nowa',
+    // Deck builder
+    deckTitle:'⚔️ Talia', deckLocked:'Talia zablokowana',
+    deckLockedSub:'Wygraj swoją pierwszą walkę<br>aby odblokować edytor talii!',
+    deckPlayNow:'▶ Zagraj teraz',
+    deckHint:'Kliknij kartę w kolekcji → dodaj · Kliknij w talii → usuń',
+    collLbl:'🃏 KOLEKCJA', deckLbl:'⚔️ TALIA',
+    deckEmpty:'Przeciągnij tu kartę z kolekcji',
+    deckNCards:(n)=>`${n} kart`,
+    deckNeed:(n)=>`⚠️ Dodaj jeszcze ${n} ${n===1?'kartę':'karty'} aby talia była gotowa`,
+    deckRemove:'✕ usuń',
+    deckDragTip:'Kliknij lub przeciągnij → dodaj do talii',
+    deckRemoveTip:'Kliknij → usuń z talii',
+    deckOwnedInDeck:(own,deck)=>`masz:${own} talia:${deck}`,
+    // Collection
+    collTitle:'🃏 Kolekcja', notOwned:'Nie posiadasz',
+    // Shop
+    shopTitle:'🍄 Sklep', shopBuy:'+ Kup grzybki',
+    shopHint:'Kliknij kartę aby kupić • Twoje kopie: zaznaczone ✓',
+    topupTitle:'🍄 Kup Grzybki',
+    topupSub:'Płatność przez Paddle — bezpieczna i szybka',
+    packSmall:'Mały pakiet', packMed:'Średni pakiet', packLarge:'Duży pakiet',
+    packPopular:'POPULARNY', packBest:'NAJLEPSZA OFERTA',
+    topupCancel:'↩ Anuluj',
+    shopMush:(n)=>`🍄 ${n} grzybków`,
+    buyCardTip:(name,p)=>`Kup ${name} za 🍄 ${p}`,
+    needMush:(p,have)=>`Potrzebujesz 🍄 ${p} — masz tylko 🍄 ${have}`,
+    notEnough:'🍄 Za mało grzybków!',
+    lackMush:(n)=>`brak ${n} 🍄`,
+    bought:(em,name)=>`✅ Kupiono ${em} ${name}!`,
+    // Ranking
+    rankTitle:'🏆 Ranking',
+    rankLoading:'Ładowanie rankingu…',
+    rankNoConn:'Brak połączenia z serwerem.',
+    rankEmpty:'Bądź pierwszy na liście!',
+    rankYou:'⭐ Ty',
+    rankWins:(n)=>`${n} zwycięstw`,
+    rankPts:(n)=>`${n.toLocaleString('pl')} pkt`,
+    // Guide
+    guideTitle:'📖 Instrukcja',
+    guideHTML:`
+      <div class="guide-section"><div class="guide-h">🎯 Cel gry</div><div class="guide-text">Zniszcz wszystkie karty przeciwnika i obniż jego punkty życia do zera. Kto pierwszy straci wszystkie punkty życia — przegrywa.</div></div>
+      <div class="guide-section"><div class="guide-h">🎮 Jak grać — krok po kroku</div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Wybierz swoją kartę — kliknij ją w dolnym rzędzie.</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Wybierz cel — kliknij kartę przeciwnika. Pojawi się 🎯 nad kartą.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Kliknij ⚔️ ATAKUJ! — piorun poleci do celu.</span></div>
+        <div class="guide-step"><span class="guide-num">4</span><span>Przeciwnik automatycznie odpowiada atakiem.</span></div>
+        <div class="guide-step"><span class="guide-num">5</span><span>Powtarzaj aż wygrasz lub przegrasz. Za wygraną dostajesz kartę!</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">📊 Liczby na karcie</div>
+        <div class="guide-stat-row"><span style="color:#ff7070;">⚔ ATK</span><span>Atak — obrażenia</span></div>
+        <div class="guide-stat-row"><span style="color:#60c0ff;">🛡 DEF</span><span>Obrona — redukuje obrażenia</span></div>
+        <div class="guide-stat-row"><span style="color:#60ee60;">❤ HP</span><span>Punkty życia karty</span></div>
+        <div class="guide-text" style="margin-top:8px;">Obrażenia: <b style="color:#ffe080;">ATK − (DEF × 0.4)</b></div>
+      </div>
+      <div class="guide-section" style="border-color:rgba(255,200,60,.3)"><div class="guide-h" style="color:#ffe080;">⚡ Przewagi typów (+50% obrażeń!)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div class="type-adv-row"><span class="type-pill water">💧 Woda</span><span class="adv-arrow">►</span><span class="type-pill fire">🔥 Ogień</span></div>
+          <div class="type-adv-row"><span class="type-pill fire">🔥 Ogień</span><span class="adv-arrow">►</span><span class="type-pill wind">💨 Wiatr</span></div>
+          <div class="type-adv-row"><span class="type-pill wind">💨 Wiatr</span><span class="adv-arrow">►</span><span class="type-pill earth">🌿 Ziemia</span></div>
+          <div class="type-adv-row"><span class="type-pill earth">🌿 Ziemia</span><span class="adv-arrow">►</span><span class="type-pill shadow">👤 Cień</span></div>
+          <div class="type-adv-row"><span class="type-pill shadow">👤 Cień</span><span class="adv-arrow">►</span><span class="type-pill magic">✨ Magia</span></div>
+          <div class="type-adv-row"><span class="type-pill magic">✨ Magia</span><span class="adv-arrow">►</span><span class="type-pill water">💧 Woda</span></div>
+        </div>
+      </div>
+      <div class="guide-section"><div class="guide-h">💎 Rzadkości</div>
+        <div class="guide-rarity-row"><span style="color:#888">⬜ Zwykła</span><span>Słabe statystyki</span></div>
+        <div class="guide-rarity-row"><span style="color:#40aa40">🟩 Rzadka</span><span>Dobre statystyki</span></div>
+        <div class="guide-rarity-row"><span style="color:#6060ff">🟦 Epicka</span><span>Silne statystyki</span></div>
+        <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendarna</span><span>Bardzo silna</span></div>
+        <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mityczna</span><span>Najpotężniejsza</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">❤️ Życia</div><div class="guide-text">Tracisz życie za każdą przegraną walkę. Darmowe życie za 30 min aktywnej gry lub +1 każdego dnia.</div></div>
+      <div class="guide-section"><div class="guide-h">🃏 Talia</div><div class="guide-text">Wybierz karty w zakładce Talia. Minimum 4 karty. Mieszaj typy — żebyś zawsze miał przewagę!</div></div>`,
+    // Auth
+    loginBtn:'🔑 Zaloguj przez Google',
+    logoutBtn:'✕ Wyloguj',
+    nickBtn:'✏️ Nick',
+    loggedOut:'Wylogowano.',
+    nickChanged:'✅ Nick zmieniony!',
+    nickError:'Błąd zmiany nicka.',
+    nickPrompt:'Nowy nick (max 20 znaków):',
+    // Lives
+    livesLbl:'Życia',
+    livesInfo:(n,lvl,diff)=>`${n} żyć · Poziom ${lvl} · ${diff}`,
+    noLives:'Nie masz żyć! Wróć później po darmowe życie.',
+    resetConfirm:'Usunąć zapis i zacząć od nowa?',
+    maxLives:'Masz maksymalną liczbę żyć (10)',
+    nextLife:(m,s)=>`❤️ Następne darmowe życie za ${m}m ${s}s aktywnej gry`,
+    freeLife:'🎁 Darmowe życie! +1 ❤️',
+    dailyMush:'🍄 +1 Grzybek za nowy dzień!',
+    purchaseOk:'✅ Zakup udany! Grzybki dodane do konta.',
+    payError:'Błąd płatności — spróbuj ponownie.',
+    connError:'Błąd połączenia z serwerem.',
+    loginRequired:'🔑 Zaloguj się aby kupić grzybki!',
+    unknownPkg:'Nieznany pakiet.',
+    // Card / type names
+    typeNames:{earth:'Ziemia',water:'Woda',fire:'Ogień',wind:'Wiatr',shadow:'Cień',magic:'Magia'},
+    cardNames:{wisp:'Wisp',oak:'Duch Dębu',fairy:'Leśna Wróżka',fog:'Strażnik Mgły',heart:'Serce Lasu',wolf:'Wilczy Duch',mushroom:'Grzybol',river:'Duch Rzeki',night:'Nocny Łowca',frost:'Mróz',seed:'Ziarnko Nadziei',storm:'Burza',bear:'Niedźwiedź Lasu',firefly:'Świetlik',crow:'Czarny Kruk',thorn:'Cierń',moonspirit:'Duch Księżyca',lava:'Lawa'},
+    enemies:['Leśny Goblin','Leśny Troll','Zły Grzyb','Wilk Cienia','Strażnik Dębu','Nocny Pająk','Strażnik Mgły','Czarny Kruk','Nocna Zmora','Władca Cieni','Lodowy Imp','Mróz','Lodowy Wilk','Lodowy Strażnik','Królowa Lodu','Ognisty Imp','Wulkan','Burza Ognia','Ognisty Demon','Lord Ognia','Niedźwiedź Lasu','Leśny Gigant','Wilczy Alfa','Duch Puszczy','Pradawny Strażnik','Cień Miniony','Mroczny Rycerz','Strażnik Grobowca','Cień Pradawny','Nekromanta','Demon Burzy','Piorunowy Tytan','Lodowy Demon','Chaos Żywiołów','Serce Ciemności','Strażnik Wieczności','Demoniczny Wisp','Prawo Mroku','Władca Chaosu','Pradawne Zło'],
+    level:'Poziom', poz:'Poz.',
+  },
+  en: {
+    subtitle: "Wisp's World — in your hands.<br>Build your deck. Save the forest.",
+    chooseDiff:'Choose difficulty:',
+    easy:'Easy', easyLives:'5 lives · 40 levels',
+    medium:'Medium', mediumLives:'3 lives · 40 levels',
+    hard:'Hard', hardLives:'1 life · 40 levels',
+    play:'▶ PLAY',
+    continueBtn:(lvl,sc)=>`▶ Continue (Level ${lvl}, ⭐${sc})`,
+    resetSave:'🗑 Delete save & start over',
+    guide:'❓ Guide', ranking:'🏆 Ranking', deck:'⚔️ Deck', shop:'🍄 Shop',
+    privacy:'Privacy Policy', terms:'Terms of Service',
+    back:'↩ Back',
+    pbTitle:'⚔️ Battle incoming!', pbEnemyLbl:'⚔️ ENEMY CARDS',
+    pbYourLbl:'🌿 YOUR CARDS', pbRandom:'🎲 Shuffle again',
+    pbManual:'🧠 Pick manually', pbStart:'▶ FIGHT!', pbBack:'↩ Back to menu',
+    pbRandInfo:'🎲 4 cards drawn — start or reshuffle',
+    pbManInfo:'🧠 Click cards to pick exactly 4',
+    pbNoCards:'No cards selected',
+    pb4cards:'✅ 4 cards ready — let\'s fight!',
+    pbNcards:(n)=>`🧠 ${n}/4 selected — add ${4-n} more`,
+    pbMax4:'⚠️ You can pick at most 4 cards!',
+    enemyCardsLbl:'⚔ ENEMY CARDS ⚔',
+    yourHandLbl:'🌿 YOUR HAND 🌿',
+    battleLog:'👇 Select a card → ⚔️ ATTACK!',
+    playerName:'You',
+    pauseTitle:'⏸ Paused', resume:'▶ Resume', mainMenu:'↩ Main Menu',
+    cardsLbl:(n,t)=>`❤️ ${n}/${t} cards`,
+    selectCard:'\n👇 Select your card',
+    yourTurn:'\n👇 Your turn! Pick a card',
+    clickEnemy:'👆 Now click an enemy card!',
+    typeAdv:'✨ Type advantage!',
+    typeAdvMsg:'✨ Type advantage!',
+    counterattack:'💥 counterattacks for',
+    directHit:'💥 hits directly for',
+    skipTurn:'Turn skipped...',
+    dmgSuffix:' damage!',
+    win:'⚔️ Victory!', winSub:'The forest is safe... for now.',
+    winScore:(lvl,wins)=>`⭐ Level ${lvl} done! Wins: ${wins}`,
+    lose:'💀 Defeat...', loseSub:'Darkness has consumed the forest.',
+    loseLives:(n)=>`Lives remaining: ${n} ❤️`,
+    nextBattle:'▶ Next Battle', retry:'↺ Try Again',
+    completed:'🏆 Completed!', resultMenu:'↩ Menu',
+    campaignDone:'🏆 Campaign Complete!',
+    campaignSub:'You saved the enchanted forest. You are the Forest Cards master!',
+    campaignScore:(sc,w)=>`⭐ Score: ${sc} pts · ${w} wins`,
+    playAgain:'🔄 Play Again',
+    deckTitle:'⚔️ Deck', deckLocked:'Deck Locked',
+    deckLockedSub:'Win your first battle<br>to unlock the deck editor!',
+    deckPlayNow:'▶ Play Now',
+    deckHint:'Click collection card → add · Click deck card → remove',
+    collLbl:'🃏 COLLECTION', deckLbl:'⚔️ DECK',
+    deckEmpty:'Drag a card here from collection',
+    deckNCards:(n)=>`${n} cards`,
+    deckNeed:(n)=>`⚠️ Add ${n} more ${n===1?'card':'cards'} to complete deck`,
+    deckRemove:'✕ remove',
+    deckDragTip:'Click or drag → add to deck',
+    deckRemoveTip:'Click → remove from deck',
+    deckOwnedInDeck:(own,deck)=>`have:${own} deck:${deck}`,
+    collTitle:'🃏 Collection', notOwned:'Not owned',
+    shopTitle:'🍄 Shop', shopBuy:'+ Buy Mushrooms',
+    shopHint:'Click card to buy • Owned copies: marked ✓',
+    topupTitle:'🍄 Buy Mushrooms',
+    topupSub:'Secure payment via Paddle',
+    packSmall:'Small pack', packMed:'Medium pack', packLarge:'Large pack',
+    packPopular:'POPULAR', packBest:'BEST VALUE',
+    topupCancel:'↩ Cancel',
+    shopMush:(n)=>`🍄 ${n} mushrooms`,
+    buyCardTip:(name,p)=>`Buy ${name} for 🍄 ${p}`,
+    needMush:(p,have)=>`Need 🍄 ${p} — you have 🍄 ${have}`,
+    notEnough:'🍄 Not enough mushrooms!',
+    lackMush:(n)=>`need ${n} more 🍄`,
+    bought:(em,name)=>`✅ Bought ${em} ${name}!`,
+    rankTitle:'🏆 Ranking',
+    rankLoading:'Loading ranking…',
+    rankNoConn:'No server connection.',
+    rankEmpty:'Be the first on the list!',
+    rankYou:'⭐ You',
+    rankWins:(n)=>`${n} wins`,
+    rankPts:(n)=>`${n.toLocaleString('en')} pts`,
+    guideTitle:'📖 Guide',
+    guideHTML:`
+      <div class="guide-section"><div class="guide-h">🎯 Objective</div><div class="guide-text">Destroy all enemy cards and reduce their HP to zero. First one to lose all HP loses the battle.</div></div>
+      <div class="guide-section"><div class="guide-h">🎮 How to play</div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Select your card — click it in the bottom row.</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Pick target — click an enemy card. 🎯 appears above it.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Attack! — lightning flies to the target.</span></div>
+        <div class="guide-step"><span class="guide-num">4</span><span>Enemy automatically counterattacks.</span></div>
+        <div class="guide-step"><span class="guide-num">5</span><span>Repeat until you win or lose. Wins earn new cards!</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">📊 Card stats</div>
+        <div class="guide-stat-row"><span style="color:#ff7070">⚔ ATK</span><span>Attack — damage dealt</span></div>
+        <div class="guide-stat-row"><span style="color:#60c0ff">🛡 DEF</span><span>Defense — reduces damage</span></div>
+        <div class="guide-stat-row"><span style="color:#60ee60">❤ HP</span><span>Card health points</span></div>
+        <div class="guide-text" style="margin-top:8px">Damage: <b style="color:#ffe080">ATK − (DEF × 0.4)</b></div>
+      </div>
+      <div class="guide-section" style="border-color:rgba(255,200,60,.3)"><div class="guide-h" style="color:#ffe080">⚡ Type advantages (+50% damage!)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div class="type-adv-row"><span class="type-pill water">💧 Water</span><span class="adv-arrow">►</span><span class="type-pill fire">🔥 Fire</span></div>
+          <div class="type-adv-row"><span class="type-pill fire">🔥 Fire</span><span class="adv-arrow">►</span><span class="type-pill wind">💨 Wind</span></div>
+          <div class="type-adv-row"><span class="type-pill wind">💨 Wind</span><span class="adv-arrow">►</span><span class="type-pill earth">🌿 Earth</span></div>
+          <div class="type-adv-row"><span class="type-pill earth">🌿 Earth</span><span class="adv-arrow">►</span><span class="type-pill shadow">👤 Shadow</span></div>
+          <div class="type-adv-row"><span class="type-pill shadow">👤 Shadow</span><span class="adv-arrow">►</span><span class="type-pill magic">✨ Magic</span></div>
+          <div class="type-adv-row"><span class="type-pill magic">✨ Magic</span><span class="adv-arrow">►</span><span class="type-pill water">💧 Water</span></div>
+        </div>
+      </div>
+      <div class="guide-section"><div class="guide-h">💎 Rarities</div>
+        <div class="guide-rarity-row"><span style="color:#888">⬜ Common</span><span>Weak stats</span></div>
+        <div class="guide-rarity-row"><span style="color:#40aa40">🟩 Rare</span><span>Good stats</span></div>
+        <div class="guide-rarity-row"><span style="color:#6060ff">🟦 Epic</span><span>Strong stats</span></div>
+        <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendary</span><span>Very powerful</span></div>
+        <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mythic</span><span>Most powerful</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">❤️ Lives</div><div class="guide-text">Lose a life each defeat. Earn a free life every 30 min of active play or +1 daily.</div></div>
+      <div class="guide-section"><div class="guide-h">🃏 Deck</div><div class="guide-text">Build your deck in the Deck tab. Min 4 cards. Mix types for advantages!</div></div>`,
+    loginBtn:'🔑 Sign in with Google',
+    logoutBtn:'✕ Sign Out',
+    nickBtn:'✏️ Nick',
+    loggedOut:'Signed out.',
+    nickChanged:'✅ Nick updated!',
+    nickError:'Error changing nick.',
+    nickPrompt:'New nick (max 20 chars):',
+    livesLbl:'Lives',
+    livesInfo:(n,lvl,diff)=>`${n} lives · Level ${lvl} · ${diff}`,
+    noLives:'No lives left! Come back later for a free life.',
+    resetConfirm:'Delete save and start over?',
+    maxLives:'You have the maximum lives (10)',
+    nextLife:(m,s)=>`❤️ Next free life in ${m}m ${s}s of active play`,
+    freeLife:'🎁 Free life! +1 ❤️',
+    dailyMush:'🍄 +1 Mushroom for a new day!',
+    purchaseOk:'✅ Purchase complete! Mushrooms added.',
+    payError:'Payment error — please try again.',
+    connError:'Connection error.',
+    loginRequired:'🔑 Sign in to buy mushrooms!',
+    unknownPkg:'Unknown package.',
+    typeNames:{earth:'Earth',water:'Water',fire:'Fire',wind:'Wind',shadow:'Shadow',magic:'Magic'},
+    cardNames:{wisp:'Wisp',oak:'Oak Spirit',fairy:'Forest Fairy',fog:'Fog Guardian',heart:'Heart of the Forest',wolf:'Wolf Spirit',mushroom:'Mushroom',river:'River Spirit',night:'Night Hunter',frost:'Frost',seed:'Seed of Hope',storm:'Storm',bear:'Forest Bear',firefly:'Firefly',crow:'Black Crow',thorn:'Thorn',moonspirit:'Moon Spirit',lava:'Lava'},
+    enemies:['Forest Goblin','Forest Troll','Evil Mushroom','Shadow Wolf','Oak Guardian','Night Spider','Fog Guardian','Black Crow','Night Terror','Shadow Lord','Ice Imp','Frost','Ice Wolf','Ice Guardian','Ice Queen','Fire Imp','Volcano','Fire Storm','Fire Demon','Fire Lord','Forest Bear','Forest Giant','Wolf Alpha','Forest Ghost','Ancient Guardian','Shadow Minion','Dark Knight','Tomb Guardian','Ancient Shadow','Necromancer','Storm Demon','Lightning Titan','Ice Demon','Chaos of Elements','Heart of Darkness','Eternity Guardian','Demonic Wisp','Law of Darkness','Chaos Lord','Ancient Evil'],
+    level:'Level', poz:'Lv.',
+  },
+  de: {
+    subtitle: 'Wisps Welt — in deinen Händen.<br>Baue dein Deck. Rette den Wald.',
+    chooseDiff:'Schwierigkeitsgrad wählen:',
+    easy:'Einfach', easyLives:'5 Leben · 40 Level',
+    medium:'Mittel', mediumLives:'3 Leben · 40 Level',
+    hard:'Schwer', hardLives:'1 Leben · 40 Level',
+    play:'▶ SPIELEN',
+    continueBtn:(lvl,sc)=>`▶ Weiter (Level ${lvl}, ⭐${sc})`,
+    resetSave:'🗑 Speicher löschen & neu starten',
+    guide:'❓ Anleitung', ranking:'🏆 Rangliste', deck:'⚔️ Deck', shop:'🍄 Shop',
+    privacy:'Datenschutz', terms:'Nutzungsbedingungen',
+    back:'↩ Zurück',
+    pbTitle:'⚔️ Kampf beginnt!', pbEnemyLbl:'⚔️ GEGNERKARTEN',
+    pbYourLbl:'🌿 DEINE KARTEN', pbRandom:'🎲 Neu mischen',
+    pbManual:'🧠 Manuell wählen', pbStart:'▶ KÄMPFEN!', pbBack:'↩ Zurück zum Menü',
+    pbRandInfo:'🎲 4 Karten gezogen — starten oder neu mischen',
+    pbManInfo:'🧠 Klicke Karten um genau 4 zu wählen',
+    pbNoCards:'Keine Karten ausgewählt',
+    pb4cards:'✅ 4 Karten bereit — los!',
+    pbNcards:(n)=>`🧠 ${n}/4 gewählt — noch ${4-n} hinzufügen`,
+    pbMax4:'⚠️ Maximal 4 Karten wählbar!',
+    enemyCardsLbl:'⚔ GEGNERKARTEN ⚔',
+    yourHandLbl:'🌿 DEINE HAND 🌿',
+    battleLog:'👇 Karte wählen → ⚔️ ANGRIFF!',
+    playerName:'Du',
+    pauseTitle:'⏸ Pause', resume:'▶ Weiter', mainMenu:'↩ Hauptmenü',
+    cardsLbl:(n,t)=>`❤️ ${n}/${t} Karten`,
+    selectCard:'\n👇 Wähle deine Karte',
+    yourTurn:'\n👇 Dein Zug! Wähle eine Karte',
+    clickEnemy:'👆 Klicke jetzt eine Gegnerkarte!',
+    typeAdv:'✨ Typvorteil!',
+    typeAdvMsg:'✨ Typvorteil!',
+    counterattack:'💥 kontert für',
+    directHit:'💥 trifft direkt für',
+    skipTurn:'Zug übersprungen...',
+    dmgSuffix:' Schaden!',
+    win:'⚔️ Sieg!', winSub:'Der Wald ist sicher... vorerst.',
+    winScore:(lvl,wins)=>`⭐ Level ${lvl} abgeschlossen! Siege: ${wins}`,
+    lose:'💀 Niederlage...', loseSub:'Die Dunkelheit hat den Wald verschluckt.',
+    loseLives:(n)=>`Verbleibende Leben: ${n} ❤️`,
+    nextBattle:'▶ Nächster Kampf', retry:'↺ Erneut versuchen',
+    completed:'🏆 Abgeschlossen!', resultMenu:'↩ Menü',
+    campaignDone:'🏆 Kampagne abgeschlossen!',
+    campaignSub:'Du hast den verzauberten Wald gerettet. Du bist der Forest Cards Meister!',
+    campaignScore:(sc,w)=>`⭐ Punktzahl: ${sc} · ${w} Siege`,
+    playAgain:'🔄 Nochmal spielen',
+    deckTitle:'⚔️ Deck', deckLocked:'Deck gesperrt',
+    deckLockedSub:'Gewinne deinen ersten Kampf<br>um den Deck-Editor freizuschalten!',
+    deckPlayNow:'▶ Jetzt spielen',
+    deckHint:'Karte in Sammlung klicken → hinzufügen · Im Deck klicken → entfernen',
+    collLbl:'🃏 SAMMLUNG', deckLbl:'⚔️ DECK',
+    deckEmpty:'Karte hierher ziehen',
+    deckNCards:(n)=>`${n} Karten`,
+    deckNeed:(n)=>`⚠️ Noch ${n} ${n===1?'Karte':'Karten'} hinzufügen`,
+    deckRemove:'✕ entfernen',
+    deckDragTip:'Klicken oder ziehen → zum Deck hinzufügen',
+    deckRemoveTip:'Klicken → aus Deck entfernen',
+    deckOwnedInDeck:(own,deck)=>`besitzt:${own} deck:${deck}`,
+    collTitle:'🃏 Sammlung', notOwned:'Nicht vorhanden',
+    shopTitle:'🍄 Shop', shopBuy:'+ Pilze kaufen',
+    shopHint:'Karte klicken zum Kaufen • Eigene Kopien: ✓ markiert',
+    topupTitle:'🍄 Pilze kaufen',
+    topupSub:'Sichere Zahlung über Paddle',
+    packSmall:'Kleines Paket', packMed:'Mittleres Paket', packLarge:'Großes Paket',
+    packPopular:'BELIEBT', packBest:'BESTES ANGEBOT',
+    topupCancel:'↩ Abbrechen',
+    shopMush:(n)=>`🍄 ${n} Pilze`,
+    buyCardTip:(name,p)=>`${name} für 🍄 ${p} kaufen`,
+    needMush:(p,have)=>`Benötige 🍄 ${p} — nur 🍄 ${have} vorhanden`,
+    notEnough:'🍄 Nicht genug Pilze!',
+    lackMush:(n)=>`noch ${n} 🍄 benötigt`,
+    bought:(em,name)=>`✅ ${em} ${name} gekauft!`,
+    rankTitle:'🏆 Rangliste',
+    rankLoading:'Rangliste lädt…',
+    rankNoConn:'Keine Serververbindung.',
+    rankEmpty:'Sei der Erste auf der Liste!',
+    rankYou:'⭐ Du',
+    rankWins:(n)=>`${n} Siege`,
+    rankPts:(n)=>`${n.toLocaleString('de')} Pkt`,
+    guideTitle:'📖 Anleitung',
+    guideHTML:`
+      <div class="guide-section"><div class="guide-h">🎯 Ziel</div><div class="guide-text">Zerstöre alle Gegnerkarten. Wer zuerst alle HP verliert, verliert den Kampf.</div></div>
+      <div class="guide-section"><div class="guide-h">🎮 Wie spielen</div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Eigene Karte wählen — in der unteren Reihe klicken.</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Ziel wählen — Gegnerkarte klicken. 🎯 erscheint.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Angreifen! — Blitz fliegt zum Ziel.</span></div>
+        <div class="guide-step"><span class="guide-num">4</span><span>Gegner antwortet automatisch.</span></div>
+        <div class="guide-step"><span class="guide-num">5</span><span>Wiederholen bis Sieg oder Niederlage. Siege bringen Karten!</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">📊 Karten-Stats</div>
+        <div class="guide-stat-row"><span style="color:#ff7070">⚔ ATK</span><span>Angriff — Schaden</span></div>
+        <div class="guide-stat-row"><span style="color:#60c0ff">🛡 DEF</span><span>Verteidigung — reduziert Schaden</span></div>
+        <div class="guide-stat-row"><span style="color:#60ee60">❤ HP</span><span>Lebenspunkte</span></div>
+        <div class="guide-text" style="margin-top:8px">Schaden: <b style="color:#ffe080">ATK − (DEF × 0.4)</b></div>
+      </div>
+      <div class="guide-section" style="border-color:rgba(255,200,60,.3)"><div class="guide-h" style="color:#ffe080">⚡ Typvorteile (+50% Schaden!)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div class="type-adv-row"><span class="type-pill water">💧 Wasser</span><span class="adv-arrow">►</span><span class="type-pill fire">🔥 Feuer</span></div>
+          <div class="type-adv-row"><span class="type-pill fire">🔥 Feuer</span><span class="adv-arrow">►</span><span class="type-pill wind">💨 Wind</span></div>
+          <div class="type-adv-row"><span class="type-pill wind">💨 Wind</span><span class="adv-arrow">►</span><span class="type-pill earth">🌿 Erde</span></div>
+          <div class="type-adv-row"><span class="type-pill earth">🌿 Erde</span><span class="adv-arrow">►</span><span class="type-pill shadow">👤 Schatten</span></div>
+          <div class="type-adv-row"><span class="type-pill shadow">👤 Schatten</span><span class="adv-arrow">►</span><span class="type-pill magic">✨ Magie</span></div>
+          <div class="type-adv-row"><span class="type-pill magic">✨ Magie</span><span class="adv-arrow">►</span><span class="type-pill water">💧 Wasser</span></div>
+        </div>
+      </div>
+      <div class="guide-section"><div class="guide-h">💎 Seltenheiten</div>
+        <div class="guide-rarity-row"><span style="color:#888">⬜ Gewöhnlich</span><span>Schwache Werte</span></div>
+        <div class="guide-rarity-row"><span style="color:#40aa40">🟩 Selten</span><span>Gute Werte</span></div>
+        <div class="guide-rarity-row"><span style="color:#6060ff">🟦 Episch</span><span>Starke Werte</span></div>
+        <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendär</span><span>Sehr mächtig</span></div>
+        <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mythisch</span><span>Mächtigste</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">❤️ Leben</div><div class="guide-text">Verliere ein Leben bei jeder Niederlage. Alle 30 Min aktivem Spielen gibt es ein freies Leben oder +1 täglich.</div></div>
+      <div class="guide-section"><div class="guide-h">🃏 Deck</div><div class="guide-text">Stelle dein Deck im Deck-Tab zusammen. Mindestens 4 Karten. Mische Typen — damit du immer einen Typvorteil hast!</div></div>`,
+    loginBtn:'🔑 Mit Google anmelden',
+    logoutBtn:'✕ Abmelden',
+    nickBtn:'✏️ Nick',
+    loggedOut:'Abgemeldet.',
+    nickChanged:'✅ Nick geändert!',
+    nickError:'Fehler beim Ändern.',
+    nickPrompt:'Neuer Nick (max. 20 Zeichen):',
+    livesLbl:'Leben',
+    livesInfo:(n,lvl,diff)=>`${n} Leben · Level ${lvl} · ${diff}`,
+    noLives:'Keine Leben mehr! Komm später zurück.',
+    resetConfirm:'Spielstand löschen und neu starten?',
+    maxLives:'Maximale Anzahl Leben (10)',
+    nextLife:(m,s)=>`❤️ Nächstes freies Leben in ${m}m ${s}s`,
+    freeLife:'🎁 Freies Leben! +1 ❤️',
+    dailyMush:'🍄 +1 Pilz für einen neuen Tag!',
+    purchaseOk:'✅ Kauf erfolgreich! Pilze hinzugefügt.',
+    payError:'Zahlungsfehler — bitte erneut versuchen.',
+    connError:'Verbindungsfehler.',
+    loginRequired:'🔑 Anmelden um Pilze zu kaufen!',
+    unknownPkg:'Unbekanntes Paket.',
+    typeNames:{earth:'Erde',water:'Wasser',fire:'Feuer',wind:'Wind',shadow:'Schatten',magic:'Magie'},
+    cardNames:{wisp:'Wisp',oak:'Eichengeist',fairy:'Waldelf',fog:'Nebelwächter',heart:'Herz des Waldes',wolf:'Wolfsgeist',mushroom:'Pilzkopf',river:'Flussgeist',night:'Nachtjäger',frost:'Frost',seed:'Samenkorn der Hoffnung',storm:'Sturm',bear:'Waldbär',firefly:'Glühwürmchen',crow:'Schwarze Krähe',thorn:'Dorn',moonspirit:'Mondgeist',lava:'Lava'},
+    enemies:['Waldgoblin','Waldtroll','Böser Pilz','Schattenwolf','Eichwächter','Nachtspinne','Nebelwächter','Schwarze Krähe','Nachtschreck','Schattenfürst','Eisimp','Frost','Eiswolf','Eiswächter','Eiskönigin','Feuerimp','Vulkan','Feuersturm','Feuerdämon','Feuerfürst','Waldbär','Waldriese','Wolfsanführer','Waldgeist','Uralter Wächter','Schattendiener','Dunkler Ritter','Grabwächter','Urschatten','Nekromant','Sturmdämon','Blitztitan','Eisdämon','Elementarchaos','Herz der Finsternis','Ewigkeitswächter','Dämonischer Wisp','Gesetz der Dunkelheit','Chaosfürst','Uraltes Böses'],
+    level:'Level', poz:'Lv.',
+  },
+  es: {
+    subtitle: 'El mundo de Wisp — en tus manos.<br>Crea tu mazo. Salva el bosque.',
+    chooseDiff:'Elige dificultad:',
+    easy:'Fácil', easyLives:'5 vidas · 40 niveles',
+    medium:'Medio', mediumLives:'3 vidas · 40 niveles',
+    hard:'Difícil', hardLives:'1 vida · 40 niveles',
+    play:'▶ JUGAR',
+    continueBtn:(lvl,sc)=>`▶ Continuar (Nivel ${lvl}, ⭐${sc})`,
+    resetSave:'🗑 Borrar partida y empezar',
+    guide:'❓ Guía', ranking:'🏆 Ranking', deck:'⚔️ Mazo', shop:'🍄 Tienda',
+    privacy:'Privacidad', terms:'Términos',
+    back:'↩ Volver',
+    pbTitle:'⚔️ ¡Batalla inminente!', pbEnemyLbl:'⚔️ CARTAS ENEMIGAS',
+    pbYourLbl:'🌿 TUS CARTAS', pbRandom:'🎲 Barajar de nuevo',
+    pbManual:'🧠 Elegir manualmente', pbStart:'▶ ¡A LUCHAR!', pbBack:'↩ Volver al menú',
+    pbRandInfo:'🎲 4 cartas — empieza o baraja de nuevo',
+    pbManInfo:'🧠 Haz clic en las cartas para elegir exactamente 4',
+    pbNoCards:'Sin cartas seleccionadas',
+    pb4cards:'✅ 4 cartas listas — ¡a luchar!',
+    pbNcards:(n)=>`🧠 ${n}/4 elegidas — añade ${4-n} más`,
+    pbMax4:'⚠️ ¡Máximo 4 cartas!',
+    enemyCardsLbl:'⚔ CARTAS ENEMIGAS ⚔',
+    yourHandLbl:'🌿 TU MANO 🌿',
+    battleLog:'👇 Selecciona carta → ⚔️ ¡ATACAR!',
+    playerName:'Tú',
+    pauseTitle:'⏸ Pausa', resume:'▶ Continuar', mainMenu:'↩ Menú principal',
+    cardsLbl:(n,t)=>`❤️ ${n}/${t} cartas`,
+    selectCard:'\n👇 Selecciona tu carta',
+    yourTurn:'\n👇 ¡Tu turno! Elige una carta',
+    clickEnemy:'👆 ¡Ahora haz clic en una carta enemiga!',
+    typeAdv:'✨ ¡Ventaja de tipo!',
+    typeAdvMsg:'✨ ¡Ventaja de tipo!',
+    counterattack:'💥 contraataca por',
+    directHit:'💥 golpea directo por',
+    skipTurn:'Turno saltado...',
+    dmgSuffix:' de daño!',
+    win:'⚔️ ¡Victoria!', winSub:'El bosque está a salvo... por ahora.',
+    winScore:(lvl,wins)=>`⭐ ¡Nivel ${lvl} completado! Victorias: ${wins}`,
+    lose:'💀 Derrota...', loseSub:'La oscuridad ha consumido el bosque.',
+    loseLives:(n)=>`Vidas restantes: ${n} ❤️`,
+    nextBattle:'▶ Siguiente batalla', retry:'↺ Intentar de nuevo',
+    completed:'🏆 ¡Completado!', resultMenu:'↩ Menú',
+    campaignDone:'🏆 ¡Campaña completada!',
+    campaignSub:'¡Salvaste el bosque encantado. Eres el maestro de Forest Cards!',
+    campaignScore:(sc,w)=>`⭐ Puntuación: ${sc} · ${w} victorias`,
+    playAgain:'🔄 Jugar de nuevo',
+    deckTitle:'⚔️ Mazo', deckLocked:'Mazo bloqueado',
+    deckLockedSub:'¡Gana tu primera batalla<br>para desbloquear el editor de mazo!',
+    deckPlayNow:'▶ Jugar ahora',
+    deckHint:'Clic en carta de colección → añadir · En mazo → eliminar',
+    collLbl:'🃏 COLECCIÓN', deckLbl:'⚔️ MAZO',
+    deckEmpty:'Arrastra una carta aquí',
+    deckNCards:(n)=>`${n} cartas`,
+    deckNeed:(n)=>`⚠️ Añade ${n} ${n===1?'carta más':'cartas más'}`,
+    deckRemove:'✕ quitar',
+    deckDragTip:'Clic o arrastra → añadir al mazo',
+    deckRemoveTip:'Clic → quitar del mazo',
+    deckOwnedInDeck:(own,deck)=>`tienes:${own} mazo:${deck}`,
+    collTitle:'🃏 Colección', notOwned:'No poseído',
+    shopTitle:'🍄 Tienda', shopBuy:'+ Comprar setas',
+    shopHint:'Haz clic en carta para comprar • Copias propias: ✓',
+    topupTitle:'🍄 Comprar setas',
+    topupSub:'Pago seguro vía Paddle',
+    packSmall:'Paquete pequeño', packMed:'Paquete mediano', packLarge:'Paquete grande',
+    packPopular:'POPULAR', packBest:'MEJOR OFERTA',
+    topupCancel:'↩ Cancelar',
+    shopMush:(n)=>`🍄 ${n} setas`,
+    buyCardTip:(name,p)=>`Comprar ${name} por 🍄 ${p}`,
+    needMush:(p,have)=>`Necesitas 🍄 ${p} — solo tienes 🍄 ${have}`,
+    notEnough:'🍄 ¡No hay suficientes setas!',
+    lackMush:(n)=>`faltan ${n} 🍄`,
+    bought:(em,name)=>`✅ ¡Comprado ${em} ${name}!`,
+    rankTitle:'🏆 Ranking',
+    rankLoading:'Cargando ranking…',
+    rankNoConn:'Sin conexión al servidor.',
+    rankEmpty:'¡Sé el primero en la lista!',
+    rankYou:'⭐ Tú',
+    rankWins:(n)=>`${n} victorias`,
+    rankPts:(n)=>`${n.toLocaleString('es')} pts`,
+    guideTitle:'📖 Guía',
+    guideHTML:`
+      <div class="guide-section"><div class="guide-h">🎯 Objetivo</div><div class="guide-text">Destruye todas las cartas enemigas. El primero en perder todos los HP pierde.</div></div>
+      <div class="guide-section"><div class="guide-h">🎮 Cómo jugar</div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Selecciona tu carta — haz clic en la fila inferior.</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Elige objetivo — haz clic en carta enemiga. Aparece 🎯.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>¡Ataca! — el rayo vuela al objetivo.</span></div>
+        <div class="guide-step"><span class="guide-num">4</span><span>El enemigo contraataca automáticamente.</span></div>
+        <div class="guide-step"><span class="guide-num">5</span><span>¡Repite hasta ganar o perder! Las victorias otorgan nuevas cartas.</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">📊 Estadísticas de carta</div>
+        <div class="guide-stat-row"><span style="color:#ff7070">⚔ ATK</span><span>Ataque — daño infligido</span></div>
+        <div class="guide-stat-row"><span style="color:#60c0ff">🛡 DEF</span><span>Defensa — reduce el daño</span></div>
+        <div class="guide-stat-row"><span style="color:#60ee60">❤ HP</span><span>Puntos de vida de la carta</span></div>
+        <div class="guide-text" style="margin-top:8px">Daño: <b style="color:#ffe080">ATK − (DEF × 0.4)</b></div>
+      </div>
+      <div class="guide-section" style="border-color:rgba(255,200,60,.3)"><div class="guide-h" style="color:#ffe080">⚡ Ventajas de tipo (+50% daño!)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div class="type-adv-row"><span class="type-pill water">💧 Agua</span><span class="adv-arrow">►</span><span class="type-pill fire">🔥 Fuego</span></div>
+          <div class="type-adv-row"><span class="type-pill fire">🔥 Fuego</span><span class="adv-arrow">►</span><span class="type-pill wind">💨 Viento</span></div>
+          <div class="type-adv-row"><span class="type-pill wind">💨 Viento</span><span class="adv-arrow">►</span><span class="type-pill earth">🌿 Tierra</span></div>
+          <div class="type-adv-row"><span class="type-pill earth">🌿 Tierra</span><span class="adv-arrow">►</span><span class="type-pill shadow">👤 Sombra</span></div>
+          <div class="type-adv-row"><span class="type-pill shadow">👤 Sombra</span><span class="adv-arrow">►</span><span class="type-pill magic">✨ Magia</span></div>
+          <div class="type-adv-row"><span class="type-pill magic">✨ Magia</span><span class="adv-arrow">►</span><span class="type-pill water">💧 Agua</span></div>
+        </div>
+      </div>
+      <div class="guide-section"><div class="guide-h">💎 Rarezas</div>
+        <div class="guide-rarity-row"><span style="color:#888">⬜ Común</span><span>Estadísticas bajas</span></div>
+        <div class="guide-rarity-row"><span style="color:#40aa40">🟩 Rara</span><span>Buenas estadísticas</span></div>
+        <div class="guide-rarity-row"><span style="color:#6060ff">🟦 Épica</span><span>Estadísticas fuertes</span></div>
+        <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendaria</span><span>Muy poderosa</span></div>
+        <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mítica</span><span>La más poderosa</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">❤️ Vidas</div><div class="guide-text">Pierdes una vida por cada derrota. Vida gratis cada 30 min de juego activo o +1 diaria.</div></div>
+      <div class="guide-section"><div class="guide-h">🃏 Mazo</div><div class="guide-text">Construye tu mazo en la pestaña Mazo. Mínimo 4 cartas. ¡Combina tipos para tener ventaja!</div></div>`,
+    loginBtn:'🔑 Iniciar sesión con Google',
+    logoutBtn:'✕ Cerrar sesión',
+    nickBtn:'✏️ Nick',
+    loggedOut:'Sesión cerrada.',
+    nickChanged:'✅ ¡Nick actualizado!',
+    nickError:'Error al cambiar nick.',
+    nickPrompt:'Nuevo nick (máx. 20 caracteres):',
+    livesLbl:'Vidas',
+    livesInfo:(n,lvl,diff)=>`${n} vidas · Nivel ${lvl} · ${diff}`,
+    noLives:'¡Sin vidas! Vuelve más tarde.',
+    resetConfirm:'¿Borrar partida y empezar de nuevo?',
+    maxLives:'Tienes el máximo de vidas (10)',
+    nextLife:(m,s)=>`❤️ Próxima vida gratis en ${m}m ${s}s`,
+    freeLife:'🎁 ¡Vida gratis! +1 ❤️',
+    dailyMush:'🍄 +1 Seta por nuevo día!',
+    purchaseOk:'✅ ¡Compra exitosa! Setas añadidas.',
+    payError:'Error de pago — inténtalo de nuevo.',
+    connError:'Error de conexión.',
+    loginRequired:'🔑 ¡Inicia sesión para comprar setas!',
+    unknownPkg:'Paquete desconocido.',
+    typeNames:{earth:'Tierra',water:'Agua',fire:'Fuego',wind:'Viento',shadow:'Sombra',magic:'Magia'},
+    cardNames:{wisp:'Wisp',oak:'Espíritu del Roble',fairy:'Hada del Bosque',fog:'Guardián de la Niebla',heart:'Corazón del Bosque',wolf:'Espíritu del Lobo',mushroom:'Champiñón',river:'Espíritu del Río',night:'Cazador Nocturno',frost:'Escarcha',seed:'Semilla de Esperanza',storm:'Tormenta',bear:'Oso del Bosque',firefly:'Luciérnaga',crow:'Cuervo Negro',thorn:'Espina',moonspirit:'Espíritu de la Luna',lava:'Lava'},
+    enemies:['Goblin del Bosque','Troll del Bosque','Hongo Malvado','Lobo Sombra','Guardián del Roble','Araña Nocturna','Guardián de la Niebla','Cuervo Negro','Terror Nocturno','Señor de las Sombras','Imp de Hielo','Escarcha','Lobo de Hielo','Guardián de Hielo','Reina de Hielo','Imp de Fuego','Volcán','Tormenta de Fuego','Demonio de Fuego','Señor del Fuego','Oso del Bosque','Gigante del Bosque','Alfa del Lobo','Fantasma del Bosque','Guardián Ancestral','Súbdito Sombra','Caballero Oscuro','Guardián de la Tumba','Sombra Ancestral','Nigromante','Demonio de Tormenta','Titán del Rayo','Demonio de Hielo','Caos Elemental','Corazón de la Oscuridad','Guardián de la Eternidad','Wisp Demoníaco','Ley de la Oscuridad','Señor del Caos','Mal Ancestral'],
+    level:'Nivel', poz:'Nv.',
+  },
+  fr: {
+    subtitle: 'Le monde de Wisp — entre vos mains.<br>Construisez votre deck. Sauvez la forêt.',
+    chooseDiff:'Choisissez la difficulté :',
+    easy:'Facile', easyLives:'5 vies · 40 niveaux',
+    medium:'Moyen', mediumLives:'3 vies · 40 niveaux',
+    hard:'Difficile', hardLives:'1 vie · 40 niveaux',
+    play:'▶ JOUER',
+    continueBtn:(lvl,sc)=>`▶ Continuer (Niveau ${lvl}, ⭐${sc})`,
+    resetSave:'🗑 Supprimer la sauvegarde',
+    guide:'❓ Guide', ranking:'🏆 Classement', deck:'⚔️ Deck', shop:'🍄 Boutique',
+    privacy:'Confidentialité', terms:'Conditions',
+    back:'↩ Retour',
+    pbTitle:'⚔️ Bataille imminente !', pbEnemyLbl:'⚔️ CARTES ENNEMIES',
+    pbYourLbl:'🌿 VOS CARTES', pbRandom:'🎲 Redistribuer',
+    pbManual:'🧠 Choisir manuellement', pbStart:'▶ AU COMBAT !', pbBack:'↩ Retour au menu',
+    pbRandInfo:'🎲 4 cartes tirées — commencer ou redistribuer',
+    pbManInfo:'🧠 Cliquez sur les cartes pour en choisir exactement 4',
+    pbNoCards:'Aucune carte sélectionnée',
+    pb4cards:'✅ 4 cartes prêtes — au combat !',
+    pbNcards:(n)=>`🧠 ${n}/4 choisies — ajoutez ${4-n} de plus`,
+    pbMax4:'⚠️ Maximum 4 cartes !',
+    enemyCardsLbl:'⚔ CARTES ENNEMIES ⚔',
+    yourHandLbl:'🌿 VOTRE MAIN 🌿',
+    battleLog:'👇 Sélectionnez une carte → ⚔️ ATTAQUER !',
+    playerName:'Vous',
+    pauseTitle:'⏸ Pause', resume:'▶ Reprendre', mainMenu:'↩ Menu principal',
+    cardsLbl:(n,t)=>`❤️ ${n}/${t} cartes`,
+    selectCard:'\n👇 Choisissez votre carte',
+    yourTurn:'\n👇 Votre tour ! Choisissez une carte',
+    clickEnemy:'👆 Cliquez sur une carte ennemie !',
+    typeAdv:'✨ Avantage de type !',
+    typeAdvMsg:'✨ Avantage de type !',
+    counterattack:'💥 contre-attaque pour',
+    directHit:'💥 frappe directement pour',
+    skipTurn:'Tour passé...',
+    dmgSuffix:' dégâts !',
+    win:'⚔️ Victoire !', winSub:'La forêt est en sécurité... pour l\'instant.',
+    winScore:(lvl,wins)=>`⭐ Niveau ${lvl} terminé ! Victoires : ${wins}`,
+    lose:'💀 Défaite...', loseSub:'Les ténèbres ont envahi la forêt.',
+    loseLives:(n)=>`Vies restantes : ${n} ❤️`,
+    nextBattle:'▶ Prochain combat', retry:'↺ Réessayer',
+    completed:'🏆 Terminé !', resultMenu:'↩ Menu',
+    campaignDone:'🏆 Campagne terminée !',
+    campaignSub:'Vous avez sauvé la forêt enchantée. Vous êtes le maître de Forest Cards !',
+    campaignScore:(sc,w)=>`⭐ Score : ${sc} · ${w} victoires`,
+    playAgain:'🔄 Rejouer',
+    deckTitle:'⚔️ Deck', deckLocked:'Deck verrouillé',
+    deckLockedSub:'Gagnez votre premier combat<br>pour débloquer l\'éditeur de deck !',
+    deckPlayNow:'▶ Jouer maintenant',
+    deckHint:'Clic sur carte de collection → ajouter · Dans deck → retirer',
+    collLbl:'🃏 COLLECTION', deckLbl:'⚔️ DECK',
+    deckEmpty:'Faites glisser une carte ici',
+    deckNCards:(n)=>`${n} cartes`,
+    deckNeed:(n)=>`⚠️ Ajoutez encore ${n} carte${n===1?'':'s'}`,
+    deckRemove:'✕ retirer',
+    deckDragTip:'Cliquer ou glisser → ajouter au deck',
+    deckRemoveTip:'Cliquer → retirer du deck',
+    deckOwnedInDeck:(own,deck)=>`possédé:${own} deck:${deck}`,
+    collTitle:'🃏 Collection', notOwned:'Non possédé',
+    shopTitle:'🍄 Boutique', shopBuy:'+ Acheter des champignons',
+    shopHint:'Cliquez sur une carte pour acheter • Copies possédées : ✓',
+    topupTitle:'🍄 Acheter des champignons',
+    topupSub:'Paiement sécurisé via Paddle',
+    packSmall:'Petit paquet', packMed:'Paquet moyen', packLarge:'Grand paquet',
+    packPopular:'POPULAIRE', packBest:'MEILLEURE OFFRE',
+    topupCancel:'↩ Annuler',
+    shopMush:(n)=>`🍄 ${n} champignons`,
+    buyCardTip:(name,p)=>`Acheter ${name} pour 🍄 ${p}`,
+    needMush:(p,have)=>`Besoin de 🍄 ${p} — vous avez 🍄 ${have}`,
+    notEnough:'🍄 Pas assez de champignons !',
+    lackMush:(n)=>`manque ${n} 🍄`,
+    bought:(em,name)=>`✅ Acheté ${em} ${name} !`,
+    rankTitle:'🏆 Classement',
+    rankLoading:'Chargement du classement…',
+    rankNoConn:'Pas de connexion au serveur.',
+    rankEmpty:'Soyez le premier sur la liste !',
+    rankYou:'⭐ Vous',
+    rankWins:(n)=>`${n} victoires`,
+    rankPts:(n)=>`${n.toLocaleString('fr')} pts`,
+    guideTitle:'📖 Guide',
+    guideHTML:`
+      <div class="guide-section"><div class="guide-h">🎯 Objectif</div><div class="guide-text">Détruisez toutes les cartes ennemies. Celui qui perd tous ses HP en premier perd.</div></div>
+      <div class="guide-section"><div class="guide-h">🎮 Comment jouer</div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Choisissez votre carte — cliquez dans la rangée du bas.</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Choisissez la cible — cliquez sur une carte ennemie. 🎯 apparaît.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Attaquez ! — la foudre vole vers la cible.</span></div>
+        <div class="guide-step"><span class="guide-num">4</span><span>L'ennemi contre-attaque automatiquement.</span></div>
+        <div class="guide-step"><span class="guide-num">5</span><span>Répétez jusqu'à la victoire ou la défaite ! Les victoires rapportent de nouvelles cartes.</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">📊 Stats de carte</div>
+        <div class="guide-stat-row"><span style="color:#ff7070">⚔ ATK</span><span>Attaque — dégâts infligés</span></div>
+        <div class="guide-stat-row"><span style="color:#60c0ff">🛡 DEF</span><span>Défense — réduit les dégâts</span></div>
+        <div class="guide-stat-row"><span style="color:#60ee60">❤ HP</span><span>Points de vie de la carte</span></div>
+        <div class="guide-text" style="margin-top:8px">Dégâts : <b style="color:#ffe080">ATK − (DEF × 0.4)</b></div>
+      </div>
+      <div class="guide-section" style="border-color:rgba(255,200,60,.3)"><div class="guide-h" style="color:#ffe080">⚡ Avantages de type (+50% dégâts !)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+          <div class="type-adv-row"><span class="type-pill water">💧 Eau</span><span class="adv-arrow">►</span><span class="type-pill fire">🔥 Feu</span></div>
+          <div class="type-adv-row"><span class="type-pill fire">🔥 Feu</span><span class="adv-arrow">►</span><span class="type-pill wind">💨 Vent</span></div>
+          <div class="type-adv-row"><span class="type-pill wind">💨 Vent</span><span class="adv-arrow">►</span><span class="type-pill earth">🌿 Terre</span></div>
+          <div class="type-adv-row"><span class="type-pill earth">🌿 Terre</span><span class="adv-arrow">►</span><span class="type-pill shadow">👤 Ombre</span></div>
+          <div class="type-adv-row"><span class="type-pill shadow">👤 Ombre</span><span class="adv-arrow">►</span><span class="type-pill magic">✨ Magie</span></div>
+          <div class="type-adv-row"><span class="type-pill magic">✨ Magie</span><span class="adv-arrow">►</span><span class="type-pill water">💧 Eau</span></div>
+        </div>
+      </div>
+      <div class="guide-section"><div class="guide-h">💎 Raretés</div>
+        <div class="guide-rarity-row"><span style="color:#888">⬜ Commune</span><span>Stats faibles</span></div>
+        <div class="guide-rarity-row"><span style="color:#40aa40">🟩 Rare</span><span>Bonnes stats</span></div>
+        <div class="guide-rarity-row"><span style="color:#6060ff">🟦 Épique</span><span>Stats puissantes</span></div>
+        <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Légendaire</span><span>Très puissante</span></div>
+        <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mythique</span><span>La plus puissante</span></div>
+      </div>
+      <div class="guide-section"><div class="guide-h">❤️ Vies</div><div class="guide-text">Perdez une vie à chaque défaite. Vie gratuite toutes les 30 min de jeu actif ou +1 quotidienne.</div></div>
+      <div class="guide-section"><div class="guide-h">🃏 Deck</div><div class="guide-text">Constituez votre deck dans l'onglet Deck. Minimum 4 cartes. Mélangez les types pour toujours avoir un avantage !</div></div>`,
+    loginBtn:'🔑 Se connecter avec Google',
+    logoutBtn:'✕ Se déconnecter',
+    nickBtn:'✏️ Pseudo',
+    loggedOut:'Déconnecté.',
+    nickChanged:'✅ Pseudo mis à jour !',
+    nickError:'Erreur de changement.',
+    nickPrompt:'Nouveau pseudo (max 20 caractères) :',
+    livesLbl:'Vies',
+    livesInfo:(n,lvl,diff)=>`${n} vies · Niveau ${lvl} · ${diff}`,
+    noLives:'Plus de vies ! Revenez plus tard.',
+    resetConfirm:'Supprimer la sauvegarde et recommencer ?',
+    maxLives:'Vous avez le maximum de vies (10)',
+    nextLife:(m,s)=>`❤️ Prochaine vie gratuite dans ${m}m ${s}s`,
+    freeLife:'🎁 Vie gratuite ! +1 ❤️',
+    dailyMush:'🍄 +1 Champignon pour un nouveau jour !',
+    purchaseOk:'✅ Achat réussi ! Champignons ajoutés.',
+    payError:'Erreur de paiement — réessayez.',
+    connError:'Erreur de connexion.',
+    loginRequired:'🔑 Connectez-vous pour acheter des champignons !',
+    unknownPkg:'Paquet inconnu.',
+    typeNames:{earth:'Terre',water:'Eau',fire:'Feu',wind:'Vent',shadow:'Ombre',magic:'Magie'},
+    cardNames:{wisp:'Wisp',oak:'Esprit du Chêne',fairy:'Fée des Bois',fog:'Gardien du Brouillard',heart:'Cœur de la Forêt',wolf:'Esprit du Loup',mushroom:'Champignon',river:'Esprit de la Rivière',night:'Chasseur Nocturne',frost:'Givre',seed:'Graine d\'Espoir',storm:'Tempête',bear:'Ours de la Forêt',firefly:'Luciole',crow:'Corbeau Noir',thorn:'Épine',moonspirit:'Esprit de la Lune',lava:'Lave'},
+    enemies:['Gobelin des Bois','Troll des Bois','Mauvais Champignon','Loup des Ombres','Gardien du Chêne','Araignée Nocturne','Gardien du Brouillard','Corbeau Noir','Terreur Nocturne','Seigneur des Ombres','Diablotin de Glace','Givre','Loup de Glace','Gardien de Glace','Reine des Glaces','Diablotin de Feu','Volcan','Tempête de Feu','Démon de Feu','Seigneur du Feu','Ours de la Forêt','Géant des Bois','Alpha des Loups','Fantôme de la Forêt','Gardien Ancestral','Ombre Mineure','Chevalier Noir','Gardien du Tombeau','Ombre Ancestrale','Nécromancien','Démon de Tempête','Titan de la Foudre','Démon de Glace','Chaos Élémentaire','Cœur des Ténèbres','Gardien de l\'Éternité','Wisp Démoniaque','Loi des Ténèbres','Seigneur du Chaos','Mal Ancestral'],
+    level:'Niveau', poz:'Nv.',
+  },
+};
+
+const FC_LANG_CYCLE = ['pl','en','de','es','fr'];
+const FC_LANG_FLAGS = {pl:'🇵🇱',en:'🇬🇧',de:'🇩🇪',es:'🇪🇸',fr:'🇫🇷'};
+const FC_LANG_ISO   = {pl:'pl',en:'gb',de:'de',es:'es',fr:'fr'};
+
+// Detect browser language
+const _fcBrowserLang = (navigator.language||'en').slice(0,2).toLowerCase();
+let FC_LANG_CODE = FC_LANG_CYCLE.includes(_fcBrowserLang) ? _fcBrowserLang : 'en';
+// Override with saved preference
+try { const s=localStorage.getItem('fc_lang'); if(s && FC_LANG_CYCLE.includes(s)) FC_LANG_CODE=s; } catch(e){}
+let FCLANG = FC_LANGS[FC_LANG_CODE];
+
+function toggleFCLang() {
+  const idx = FC_LANG_CYCLE.indexOf(FC_LANG_CODE);
+  FC_LANG_CODE = FC_LANG_CYCLE[(idx+1) % FC_LANG_CYCLE.length];
+  FCLANG = FC_LANGS[FC_LANG_CODE];
+  try { localStorage.setItem('fc_lang', FC_LANG_CODE); } catch(e){}
+  applyFCLang();
+}
+
+function applyFCLang() {
+  const L = FCLANG;
+  const $ = id => document.getElementById(id);
+  document.documentElement.lang = FC_LANG_CODE;
+
+  const setT = (id,v) => { const e=$(id); if(e) e.textContent=v; };
+  const setH = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
+
+  // Lang buttons (menu + all subpages)
+  const _langLabel = FC_LANG_FLAGS[FC_LANG_CODE]+' '+FC_LANG_CODE.toUpperCase();
+  ['fc-lang-btn','fc-lang-guide','fc-lang-ranking','fc-lang-deck','fc-lang-shop'].forEach(id => setT(id, _langLabel));
+
+  // Menu
+  setH('fc-subtitle', L.subtitle);
+  setT('fc-choosediff', L.chooseDiff);
+  setT('fc-diff-easy-lbl', L.easy);
+  setH('fc-diff-easy-lives', L.easyLives);
+  setT('fc-diff-med-lbl', L.medium);
+  setH('fc-diff-med-lives', L.mediumLives);
+  setT('fc-diff-hard-lbl', L.hard);
+  setH('fc-diff-hard-lives', L.hardLives);
+  setT('fc-play-btn', L.play);
+  setT('fc-btn-guide', L.guide);
+  setT('fc-btn-ranking', L.ranking);
+  setT('fc-btn-deck', L.deck);
+  setT('fc-btn-shop', L.shop);
+  setT('fc-privacy-lnk', L.privacy);
+  setT('fc-terms-lnk', L.terms);
+  // reset label
+  const rl = $('fc-reset-link');
+  if(rl && (GS.wins>0||GS.battleLevel>1)) rl.textContent = L.resetSave;
+
+  // Pre-battle
+  setT('fc-pb-title', L.pbTitle);
+  setT('fc-pb-enemy-lbl', L.pbEnemyLbl);
+  setT('fc-pb-your-lbl', L.pbYourLbl);
+  setT('fc-pb-random-btn', L.pbRandom);
+  setT('fc-pb-manual-btn', L.pbManual);
+  setT('fc-pb-start-btn', L.pbStart);
+  setT('fc-pb-back-btn', L.pbBack);
+
+  // Battle
+  setT('fc-bt-enemy-lbl', L.enemyCardsLbl);
+  setT('fc-bt-hand-lbl', L.yourHandLbl);
+  setT('battleLog', L.battleLog);
+  setT('playerName', L.playerName);
+  setT('fc-pause-title', L.pauseTitle);
+  setT('fc-pause-resume', L.resume);
+  setT('fc-pause-ranking', L.ranking);
+  setT('fc-pause-menu', L.mainMenu);
+  setT('fc-result-menu', L.resultMenu);
+
+  // Deck
+  setT('fc-deck-title', L.deckTitle);
+  const db=$('fc-deck-back'); if(db) db.textContent=L.back;
+  setT('fc-deck-locked-title', L.deckLocked);
+  setH('fc-deck-locked-sub', L.deckLockedSub);
+  setT('fc-deck-play-now', L.deckPlayNow);
+  setT('fc-deck-hint', L.deckHint);
+  setT('fc-coll-panel-lbl', L.collLbl);
+  setT('fc-deck-panel-lbl', L.deckLbl);
+  setT('deckEmptyHint', L.deckEmpty);
+
+  // Collection
+  setT('fc-coll-title', L.collTitle);
+  const cb=$('fc-coll-back'); if(cb) cb.textContent=L.back;
+
+  // Shop
+  setT('fc-shop-title', L.shopTitle);
+  const sb=$('fc-shop-back'); if(sb) sb.textContent=L.back;
+  setT('fc-shop-buy-btn', L.shopBuy);
+  setT('fc-shop-hint', L.shopHint);
+  setT('fc-topup-title', L.topupTitle);
+  setT('fc-topup-sub', L.topupSub);
+  setT('fc-pack-small-lbl', L.packSmall);
+  setT('fc-pack-popular', L.packPopular);
+  setT('fc-pack-med-lbl', L.packMed);
+  setT('fc-pack-best', L.packBest);
+  setT('fc-pack-large-lbl', L.packLarge);
+  setT('fc-topup-cancel', L.topupCancel);
+
+  // Guide
+  setT('fc-guide-title', L.guideTitle);
+  const gb=$('fc-guide-back'); if(gb) gb.textContent=L.back;
+  setH('fc-guide-content', L.guideHTML||'');
+
+  // Ranking
+  setT('fc-rank-title', L.rankTitle);
+  const rb=$('fc-rank-back'); if(rb) rb.textContent=L.back;
+
+  // Pack open
+  setT('fc-pack-continue', '🃏 ' + L.collTitle);
+
+  // Update menu continue button
+  updateMenuContinue();
+  updateMenuLives();
+  // Re-render shop if open
+  const shopActive = document.getElementById('shop')?.classList.contains('active');
+  if(shopActive) renderShop();
+  const rankActive = document.getElementById('ranking')?.classList.contains('active');
+  if(rankActive) renderRanking();
+  // Re-render deck builder if open (nazwy kart zależą od języka)
+  const deckActive = document.getElementById('deckbuilder')?.classList.contains('active');
+  if(deckActive) { renderCollectionPanel(); renderDeckPanel(); updateDeckInfo(); }
+  // Refresh auth UI so login button text reflects current language
+  updateAuthUI();
+}
+
+
+
+// ═══════════════════════════════════════════════
+//  AUDIO ENGINE v2 — Rich procedural sound
+// ═══════════════════════════════════════════════
+const Audio = (() => {
+  let actx = null, masterGain = null, musicGain = null, sfxGain = null;
+  let musicNodes = [], currentTheme = -1, muted = false;
+  let musicTimer = null;
+
+  function init() {
+    if(actx) return;
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = actx.createGain(); masterGain.gain.value = 0.8; masterGain.connect(actx.destination);
+    musicGain  = actx.createGain(); musicGain.gain.value  = 0.28; musicGain.connect(masterGain);
+    sfxGain    = actx.createGain(); sfxGain.gain.value    = 0.7;  sfxGain.connect(masterGain);
+  }
+
+  function now() { return actx.currentTime; }
+
+  // ── Low-level primitives ──────────────────────
+  function osc(freq, type, vol, att, sus, rel, delay=0, dest=null, detune=0) {
+    if(!actx||muted) return null;
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.value=freq; if(detune) o.detune.value=detune;
+    const t=now()+delay;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+att);
+    g.gain.setValueAtTime(vol,t+att+sus);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+att+sus+rel);
+    o.connect(g); g.connect(dest||sfxGain);
+    o.start(t); o.stop(t+att+sus+rel+0.05);
+    return o;
+  }
+
+  function oscSlide(f1, f2, type, vol, dur, delay=0, dest=null) {
+    if(!actx||muted) return;
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type;
+    const t=now()+delay;
+    o.frequency.setValueAtTime(f1,t);
+    o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+    g.gain.setValueAtTime(vol,t);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur+0.05);
+    o.connect(g); g.connect(dest||sfxGain);
+    o.start(t); o.stop(t+dur+0.1);
+  }
+
+  function noise(vol, dur, freq, q, delay=0, dest=null) {
+    if(!actx||muted) return;
+    const buf=actx.createBuffer(1,actx.sampleRate*dur,actx.sampleRate);
+    const d=buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    const src=actx.createBufferSource();
+    const flt=actx.createBiquadFilter();
+    flt.type='bandpass'; flt.frequency.value=freq; flt.Q.value=q;
+    const g=actx.createGain();
+    const t=now()+delay;
+    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    src.buffer=buf; src.connect(flt); flt.connect(g); g.connect(dest||sfxGain);
+    src.start(t); src.stop(t+dur+0.05);
+  }
+
+  function chord(freqs, type, vol, att, sus, rel, delay=0, dest=null) {
+    freqs.forEach((f,i) => osc(f, type, vol/(i+1)*0.9, att, sus, rel, delay, dest));
+  }
+
+  function reverb(wet=0.3) {
+    if(!actx) return null;
+    const conv = actx.createConvolver();
+    const len = actx.sampleRate * 1.5;
+    const buf = actx.createBuffer(2, len, actx.sampleRate);
+    for(let c=0;c<2;c++){
+      const d=buf.getChannelData(c);
+      for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.5);
+    }
+    conv.buffer = buf;
+    const g = actx.createGain(); g.gain.value = wet;
+    conv.connect(g); g.connect(masterGain);
+    return conv;
+  }
+
+  // ── SFX ─────────────────────────────────────────
+
+  // Kliknięcie karty — magiczny "pick up"
+  function sfxCardSelect() {
+    osc(440,'sine',.15,.005,.03,.12);
+    osc(660,'triangle',.08,.005,.02,.1,.02);
+    osc(880,'sine',.05,.005,.01,.08,.04);
+    noise(.04,.06,2000,3,.01);
+  }
+
+  // Atak — potężne uderzenie z impact
+  // Atak — trzask pioruna (prosta, pewna metoda)
+  function sfxAttack() {
+    if(!actx||muted) return;
+    // Wypełnij bufor czystym szumem z eksponencjalnym zanikaniem
+    const sr = actx.sampleRate;
+    const dur = 0.08;
+    const buf = actx.createBuffer(1, Math.floor(sr*dur), sr);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<data.length;i++){
+      data[i] = (Math.random()*2-1) * Math.exp(-i/(sr*0.012));
+    }
+    const src = actx.createBufferSource();
+    src.buffer = buf;
+    // Filtr górnoprzepustowy — tylko wyższe tony jak iskra
+    const hp = actx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 1800;
+    // Głośność
+    const g = actx.createGain();
+    g.gain.value = 0.35;
+    src.connect(hp); hp.connect(g); g.connect(actx.destination);
+    src.start();
+    // Drugi krótki trzask jako echo
+    setTimeout(()=>{
+      if(!actx||muted) return;
+      const buf2 = actx.createBuffer(1, Math.floor(sr*0.04), sr);
+      const d2 = buf2.getChannelData(0);
+      for(let i=0;i<d2.length;i++) d2[i]=(Math.random()*2-1)*Math.exp(-i/(sr*0.006));
+      const s2=actx.createBufferSource(), hp2=actx.createBiquadFilter(), g2=actx.createGain();
+      hp2.type='highpass'; hp2.frequency.value=2500;
+      g2.gain.value=0.15;
+      s2.buffer=buf2; s2.connect(hp2); hp2.connect(g2); g2.connect(actx.destination);
+      s2.start();
+    }, 70);
+  }
+
+  // Trafienie w kartę — ból / impact
+  function sfxHit() {
+    noise(.08,.05,400,1.5);
+  }
+
+  // Przewaga typu — magiczny efekt żywiołu
+  function sfxTypeAdv() {
+    // Rising sparkle
+    [523,659,784,1047,1319].forEach((f,i) => {
+      osc(f,'sine',.14,.01,.05,.2,i*.06);
+      osc(f*1.5,'triangle',.05,.01,.03,.12,i*.06);
+    });
+    // Magic burst
+    noise(.08,.15,3000,4,.25);
+    osc(2093,'sine',.1,.005,.08,.3,.3);
+  }
+
+  // Zwycięstwo — triumfalna fanfara
+  function sfxWin() {
+    const melody = [
+      [523,.0],[659,.12],[784,.24],[1047,.38],
+      [784,.54],[880,.66],[1047,.78],[1319,.94],
+      [1047,1.12],[1319,1.26],[1568,1.42]
+    ];
+    melody.forEach(([f,t]) => osc(f,'sine',.18,.02,.07,.18,t));
+    // Harmony
+    [[330,.0],[415,.12],[494,.24],[659,.38],[784,.94],[1047,1.42]]
+      .forEach(([f,t]) => osc(f,'triangle',.08,.02,.07,.2,t));
+    // Bass
+    [130,165,196,261].forEach((f,i) => osc(f,'sine',.14,.02,.1,.2,i*.38));
+    // Sparkle
+    for(let i=0;i<8;i++) noise(.04,.08,2000+i*200,3,.1+i*.15);
+  }
+
+  // Porażka — opadający lament
+  function sfxLose() {
+    oscSlide(440,55,'sawtooth',.22,.9);
+    oscSlide(330,41,'sawtooth',.12,.7,.1);
+    oscSlide(220,27,'sine',.1,.6,.2);
+    noise(.15,.4,200,.8,.05);
+    [440,330,220,165].forEach((f,i) => osc(f,'sine',.06,.01,.05,.2,i*.2));
+  }
+
+  // Odkrycie karty z paczki
+  function sfxCardReveal() {
+    oscSlide(300,1200,'sine',.15,.25);
+    noise(.1,.1,4000,5,.1);
+    osc(1047,'sine',.12,.005,.04,.2,.2);
+    osc(1319,'triangle',.08,.005,.03,.15,.26);
+  }
+
+  // Karta legendarna / mityczna
+  function sfxLegendaryReveal() {
+    [130,164,195,261,330,392,523].forEach((f,i) => {
+      osc(f,'sine',.12,.03,.2,.4,i*.08);
+      osc(f*2,'triangle',.06,.03,.15,.3,i*.08);
+    });
+    noise(.1,.3,500,2,.5);
+    noise(.08,.2,2000,4,.6);
+    osc(2093,'sine',.15,.01,.15,.5,.55);
+  }
+
+  // Dodanie karty do talii
+  function sfxDeckAdd() {
+    osc(523,'triangle',.12,.01,.03,.12);
+    osc(784,'sine',.08,.01,.02,.1,.05);
+    noise(.04,.04,3000,4,.03);
+  }
+
+  // Usunięcie z talii
+  function sfxDeckRemove() {
+    osc(330,'triangle',.1,.01,.03,.1);
+    oscSlide(440,220,'sine',.08,.1);
+  }
+
+  // Klik menu
+  function sfxMenuClick() {
+    osc(660,'triangle',.09,.005,.015,.07);
+    osc(880,'sine',.05,.005,.01,.05,.02);
+  }
+
+  // Zakup paczki
+  function sfxBuyPack() {
+    [392,494,587,740].forEach((f,i) => osc(f,'sine',.14,.01,.05,.18,i*.07));
+    noise(.06,.1,3000,3,.3);
+    osc(1568,'sine',.1,.005,.1,.3,.3);
+  }
+
+  // ── MUSIC — Rich procedural themes ──────────────
+
+  function stopMusic() {
+    musicNodes.forEach(n=>{try{n.stop();}catch(e){}});
+    musicNodes=[];
+    if(musicTimer) { clearTimeout(musicTimer); musicTimer=null; }
+    currentTheme=-1;
+  }
+
+  function playTheme(idx) {
+    if(!actx||muted) return;
+    if(currentTheme===idx) return;
+    stopMusic(); currentTheme=idx;
+    if(idx===0) menuTheme();
+    else if(idx===1) battleTheme();
+    else shopTheme();
+  }
+
+  // ── MENU: Mystical forest ambience ───────────────
+  // Rich layered: bass drone + pentatonic arpegio + bird calls + wind
+  // ── MENU: Zaczarowany Las — jak w Wisp poziomy 1-3 ──
+  function menuTheme() {
+    const scale = [261,294,330,349,392,440,494,523];
+    let t = now() + 0.1;
+    const loop = () => {
+      if(currentTheme!==0) return;
+      [261,330,392].forEach((f) => {
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.055,t+.35);
+        g.gain.setValueAtTime(.055,t+1.9); g.gain.exponentialRampToValueAtTime(.0001,t+2.5);
+        o.connect(g); g.connect(musicGain); o.start(t); o.stop(t+2.6); musicNodes.push(o);
+      });
+      for(let i=0;i<8;i++){
+        const f=scale[Math.floor(Math.random()*scale.length)]*(Math.random()>.65?2:1);
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='triangle'; o.frequency.value=f;
+        const st=t+i*.28+Math.random()*.05;
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.042,st+.04);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.24);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.3); musicNodes.push(o);
+      }
+      if(Math.random()>.35){
+        const f=750+Math.random()*500, st=t+1.4+Math.random()*.5;
+        const o=actx.createOscillator(), g=actx.createGain(); o.type='sine';
+        o.frequency.setValueAtTime(f,st); o.frequency.exponentialRampToValueAtTime(f*1.35,st+.16); o.frequency.exponentialRampToValueAtTime(f,st+.32);
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.048,st+.05);
+        g.gain.setValueAtTime(.048,st+.28); g.gain.exponentialRampToValueAtTime(.0001,st+.38);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.45); musicNodes.push(o);
+      }
+      if(Math.random()>.6){
+        const f=900+Math.random()*400, st=t+.6+Math.random()*.8;
+        const o=actx.createOscillator(), g=actx.createGain(); o.type='sine';
+        o.frequency.setValueAtTime(f,st); o.frequency.linearRampToValueAtTime(f*1.5,st+.1); o.frequency.linearRampToValueAtTime(f*1.2,st+.2);
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.035,st+.03);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.25);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.3); musicNodes.push(o);
+      }
+      t += 2.4;
+      musicTimer = setTimeout(()=>{ if(currentTheme===0) loop(); }, 2200);
+    };
+    loop();
+  }
+
+  // ── BATTLE: Mroczny Las — klimat Wispa poziomy 4-7 ──
+  // Niskie pady sinusowe + wolne arpeggio moll + niepokojące piny
+  function battleTheme() {
+    const darkScale = [220,247,277,294,330,370,415,440];
+    let t = now() + 0.1;
+    const loop = () => {
+      if(currentTheme!==1) return;
+
+      // Mroczne arpeggio moll triangle — jak w Wisp ale wolniejsze
+      for(let i=0;i<6;i++){
+        const f=darkScale[Math.floor(Math.random()*darkScale.length)];
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='triangle'; o.frequency.value=f;
+        const st=t+i*.45+Math.random()*.08;
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.032,st+.06);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.38);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.45); musicNodes.push(o);
+      }
+
+      // Niepokojący wysoki ton — jak duch
+      if(Math.random()>.45){
+        const f=440+Math.random()*220;
+        const st=t+.8+Math.random()*2;
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.025,st+.15);
+        g.gain.setValueAtTime(.025,st+.5); g.gain.exponentialRampToValueAtTime(.0001,st+1.2);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+1.3); musicNodes.push(o);
+      }
+
+      // Dysonansowe uderzenie co kilka taktów
+      if(Math.random()>.55){
+        const st=t+1.5+Math.random();
+        [220,233].forEach((f,i) => {
+          const o=actx.createOscillator(), g=actx.createGain();
+          o.type='triangle'; o.frequency.value=f;
+          g.gain.setValueAtTime(.02,st+i*.05); g.gain.exponentialRampToValueAtTime(.0001,st+.6);
+          o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.65); musicNodes.push(o);
+        });
+      }
+
+      t += 3.8;
+      musicTimer = setTimeout(()=>{ if(currentTheme===1) loop(); }, 3600);
+    };
+    loop();
+  }
+  // ── SHOP: Las o Zmierzchu — jak Wisp poziomy 4-5 ──
+  function shopTheme() {
+    const scale = [233,277,311,370,415,466,523];
+    let t = now() + 0.1;
+    const loop = () => {
+      if(currentTheme!==2) return;
+      [233,277,349].forEach((f) => {
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.052,t+.65);
+        g.gain.setValueAtTime(.052,t+2.5); g.gain.exponentialRampToValueAtTime(.0001,t+3.3);
+        o.connect(g); g.connect(musicGain); o.start(t); o.stop(t+3.4); musicNodes.push(o);
+      });
+      for(let i=0;i<5;i++){
+        const f=scale[Math.floor(Math.random()*scale.length)]*(Math.random()>.5?2:1);
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='triangle'; o.frequency.value=f;
+        const st=t+i*.5+Math.random()*.1;
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.038,st+.1);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.42);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.5); musicNodes.push(o);
+      }
+      if(Math.random()>.45){
+        const f=1047+Math.floor(Math.random()*3)*131, st=t+1+Math.random()*1.5;
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.038,st+.03);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.65);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.7); musicNodes.push(o);
+      }
+      t += 3.0;
+      musicTimer = setTimeout(()=>{ if(currentTheme===2) loop(); }, 2800);
+    };
+    loop();
+  }
+  function setMute(v) {
+    muted=v;
+    if(masterGain) masterGain.gain.value = v ? 0 : 0.8;
+  }
+
+  return {
+    init, playTheme, stopMusic, setMute,
+    sfxCardSelect, sfxAttack, sfxHit, sfxTypeAdv,
+    sfxWin, sfxLose, sfxCardReveal, sfxLegendaryReveal,
+    sfxDeckAdd, sfxDeckRemove, sfxMenuClick, sfxBuyPack
+  };
+})();
+
+// ═══════════════════════════════════════════════
+//  DECK BUILDER
+// ═══════════════════════════════════════════════
+const MAX_DECK = 9999; // bez limitu
+const MIN_DECK = 4;  // minimum do gry
+const MAX_COPIES = 99; // bez limitu kopii // max copies of same card in deck
+
+function renderDeckBuilder() {
+  // Sprawdź czy talia odblokowana (po pierwszej wygranej)
+  const locked = GS.wins === 0 && GS.battleLevel <= 1;
+  document.getElementById('deckLocked').style.display  = locked ? 'flex' : 'none';
+  document.getElementById('deckEditor').style.display  = locked ? 'none' : 'flex';
+  if(locked) return;
+
+  renderCollectionPanel();
+  renderDeckPanel();
+  updateDeckInfo();
+}
+
+function renderCollectionPanel() {
+  const panel = document.getElementById('collectionPanel');
+  panel.innerHTML = '';
+
+  CARD_DB.forEach(cardDef => {
+    const owned = GS.collection.find(c => c.id === cardDef.id);
+    const count = owned ? owned.count : 0;
+    if(count === 0) return;
+    const inDeck = GS.deck.filter(id => id === cardDef.id).length;
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;cursor:pointer;transition:opacity .2s;';
+    const cv = drawCard(cardDef.id, 72, 108);
+    wrap.appendChild(cv);
+
+    // Odznaka ile w talii
+    if(inDeck > 0) {
+      const badge = document.createElement('div');
+      badge.style.cssText = `position:absolute;top:3px;right:3px;background:#1a5a1a;border:1px solid #3aaa2a;border-radius:8px;padding:1px 6px;font-family:'Cinzel',cursive;font-size:10px;color:#b8ffa0;pointer-events:none;`;
+      badge.textContent = `✓${inDeck}`;
+      wrap.appendChild(badge);
+    }
+
+    const cnt = document.createElement('div');
+    cnt.style.cssText = 'text-align:center;font-size:9px;color:#4a8a6a;margin-top:2px;font-family:Cinzel,serif;';
+    cnt.textContent = FCLANG.deckOwnedInDeck(count,inDeck);
+    wrap.appendChild(cnt);
+
+    wrap.draggable = true;
+    wrap.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('cardId', cardDef.id);
+      e.dataTransfer.effectAllowed = 'copy';
+      wrap.style.opacity = '0.5';
+    });
+    wrap.addEventListener('dragend', () => { wrap.style.opacity = '1'; });
+    wrap.addEventListener('click', () => { deckPlus(cardDef.id); });
+    wrap.title = FCLANG.deckDragTip||'Click → add to deck';
+    panel.appendChild(wrap);
+  });
+}
+
+function renderDeckPanel() {
+  const panel = document.getElementById('deckPanel');
+  // Zachowaj strefę drop — wyczyść tylko karty
+  const hint = document.getElementById('deckEmptyHint');
+  // Usuń stare karty (nie hint)
+  Array.from(panel.children).forEach(c => { if(c !== hint) c.remove(); });
+
+  const unique = [...new Set(GS.deck)];
+  hint.style.display = unique.length === 0 ? 'block' : 'none';
+
+  unique.forEach(cardId => {
+    const cardDef = CARD_DB.find(c => c.id === cardId);
+    if(!cardDef) return;
+    const inDeck = GS.deck.filter(id => id === cardId).length;
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `position:relative;cursor:pointer;`;
+    wrap.title = FCLANG.deckRemoveTip||'Click → remove';
+    const cv = drawCard(cardId, 72, 108);
+    wrap.appendChild(cv);
+
+    // Licznik kopii w talii
+    const badge = document.createElement('div');
+    badge.style.cssText = `position:absolute;top:3px;right:3px;background:#3a1a1a;border:1px solid #aa3030;border-radius:8px;padding:1px 6px;font-family:'Cinzel',cursive;font-size:10px;color:#ffb0b0;pointer-events:none;`;
+    badge.textContent = `×${inDeck}`;
+    wrap.appendChild(badge);
+
+    // Przycisk usuń
+    const del = document.createElement('div');
+    del.style.cssText = `text-align:center;font-size:10px;color:#ff6060;margin-top:2px;font-family:'Cinzel',cursive;`;
+    del.textContent = FCLANG.deckRemove||'✕ remove';
+    wrap.appendChild(del);
+
+    wrap.addEventListener('click', () => { deckMinus(cardId); });
+    panel.appendChild(wrap);
+  });
+}
+
+function onDropToDeck(e) {
+  e.preventDefault();
+  document.getElementById('deckPanel').style.borderColor = 'rgba(80,140,200,.2)';
+  const cardId = e.dataTransfer.getData('cardId');
+  if(cardId) deckPlus(cardId);
+}
+
+function deckPlus(cardId) {
+  const owned = GS.collection.find(c => c.id === cardId);
+  const count = owned ? owned.count : 0;
+  const inDeck = GS.deck.filter(id => id === cardId).length;
+  if(inDeck >= Math.min(count, MAX_COPIES)) return; // już max kopii tej karty
+
+  GS.deck.push(cardId);
+  saveSave();
+  try{ Audio.sfxDeckAdd(); }catch(e){}
+  renderCollectionPanel();
+  renderDeckPanel();
+  updateDeckInfo();
+}
+
+function deckMinus(cardId) {
+  const idx = GS.deck.lastIndexOf(cardId);
+  if(idx !== -1) {
+    GS.deck.splice(idx, 1);
+    saveSave();
+    try{ Audio.sfxDeckRemove(); }catch(e){}
+    renderCollectionPanel();
+    renderDeckPanel();
+    updateDeckInfo();
+  }
+}
+
+function addToDeck(id) {
+  deckPlus(id);
+}
+
+function removeFromDeck(id) {
+  const idx = GS.deck.lastIndexOf(id);
+  if(idx === -1) return;
+  GS.deck.splice(idx, 1);
+  saveSave();
+  updateDeckInfo();
+}
+
+function updateDeckInfo() {
+  const cnt = document.getElementById('deckCount');
+  const n = GS.deck.length;
+  if(cnt) {
+    cnt.textContent = FCLANG.deckNCards(n);
+    cnt.style.color = n >= 4 ? '#80ff80' : '#ffcc60';
+  }
+  const lst = document.getElementById('deckList');
+  if(lst) {
+    if(n < 4) {
+      lst.textContent = FCLANG.deckNeed(4-n);
+      lst.style.color = '#ffaa40';
+    } else {
+      const counts = {};
+      GS.deck.forEach(id => { counts[id] = (counts[id]||0)+1; });
+      const summary = Object.entries(counts).map(([id,c]) => {
+        const card = CARD_DB.find(x=>x.id===id);
+        return `${card?.emoji||'?'} ${(FCLANG.cardNames||{})[id]||card?.name||id}${c>1?` ×${c}`:''}`;
+      }).join('  ·  ');
+      lst.textContent = '✅ ' + summary;
+      lst.style.color = '#60c060';
+    }
+  }
+}
+
+// ── DIFFICULTY CONFIG (wzorowane na Wisp) ────────
+const FC_DIFF_CONFIG = {
+  easy:   { atkMult:0.70, defMult:1.30, get label(){ return '😊 '+(FCLANG.easy||'Easy');   }, lives:5 },
+  medium: { atkMult:1.00, defMult:1.00, get label(){ return '😐 '+(FCLANG.medium||'Medium'); }, lives:3 },
+  hard:   { atkMult:1.30, defMult:0.70, get label(){ return '💀 '+(FCLANG.hard||'Hard');   }, lives:1 },
+};
+let FC_DIFF = 'easy';
+
+function selectDifficulty(d) {
+  FC_DIFF = d;
+  // Aktualizuj życia tylko gdy gra jeszcze nie wystartowała
+  if(GS.wins === 0 && GS.battleLevel <= 1) {
+    GS.lives = (FC_DIFF_CONFIG[d] || FC_DIFF_CONFIG.easy).lives;
+    saveSave();
+    updateMenuLives();
+  }
+  ['easy','medium','hard'].forEach(x => {
+    const el = document.getElementById('fc-diff-'+x);
+    if(el) el.classList.toggle('selected', x===d);
+  });
+  GS.difficulty = d;
+  saveSave();
+}
+
+// continueCampaign — przeniesiona niżej
+
+function resetSaveConfirm() {
+  if(confirm(FCLANG.resetConfirm||'Delete save?')) {
+    try{ localStorage.removeItem('fc_save'); }catch(e){}
+    location.reload();
+  }
+}
+
+function updateMenuContinue() {
+  const btn = document.getElementById('fc-btn-continue');
+  const reset = document.getElementById('fc-reset-link');
+  if(!btn) return;
+  if(GS.wins > 0 || GS.battleLevel > 1) {
+    btn.style.display = 'block';
+    btn.textContent = FCLANG.continueBtn(GS.battleLevel,getPlayerScore());
+    if(reset) reset.style.display = 'block';
+  } else {
+    btn.style.display = 'none';
+    if(reset) reset.style.display = 'none';
+  }
+}
+
+function initGame() {
+  try {
+    const saved = loadSave();
+    if (saved && saved.lives !== undefined && saved.deck) {
+      GS = saved;
+      if(GS.mushrooms === undefined) GS.mushrooms = 5;
+      if(GS.lastLogin === undefined) GS.lastLogin = '';
+
+    } else {
+      resetGS();
+    }
+  } catch(e) {
+    resetGS();
+  }
+  FC_DIFF = GS.difficulty || 'easy';
+  selectDifficulty(FC_DIFF);
+  checkDailyLogin();
+  updateMenuLives();
+  updateMenuContinue();
+  try { renderCollection(); } catch(e){}
+}
+
+function resetGS() {
+  GS.lives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
+  GS.wins = 0;
+  GS.battleLevel = 1;
+  GS.collection = STARTER_DECK.map(id => ({id, count:1}));
+  GS.deck = [...STARTER_DECK];
+  GS.mushrooms = 5;
+  GS.lastLogin = '';
+  try { saveSave(); } catch(e){}
+}
+
+// ── GRZYBKI 🍄 ────────────────────────────────────
+function checkDailyLogin() {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  if(GS.lastLogin !== today) {
+    GS.lastLogin = today;
+    GS.mushrooms = (GS.mushrooms || 0) + 1;
+    saveSave();
+    setTimeout(() => showToast(FCLANG.dailyMush||'🍄 +1 Mushroom!'), 800);
+  }
+  updateMushroomDisplay();
+}
+
+function updateMushroomDisplay() {
+  const el = document.getElementById('mushroomCount');
+  if(el) el.textContent = `🍄 ${GS.mushrooms || 0}`;
+}
+
+// Cena karty: 1-10 grzybków wg siły (atk+def+hp)
+function cardPrice(cardId) {
+  const card = CARD_DB.find(c => c.id === cardId);
+  if(!card) return 5;
+  const power = card.atk + card.def + card.hp;
+  // power min ~12 (seed), max ~56 (heart) → mapuj na 1-10
+  return Math.max(1, Math.min(10, Math.round((power - 10) / 5)));
+}
+
+function saveSave() {
+  try { localStorage.setItem('fc_save', JSON.stringify(GS)); } catch(e){}
+}
+function loadSave() {
+  try { const d = localStorage.getItem('fc_save'); return d ? JSON.parse(d) : null; } catch(e){ return null; }
+}
+
+// ── CARD DRAWING ─────────────────────────────────
+function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
+  const canvas = document.createElement('canvas');
+  // Rysuj w 2x rozdzielczości dla ostrości
+  const scale = window.devicePixelRatio || 2;
+  canvas.width = width * scale;
+  canvas.height = height * scale;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  canvas.className = 'card-canvas';
+  const c = canvas.getContext('2d');
+  c.scale(scale, scale);
+
+  const W = width, H = height;
+  const r = 10; // border radius
+
+  if (isBack) {
+    // Tył karty — ciemna zieleń z wzorem
+    const bg = c.createLinearGradient(0,0,W,H);
+    bg.addColorStop(0,'#0a1e0a'); bg.addColorStop(1,'#162e16');
+    c.fillStyle = bg; roundRect(c,0,0,W,H,r); c.fill();
+    // Wzór
+    c.strokeStyle='rgba(80,160,40,.12)'; c.lineWidth=1;
+    for(let i=0;i<W;i+=10) { c.beginPath(); c.moveTo(i,0); c.lineTo(i,H); c.stroke(); }
+    for(let j=0;j<H;j+=10) { c.beginPath(); c.moveTo(0,j); c.lineTo(W,j); c.stroke(); }
+    // Obramowanie
+    c.strokeStyle='#3a7a3a'; c.lineWidth=2;
+    roundRect(c,1,1,W-2,H-2,r); c.stroke();
+    // Logo
+    c.font=`${W*0.4}px serif`; c.textAlign='center'; c.textBaseline='middle';
+    c.fillStyle='rgba(80,200,60,.6)'; c.fillText('🌿',W/2,H/2);
+    return canvas;
+  }
+
+  const card = CARD_DB.find(x=>x.id===id);
+  if (!card) return canvas;
+
+  const rc = RARITY_COLORS[card.rarity];
+  const tc = TYPE_COLORS[card.type];
+
+  // ── TŁO KARTY — bogaty gradient ──
+  const bgColors = {
+    common:  ['#1a1a1a','#252525','#1a1a1a'],
+    rare:    ['#0a1a0a','#122212','#0a1a0a'],
+    epic:    ['#0a0a20','#121228','#0a0a20'],
+    legendary:['#180a28','#221232','#180a28'],
+    mythic:  ['#201000','#301800','#201000'],
+  };
+  const bgC = bgColors[card.rarity] || bgColors.common;
+  const bg = c.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,bgC[0]); bg.addColorStop(0.5,bgC[1]); bg.addColorStop(1,bgC[2]);
+  c.fillStyle=bg; roundRect(c,0,0,W,H,r); c.fill();
+
+  // ── BLASK KRAWĘDZIOWY wg rzadkości ──
+  const glowColors = {
+    common:'rgba(160,160,160,.15)', rare:'rgba(40,200,40,.2)',
+    epic:'rgba(80,80,255,.25)', legendary:'rgba(200,100,255,.3)', mythic:'rgba(255,160,0,.35)'
+  };
+  const edgeGlow = c.createLinearGradient(0,0,W,H);
+  edgeGlow.addColorStop(0,glowColors[card.rarity]);
+  edgeGlow.addColorStop(0.5,'transparent');
+  edgeGlow.addColorStop(1,glowColors[card.rarity]);
+  c.fillStyle=edgeGlow; roundRect(c,0,0,W,H,r); c.fill();
+
+  // ── NAGŁÓWEK — gradient koloru typu ──
+  const hh = H*0.30;
+  const hg = c.createLinearGradient(0,0,W,hh);
+  hg.addColorStop(0, tc+'55'); hg.addColorStop(1, tc+'11');
+  c.fillStyle=hg; roundRect(c,0,0,W,hh,r); c.fill();
+  // dolna krawędź nagłówka — linia koloru
+  c.strokeStyle=tc+'44'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(4,hh); c.lineTo(W-4,hh); c.stroke();
+
+  // ── EMOJI POSTACI — duże, wyraźne ──
+  const emojiY = H*0.36;
+  const emojiSize = Math.floor(W * 0.55);
+  c.font=`${emojiSize}px serif`;
+  c.textAlign='center'; c.textBaseline='middle';
+  // Cień pod emoji dla głębi
+  c.shadowColor=tc+'88'; c.shadowBlur=W*0.15;
+  c.fillText(card.emoji, W/2, emojiY);
+  c.shadowBlur=0;
+
+  // ── NAZWA ──
+  const nameFontSize = Math.max(8, Math.floor(W*0.115));
+  c.fillStyle='#ffffff';
+  c.font=`500 ${nameFontSize}px Cinzel, serif`;
+  c.textAlign='center'; c.textBaseline='top';
+  // Tło pod nazwą
+  c.fillStyle='rgba(0,0,0,.5)';
+  c.fillRect(0, H*0.63, W, nameFontSize+6);
+  c.fillStyle='#ffffff';
+  c.fillText((FCLANG.cardNames||{})[card.id]||card.name, W/2, H*0.635);
+
+  // ── TYP — kolorowy badge ──
+  const badgeY = H*0.72;
+  const badgeH = Math.max(14, H*0.085);
+  const badgeW = W*0.82;
+  const badgeX = (W-badgeW)/2;
+  // Badge tło
+  const badgeBg = c.createLinearGradient(badgeX,badgeY,badgeX+badgeW,badgeY);
+  badgeBg.addColorStop(0,'transparent');
+  badgeBg.addColorStop(0.2,tc+'44');
+  badgeBg.addColorStop(0.8,tc+'44');
+  badgeBg.addColorStop(1,'transparent');
+  c.fillStyle=badgeBg;
+  roundRect(c,badgeX,badgeY,badgeW,badgeH,badgeH/2); c.fill();
+  // Tekst typu
+  const typeFontSize = Math.max(7, Math.floor(W*0.1));
+  c.fillStyle=tc;
+  c.font=`500 ${typeFontSize}px Cinzel, serif`;
+  c.textAlign='center'; c.textBaseline='middle';
+  c.fillText((FCLANG.typeNames||TYPE_NAMES)[card.type]||card.type, W/2, badgeY+badgeH/2);
+
+  // ── STATYSTYKI ATK / DEF ──
+  const statY = H*0.822;
+  const statFontSize = Math.max(8, Math.floor(W*0.11));
+  // Tło statystyk
+  c.fillStyle='rgba(0,0,0,.4)';
+  c.fillRect(0, statY-3, W, statFontSize+8);
+  // ATK
+  c.font=`500 ${statFontSize}px Cinzel, serif`;
+  c.fillStyle='#ff7070';
+  c.textAlign='left'; c.textBaseline='top';
+  c.fillText(`⚔ ${card.atk}`, W*0.08, statY);
+  // DEF
+  c.fillStyle='#60c8ff';
+  c.textAlign='right';
+  c.fillText(`${card.def} 🛡`, W*0.92, statY);
+
+  // ── PASEK ŻYCIA — zmniejsza się po obrażeniach ──
+  const lifeBarY = H*0.905;
+  const lifeBarH = Math.max(4, H*0.028);
+  const lifeBarW = W*0.84;
+  const lifeBarX = (W-lifeBarW)/2;
+  const curHP  = currentHP !== null ? currentHP : card.hp;
+  const ratio  = Math.max(0, Math.min(1, curHP / card.hp));
+  // Tło (szare)
+  c.fillStyle='rgba(255,255,255,.12)';
+  roundRect(c,lifeBarX,lifeBarY,lifeBarW,lifeBarH,lifeBarH/2); c.fill();
+  // Wypełnienie — kolor zależy od HP: zielony→żółty→czerwony
+  if(ratio > 0) {
+    const lifeGrad = c.createLinearGradient(lifeBarX,0,lifeBarX+lifeBarW,0);
+    if(ratio > 0.5) {
+      lifeGrad.addColorStop(0,'#20cc20'); lifeGrad.addColorStop(1,'#60ff40');
+    } else if(ratio > 0.25) {
+      lifeGrad.addColorStop(0,'#cc8820'); lifeGrad.addColorStop(1,'#ffcc40');
+    } else {
+      lifeGrad.addColorStop(0,'#cc2020'); lifeGrad.addColorStop(1,'#ff4040');
+    }
+    c.fillStyle=lifeGrad;
+    roundRect(c,lifeBarX,lifeBarY,lifeBarW*ratio,lifeBarH,lifeBarH/2); c.fill();
+  }
+  // Tekst HP
+  const lifeFontSize = Math.max(7, Math.floor(W*0.09));
+  c.fillStyle = ratio > 0.5 ? 'rgba(200,255,180,.9)' : ratio > 0.25 ? 'rgba(255,220,150,.9)' : 'rgba(255,160,160,.9)';
+  c.font=`${lifeFontSize}px Cinzel, serif`;
+  c.textAlign='center'; c.textBaseline='top';
+  c.fillText(`❤ ${curHP}/${card.hp}`, W/2, lifeBarY+lifeBarH+1);
+
+  // ── OBRAMOWANIE — grube, świecące ──
+  const borderColors = {
+    common:'#888888', rare:'#40cc40', epic:'#7070ff',
+    legendary:'#dd88ff', mythic:'#ffbb00'
+  };
+  // Zewnętrzna poświata
+  c.shadowColor=rc; c.shadowBlur=W*0.12;
+  c.strokeStyle=borderColors[card.rarity]; c.lineWidth=2.5;
+  roundRect(c,1.25,1.25,W-2.5,H-2.5,r); c.stroke();
+  c.shadowBlur=0;
+
+  // ── KORONA dla Legendarnych i Mitycznych ──
+  if(card.rarity==='legendary'||card.rarity==='mythic') {
+    c.font=`${Math.floor(W*0.18)}px serif`;
+    c.textAlign='center'; c.textBaseline='top';
+    c.shadowColor='#ffdd00'; c.shadowBlur=8;
+    c.fillText('👑', W/2, 1);
+    c.shadowBlur=0;
+  }
+
+  // ── Połysk na górze (shine effect) ──
+  const shine = c.createLinearGradient(0,0,W*0.6,H*0.4);
+  shine.addColorStop(0,'rgba(255,255,255,.12)');
+  shine.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=shine;
+  roundRect(c,0,0,W,H,r); c.fill();
+
+  return canvas;
+}
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x+r, y);
+  c.lineTo(x+w-r, y);
+  c.quadraticCurveTo(x+w, y, x+w, y+r);
+  c.lineTo(x+w, y+h-r);
+  c.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  c.lineTo(x+r, y+h);
+  c.quadraticCurveTo(x, y+h, x, y+h-r);
+  c.lineTo(x, y+r);
+  c.quadraticCurveTo(x, y, x+r, y);
+  c.closePath();
+}
+
+// ── BATTLE SYSTEM ────────────────────────────────
+let battle = {
+  playerHP: 30, playerMaxHP: 30,
+  enemyHP: 30, enemyMaxHP: 30,
+  playerHand: [],
+  enemyHand: [],
+  selectedCard: null,
+  selectedTarget: null,
+  turn: 'player',
+  over: false,
+};
+
+const ENEMIES = [
+  // ── ROZDZIAŁ 1: Przebudzenie Lasu (1-5) ──────────────────
+  {name:'Leśny Goblin',     avatar:'👺', hp:18, deck:['seed','mushroom','fairy','thorn']},
+  {name:'Leśny Troll',      avatar:'👹', hp:22, deck:['mushroom','thorn','seed','fairy']},
+  {name:'Zły Grzyb',        avatar:'🍄', hp:24, deck:['mushroom','thorn','mushroom','seed']},
+  {name:'Wilk Cienia',      avatar:'🐺', hp:26, deck:['wolf','crow','thorn','seed']},
+  {name:'Strażnik Dębu',    avatar:'🌳', hp:30, deck:['oak','thorn','bear','mushroom']},
+
+  // ── ROZDZIAŁ 2: Mgły i Noce (6-10) ───────────────────────
+  {name:'Nocny Pająk',      avatar:'🕷️', hp:28, deck:['night','crow','fog','thorn']},
+  {name:'Strażnik Mgły',    avatar:'👻', hp:32, deck:['fog','night','crow','wolf']},
+  {name:'Czarny Kruk',      avatar:'🦅', hp:30, deck:['crow','night','fog','mushroom']},
+  {name:'Nocna Zmora',      avatar:'👿', hp:35, deck:['night','fog','crow','wolf']},
+  {name:'Władca Cieni',     avatar:'🌑', hp:40, deck:['fog','night','crow','moonspirit']},
+
+  // ── ROZDZIAŁ 3: Lodowe Królestwo (11-15) ─────────────────
+  {name:'Lodowy Imp',       avatar:'🧊', hp:32, deck:['frost','river','fog','seed']},
+  {name:'Mróz',             avatar:'❄️', hp:36, deck:['frost','river','frost','wolf']},
+  {name:'Lodowy Wilk',      avatar:'🐺', hp:38, deck:['frost','wolf','river','night']},
+  {name:'Lodowy Strażnik',  avatar:'🏔️', hp:42, deck:['frost','frost','river','fog']},
+  {name:'Królowa Lodu',     avatar:'👸', hp:48, deck:['frost','river','moonspirit','fog']},
+
+  // ── ROZDZIAŁ 4: Ogniste Otchłanie (16-20) ────────────────
+  {name:'Ognisty Imp',      avatar:'😈', hp:36, deck:['lava','storm','thorn','night']},
+  {name:'Wulkan',           avatar:'🌋', hp:40, deck:['lava','storm','lava','fog']},
+  {name:'Burza Ognia',      avatar:'⚡', hp:42, deck:['storm','lava','night','crow']},
+  {name:'Ognisty Demon',    avatar:'🔥', hp:48, deck:['lava','storm','heart','night']},
+  {name:'Lord Ognia',       avatar:'🎆', hp:55, deck:['lava','heart','storm','lava']},
+
+  // ── ROZDZIAŁ 5: Pradawne Bestie (21-25) ──────────────────
+  {name:'Niedźwiedź Lasu',  avatar:'🐻', hp:44, deck:['bear','oak','thorn','wolf']},
+  {name:'Leśny Gigant',     avatar:'🧌', hp:48, deck:['bear','oak','bear','thorn']},
+  {name:'Wilczy Alfa',      avatar:'🐺', hp:50, deck:['wolf','bear','storm','night']},
+  {name:'Duch Puszczy',     avatar:'🌲', hp:55, deck:['oak','bear','moonspirit','fog']},
+  {name:'Pradawny Strażnik',avatar:'🗿', hp:62, deck:['bear','oak','frost','moonspirit']},
+
+  // ── ROZDZIAŁ 6: Królestwo Cieni (26-30) ──────────────────
+  {name:'Cień Miniony',     avatar:'🌫️', hp:50, deck:['fog','night','crow','moonspirit']},
+  {name:'Mroczny Rycerz',   avatar:'⚔️', hp:55, deck:['night','storm','crow','fog']},
+  {name:'Strażnik Grobowca',avatar:'💀', hp:58, deck:['fog','moonspirit','night','lava']},
+  {name:'Cień Pradawny',    avatar:'👁️', hp:65, deck:['moonspirit','fog','night','heart']},
+  {name:'Nekromanta',       avatar:'🧙', hp:72, deck:['moonspirit','heart','fog','night']},
+
+  // ── ROZDZIAŁ 7: Burza Ostateczna (31-35) ─────────────────
+  {name:'Demon Burzy',      avatar:'⛈️', hp:60, deck:['storm','lava','night','frost']},
+  {name:'Piorunowy Tytan',  avatar:'🌩️', hp:65, deck:['storm','storm','lava','moonspirit']},
+  {name:'Lodowy Demon',     avatar:'🧊', hp:68, deck:['frost','lava','storm','moonspirit']},
+  {name:'Chaos Żywiołów',   avatar:'🌀', hp:75, deck:['storm','frost','lava','heart']},
+  {name:'Serce Ciemności',  avatar:'🌑', hp:85, deck:['heart','moonspirit','lava','storm']},
+
+  // ── ROZDZIAŁ 8: Finał — Starożytne Zło (36-40) ───────────
+  {name:'Strażnik Wieczności',avatar:'⚖️', hp:80, deck:['moonspirit','heart','frost','storm']},
+  {name:'Demoniczny Wisp',  avatar:'👁️', hp:88, deck:['heart','moonspirit','night','lava']},
+  {name:'Prawo Mroku',      avatar:'🌒', hp:95, deck:['moonspirit','heart','storm','frost']},
+  {name:'Władca Chaosu',    avatar:'💫', hp:105,deck:['heart','lava','moonspirit','storm']},
+  {name:'Pradawne Zło',     avatar:'🌑', hp:120,deck:['heart','moonspirit','lava','storm']},
+];
+
+function startCampaign() {
+  try { Audio.init(); } catch(e){}
+  if(GS.lives <= 0) {
+    alert(FCLANG.noLives||'No lives left!');
+    return;
+  }
+  GS.difficulty = FC_DIFF;
+  saveSave();
+  showPrebattle();
+}
+
+// ── PRE-BATTLE — wybór kart ───────────────────────
+let prebattleHand = []; // 4 karty wybrane do walki
+let prebattleMode = null; // 'random' | 'manual'
+
+function showPrebattle() {
+  showScreen('prebattle');
+  prebattleHand = [];
+  prebattleMode = null;
+
+  const enemy = ENEMIES[Math.min(GS.battleLevel - 1, ENEMIES.length - 1)];
+
+  // Pokaż nazwę przeciwnika
+  const _pbEName = (FCLANG.enemies||[])[Math.min(GS.battleLevel-1,(FCLANG.enemies?.length||40)-1)]||enemy.name;
+document.getElementById('prebattleEnemyName').textContent = `${enemy.avatar} ${_pbEName} — ${FCLANG.level||'Level'} ${GS.battleLevel}`;
+
+  // Pokaż karty przeciwnika (losujemy jak w walce żeby gracz widział skład)
+  const enemyField = document.getElementById('prebattleEnemyCards');
+  enemyField.innerHTML = '';
+  const enemyCards = shuffle([...enemy.deck, ...enemy.deck]).slice(0, 4);
+  enemyCards.forEach(id => {
+    const card = CARD_DB.find(c => c.id === id);
+    if(!card) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;';
+    wrap.appendChild(drawCard(id, 68, 102));
+    // Typ karty jako podpis
+    const typeLbl = document.createElement('div');
+    typeLbl.style.cssText = 'text-align:center;font-size:9px;color:#cc8080;font-family:Cinzel,serif;margin-top:2px;';
+    typeLbl.textContent = card.emoji + ' ' + card.type;
+    wrap.appendChild(typeLbl);
+    enemyField.appendChild(wrap);
+  });
+
+  // Od razu losuj karty gracza — gracz może je zmienić
+  document.getElementById('fc-pb-start-btn').style.display = 'none';
+  document.getElementById('prebattleCollection').style.display = 'none';
+  prebattleRandom();
+}
+
+function prebattleRandom() {
+  prebattleMode = 'random';
+  // Pobierz dostępne karty (talia lub starter)
+  const pool = GS.deck.length >= 4 ? [...GS.deck] : [...GS.deck, ...STARTER_DECK];
+  prebattleHand = shuffle([...pool]).slice(0, 4);
+  renderPrebattleSelected();
+  document.getElementById('prebattleCollection').style.display = 'none';
+  document.getElementById('prebattleInfo').textContent = FCLANG.pbRandInfo||'🎲 4 cards drawn';
+  document.getElementById('fc-pb-start-btn').style.display = 'block';
+
+  // Podświetl aktywny przycisk
+  document.getElementById('fc-pb-random-btn').style.borderColor = '#4aaa3a';
+  document.getElementById('fc-pb-random-btn').style.background = 'linear-gradient(135deg,#1a5a1a,#2a8a2a)';
+  document.getElementById('fc-pb-manual-btn').style.borderColor = '#3a5a8a';
+  document.getElementById('fc-pb-manual-btn').style.background = 'rgba(20,30,50,.8)';
+}
+
+function prebattleManual() {
+  prebattleMode = 'manual';
+  prebattleHand = [];
+  renderPrebattleSelected();
+  renderPrebattleCollection();
+  document.getElementById('prebattleCollection').style.display = 'flex';
+  document.getElementById('prebattleInfo').textContent = FCLANG.pbManInfo||'🧠 Pick 4 cards';
+  document.getElementById('fc-pb-start-btn').style.display = 'none';
+
+  document.getElementById('fc-pb-manual-btn').style.borderColor = '#6a9aff';
+  document.getElementById('fc-pb-manual-btn').style.background = 'linear-gradient(135deg,#1a2a4a,#2a3a6a)';
+  document.getElementById('fc-pb-random-btn').style.borderColor = '#3a8a3a';
+  document.getElementById('fc-pb-random-btn').style.background = 'linear-gradient(135deg,#1a3a1a,#2a5a2a)';
+}
+
+function prebattleToggleCard(cardId) {
+  const idx = prebattleHand.indexOf(cardId);
+  if(idx !== -1) {
+    // Odznacz
+    prebattleHand.splice(idx, 1);
+  } else {
+    if(prebattleHand.length >= 4) {
+      document.getElementById('prebattleInfo').textContent = FCLANG.pbMax4||'⚠️ Max 4 cards!';
+      return;
+    }
+    prebattleHand.push(cardId);
+  }
+  renderPrebattleSelected();
+  renderPrebattleCollection();
+  const n = prebattleHand.length;
+  if(n === 4) {
+    document.getElementById('prebattleInfo').textContent = FCLANG.pb4cards||'✅ 4 cards ready!';
+    document.getElementById('fc-pb-start-btn').style.display = 'block';
+  } else {
+    document.getElementById('prebattleInfo').textContent = FCLANG.pbNcards(n);
+    document.getElementById('fc-pb-start-btn').style.display = 'none';
+  }
+}
+
+function renderPrebattleSelected() {
+  const el = document.getElementById('prebattleSelected');
+  el.innerHTML = '';
+  if(prebattleHand.length === 0) {
+    el.innerHTML = `<div style="color:#3a6a4a;font-style:italic;font-size:13px;padding:40px 0;">${FCLANG.pbNoCards||'No cards selected'}</div>`;
+    return;
+  }
+  prebattleHand.forEach((id, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;cursor:pointer;';
+    wrap.appendChild(drawCard(id, 72, 108));
+    if(prebattleMode === 'manual') {
+      const x = document.createElement('div');
+      x.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(120,20,20,.9);border-radius:50%;width:18px;height:18px;text-align:center;font-size:11px;line-height:18px;color:#ffaaaa;pointer-events:none;';
+      x.textContent = '✕';
+      wrap.appendChild(x);
+      wrap.addEventListener('click', () => prebattleToggleCard(id));
+    }
+    el.appendChild(wrap);
+  });
+}
+
+function renderPrebattleCollection() {
+  const el = document.getElementById('prebattleCollection');
+  el.innerHTML = '';
+  // Pokaż wszystkie posiadane karty
+  const pool = GS.deck.length >= 4 ? GS.deck : [...GS.deck, ...STARTER_DECK];
+  const unique = [...new Set(pool)];
+  unique.forEach(id => {
+    const card = CARD_DB.find(c => c.id === id);
+    if(!card) return;
+    const selected = prebattleHand.includes(id);
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `position:relative;cursor:pointer;opacity:${selected?'0.5':'1'};
+      outline:${selected?'2px solid #60c060':'none'};border-radius:6px;transition:all .15s;`;
+    wrap.appendChild(drawCard(id, 60, 90));
+    if(selected) {
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;pointer-events:none;';
+      badge.textContent = '✓';
+      wrap.appendChild(badge);
+    }
+    wrap.addEventListener('click', () => prebattleToggleCard(id));
+    el.appendChild(wrap);
+  });
+}
+
+function prebattleStart() {
+  if(prebattleHand.length !== 4) return;
+  // Przejdź do walki z wybranymi kartami
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('battle').classList.add('active');
+  initBattle(prebattleHand);
+  try { Audio.playTheme(1); } catch(e){}
+}
+
+function initBattle(selectedHand) {
+  const enemyIdx = Math.min(GS.battleLevel - 1, ENEMIES.length - 1);
+  const enemy = ENEMIES[enemyIdx];
+
+  const hpScale = 1 + (GS.battleLevel - 1) * 0.15;
+  const diffCfg = FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.medium;
+  // Przy pierwszej walce ustaw życia z poziomu trudności
+  if(GS.battleLevel === 1 && GS.wins === 0) {
+    GS.lives = diffCfg.lives;
+  }
+  battle.enemyMaxHP = 30;
+  battle.enemyHP = 30;
+  battle.playerMaxHP = 30;
+  battle.playerHP = 30;
+  battle.over = false;
+  battle.turn = 'player';
+  battle.selectedCard = null;
+  battle.selectedTarget = null;
+
+  // Użyj wybranych kart (z ekranu pre-battle) lub fallback do talii/startera
+  let hand4;
+  if(selectedHand && selectedHand.length === 4) {
+    hand4 = selectedHand;
+  } else {
+    let pool = GS.deck.length >= 4 ? [...GS.deck] : [...GS.deck, ...STARTER_DECK];
+    hand4 = shuffle(pool).slice(0, 4);
+  }
+  battle.playerHand = hand4.map(id => ({
+    id, ...CARD_DB.find(x=>x.id===id), currentHP: CARD_DB.find(x=>x.id===id)?.hp || 10
+  }));
+
+  battle.enemyHand = shuffle([...enemy.deck, ...enemy.deck]).slice(0, 4).map(id => ({
+    id, ...CARD_DB.find(x=>x.id===id), currentHP: CARD_DB.find(x=>x.id===id)?.hp || 8
+  }));
+
+  // Update UI
+  document.getElementById('enemyAvatar').textContent = enemy.avatar;
+  const _eName = (FCLANG.enemies||[])[Math.min(GS.battleLevel-1,FCLANG.enemies?.length-1||39)]||enemy.name;
+document.getElementById('enemyName').textContent = _eName + ` (${FCLANG.poz||'Lv.'} ${GS.battleLevel})`;
+  updateHP();
+  renderHand();
+  renderEnemyField();
+  renderLives();
+  setLog(`\n👇 ${FCLANG.battleLog||'Select card'} [${FC_DIFF_CONFIG[FC_DIFF]?.label || FC_DIFF}]`);
+}
+
+// ── DYNAMIC CARD SIZE ────────────────────────────
+function calcCardSize(count=4) {
+  const appW = Math.min(window.innerWidth, 480);
+  const gap = 6;
+  const pad = 10;
+  const w = Math.floor((appW - pad*2 - gap*(count-1)) / count);
+  const h = Math.floor(w * 1.48);
+  return { w, h };
+}
+
+function renderHand() {
+  const area = document.getElementById('handArea');
+  area.innerHTML = '';
+  const {w, h} = calcCardSize(4);
+  battle.playerHand.forEach((card, i) => {
+    if(card.currentHP <= 0) return;
+    const wrap = document.createElement('div');
+    wrap.className = `card ${card.rarity}`;
+    wrap.dataset.idx = i; // indeks w playerHand
+    if(battle.selectedCard === i) wrap.classList.add('selected');
+    wrap.style.cssText = `position:relative;width:${w}px;height:${h}px;`;
+    const canvas = drawCard(card.id, w, h, false, card.currentHP);
+    wrap.appendChild(canvas);
+    wrap.addEventListener('click', () => selectCard(i));
+    area.appendChild(wrap);
+  });
+}
+
+function renderEnemyField() {
+  const field = document.getElementById('enemyField');
+  field.innerHTML = '';
+  const {w, h} = calcCardSize(4);
+  battle.enemyHand.forEach((card, i) => {
+    if(card.currentHP <= 0) return;
+    const wrap = document.createElement('div');
+    wrap.className = `card enemy-card ${card.rarity}`;
+    wrap.dataset.idx = i; // indeks w enemyHand
+    const canTarget = battle.selectedCard !== null;
+    wrap.style.cssText = `width:${w}px;height:${h}px;position:relative;
+      ${canTarget ? 'cursor:pointer;animation:enemyPulse 1s ease-in-out infinite;' : ''}`;
+    const canvas = drawCard(card.id, w, h, false, card.currentHP);
+    wrap.appendChild(canvas);
+    if(canTarget) {
+      const aim = document.createElement('div');
+      aim.style.cssText = `position:absolute;top:4px;left:50%;transform:translateX(-50%);
+        font-size:16px;animation:aimBounce .5s ease-in-out infinite alternate;pointer-events:none;
+        z-index:5;text-shadow:0 0 8px rgba(255,80,80,.8);`;
+      aim.textContent = '🎯';
+      wrap.appendChild(aim);
+      wrap.addEventListener('click', () => selectTarget(i));
+    }
+    field.appendChild(wrap);
+  });
+}
+
+function selectTarget(i) {
+  if(battle.turn !== 'player' || battle.over || battle.selectedCard === null) return;
+  if(battle.enemyHand[i].currentHP <= 0) return;
+  battle.selectedTarget = i;
+  try{ Audio.sfxCardSelect(); }catch(e){}
+  const pCard = battle.playerHand[battle.selectedCard];
+  const tCard = battle.enemyHand[i];
+  const adv = (TYPE_ADV[pCard.type]||[]).includes(tCard.type);
+  const _tName=(FCLANG.cardNames||{})[tCard.id]||tCard.name;
+if(adv) setLog(`${FCLANG.typeAdv||'✨ Type adv!'}\n${pCard.emoji} → ${tCard.emoji} ${_tName}`);
+else    setLog(`${pCard.emoji} → ${tCard.emoji} ${_tName}`);
+  // NIE renderujemy pola — DOM musi być stabilny dla fireLightning
+  setTimeout(() => endTurn(), 120);
+}
+
+function selectCard(i) {
+  if(battle.turn !== 'player' || battle.over) return;
+  if(battle.playerHand[i]?.currentHP <= 0) return; // nie można wybrać martwej karty
+  battle.selectedCard = battle.selectedCard === i ? null : i;
+  battle.selectedTarget = null;
+  try{ Audio.sfxCardSelect(); }catch(e){}
+  renderHand();
+  renderEnemyField();
+
+  if(battle.selectedCard !== null) {
+    const card = battle.playerHand[battle.selectedCard];
+    setLog(`${card.emoji} ${(FCLANG.cardNames||{})[card.id]||card.name}\n${FCLANG.clickEnemy||'👆 Click enemy card!'}`);
+  } else {
+    setLog(FCLANG.selectCard||'\n👇 Select card');
+  }
+}
+
+function endTurn() {
+  if(battle.over) return;
+  if(battle.turn !== 'player') return;
+
+  // Player attacks
+  if(battle.selectedCard !== null) {
+    const pCard = battle.playerHand[battle.selectedCard];
+    // Find alive enemy card
+    const aliveEnemies = battle.enemyHand.filter(e => e.currentHP > 0);
+    if(aliveEnemies.length > 0) {
+      // Użyj wybranego celu lub losowego
+      let targetIdx;
+      if(battle.selectedTarget !== null && battle.enemyHand[battle.selectedTarget]?.currentHP > 0) {
+        targetIdx = battle.selectedTarget;
+      } else {
+        const randEnemy = aliveEnemies[Math.floor(Math.random()*aliveEnemies.length)];
+        targetIdx = battle.enemyHand.indexOf(randEnemy);
+      }
+      const target = battle.enemyHand[targetIdx];
+      let dmg = calcDamage(pCard, target, true);
+      const targetMaxHP = target.hp;
+      target.currentHP = Math.max(0, target.currentHP - dmg);
+
+      // enemyHP zmniejsza się proporcjonalnie gdy karta ginie
+      if(target.currentHP <= 0) {
+        battle.enemyHP = Math.max(0, battle.enemyHP - Math.ceil(targetMaxHP * 0.25));
+      }
+
+      Audio.sfxAttack();
+
+      // 1. Piorun
+      const lightColor = TYPE_LIGHTNING[pCard.type] || '#ffe060';
+      const attackingCardIdx = battle.selectedCard;
+      fireLightning(attackingCardIdx, targetIdx, lightColor);
+
+      // 2. Cofnięcie karty gracza
+      setTimeout(() => animatePlayerRecoil(attackingCardIdx), 80);
+
+      // 3. Trafienie / śmierć karty wroga
+      const isDying = target.currentHP <= 0;
+      setTimeout(() => {
+        animateEnemyHit(targetIdx, isDying);
+        try{ Audio.sfxHit(); }catch(e){}
+        floatDamage(dmg, true);
+        setTimeout(() => renderEnemyField(), isDying ? 520 : 0);
+      }, 300);
+
+      const _pN=(FCLANG.cardNames||{})[pCard.id]||pCard.name;
+const _tN2=(FCLANG.cardNames||{})[target.id]||target.name;
+setLog(`${_pN} → ${_tN2}: -${dmg}${FCLANG.dmgSuffix||'!'} ${getTypeMsg(pCard.type,target.type)}`);
+      updateHP();
+
+      // Wygrana TYLKO gdy wszystkie karty przeciwnika martwe
+      const allEnemiesDead = battle.enemyHand.every(e => e.currentHP <= 0);
+      if(allEnemiesDead) {
+        setTimeout(() => endBattle(true), 600);
+        return;
+      }
+    }
+  } else {
+    setLog(FCLANG.skipTurn||'Turn skipped...');
+  }
+
+  // Enemy turn
+  battle.turn = 'enemy';
+  setTimeout(() => {
+    enemyAttack();
+  }, 800);
+}
+
+function enemyAttack() {
+  if(battle.over) return;
+  const aliveEnemies = battle.enemyHand.filter(e => e.currentHP > 0);
+
+  // Jeśli wszystkie karty wroga martwe — gracz wygrał!
+  if(aliveEnemies.length === 0 || battle.enemyHP <= 0) {
+    endBattle(true);
+    return;
+  }
+    const attacker    = aliveEnemies[Math.floor(Math.random()*aliveEnemies.length)];
+    const attackerIdx = battle.enemyHand.indexOf(attacker);
+    const alivePlayer = battle.playerHand.filter(p => p.currentHP > 0);
+    let dmg, targetIdx = 0;
+
+    if(alivePlayer.length > 0) {
+      const target = alivePlayer[Math.floor(Math.random()*alivePlayer.length)];
+      targetIdx = battle.playerHand.indexOf(target);
+      dmg = calcDamage(attacker, target, false);
+      target.currentHP = Math.max(0, target.currentHP - dmg);
+      const _aName=(FCLANG.enemies||[])[Math.min(GS.battleLevel-1,(FCLANG.enemies?.length||40)-1)]||attacker.name;
+setLog(`${attacker.emoji||'👾'} ${_aName}\n${FCLANG.counterattack||'💥 counter'} ${dmg}${FCLANG.dmgSuffix||'!'}`);
+    } else {
+      dmg = Math.ceil(attacker.atk * 0.5);
+      battle.playerHP = Math.max(0, battle.playerHP - dmg);
+      setLog(`${_aName}\n${FCLANG.directHit||'💥 direct hit'} ${dmg}${FCLANG.dmgSuffix||'!'}`);
+    }
+
+    // Piorun wroga — z opóźnieniem żeby DOM był w pełni wyrenderowany
+    setTimeout(() => fireEnemyLightning(attackerIdx, targetIdx), 50);
+    setTimeout(()=>{
+      floatDamage(dmg, false);
+      try{ Audio.sfxHit(); }catch(e){}
+      // Animacja trafienia / śmierci karty gracza
+      const playerCardDying = battle.playerHand[targetIdx]?.currentHP <= 0;
+      animatePlayerCardHit(targetIdx);
+      if(playerCardDying) {
+        setTimeout(() => renderHand(), 400);
+      }
+    }, 220);
+    updateHP();
+
+    // Przegrana gdy wszystkie karty gracza martwe LUB playerHP = 0
+    const allPlayerDead = battle.playerHand.every(p => p.currentHP <= 0);
+    if(allPlayerDead) {
+      setTimeout(()=>endBattle(false), 700);
+      return;
+    }
+
+  // Opóźnij reset tury żeby animacja zdążyła się pokazać
+  setTimeout(()=>{
+    battle.turn = 'player';
+    // Reset wybranej karty jeśli zginęła
+    if(battle.selectedCard !== null &&
+       battle.playerHand[battle.selectedCard]?.currentHP <= 0) {
+      battle.selectedCard = null;
+    }
+    battle.selectedTarget = null;
+    renderHand();
+    renderEnemyField();
+    setTimeout(()=> setLog(FCLANG.yourTurn||'\n👇 Your turn!'), 400);
+  }, 800);
+}
+
+function calcDamage(attacker, defender, isPlayerAttacking) {
+  const diff = FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.medium;
+  // Na łatwym: gracz silniejszy (×1.30 atk), wróg słabszy (×0.70 atk)
+  // Na trudnym: gracz słabszy (×0.70 atk), wróg silniejszy (×1.30 atk)
+  let atkMod, defMod;
+  if(isPlayerAttacking) {
+    atkMod = 2 - diff.atkMult; // łatwy=1.30, średni=1.00, trudny=0.70
+    defMod = diff.defMult;     // łatwy=1.30, średni=1.00, trudny=0.70
+  } else {
+    atkMod = diff.atkMult;     // łatwy=0.70, średni=1.00, trudny=1.30
+    defMod = 2 - diff.defMult; // łatwy=0.70, średni=1.00, trudny=1.30
+  }
+  let base = Math.max(1, Math.round(attacker.atk * atkMod) - Math.floor(defender.def * defMod * 0.4));
+  const adv = TYPE_ADV[attacker.type] || [];
+  if(adv.includes(defender.type)) base = Math.round(base * 1.5);
+  return Math.max(1, base);
+}
+
+function getTypeMsg(atkType, defType) {
+  const adv = TYPE_ADV[atkType] || [];
+  if(adv.includes(defType)) return FCLANG.typeAdvMsg||'✨ Type advantage!';
+  return '';
+}
+
+// ── FIREWORKS ────────────────────────────────────
+function launchFireworks(duration=5000) {
+  const canvas = document.getElementById('fireworksCanvas');
+  if(!canvas) return;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width  = rect.width;
+  canvas.height = rect.height;
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  const colors = ['#ff4060','#ffaa00','#40ff80','#60a0ff','#ff60ff','#ffffff','#ffe060','#40ffff'];
+
+  function burst(x, y) {
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    const count = 28 + Math.floor(Math.random()*16);
+    for(let i=0;i<count;i++) {
+      const angle = (i/count)*Math.PI*2 + Math.random()*.3;
+      const speed = 2.5 + Math.random()*4;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle)*speed,
+        vy: Math.sin(angle)*speed - 1.5,
+        color,
+        alpha: 1,
+        r: 2.5 + Math.random()*2,
+        gravity: 0.08,
+        trail: [],
+      });
+    }
+  }
+
+  // Odpal pierwszy fajerwerk od razu, potem co chwilę
+  burst(canvas.width*0.3, canvas.height*0.3);
+  burst(canvas.width*0.7, canvas.height*0.25);
+
+  const interval = setInterval(()=>{
+    const x = canvas.width*0.15 + Math.random()*canvas.width*0.7;
+    const y = canvas.height*0.1 + Math.random()*canvas.height*0.45;
+    burst(x, y);
+  }, 400);
+
+  const startTime = Date.now();
+
+  function animate() {
+    if(Date.now() - startTime > duration) {
+      clearInterval(interval);
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      return;
+    }
+
+    // Fade poprzedniej klatki (trail effect)
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach((p,idx) => {
+      p.trail.push({x:p.x, y:p.y});
+      if(p.trail.length > 5) p.trail.shift();
+
+      // Rysuj ślad
+      p.trail.forEach((t,ti) => {
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, p.r*(ti/p.trail.length)*0.6, 0, Math.PI*2);
+        ctx.fillStyle = p.color + Math.floor(p.alpha*(ti/p.trail.length)*150).toString(16).padStart(2,'0');
+        ctx.fill();
+      });
+
+      // Rysuj cząstkę
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.color + Math.floor(p.alpha*255).toString(16).padStart(2,'0');
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.vy += p.gravity;
+      p.vx *= 0.98;
+      p.alpha -= 0.016;
+    });
+
+    // Usuń martwe cząstki
+    for(let i=particles.length-1;i>=0;i--) {
+      if(particles[i].alpha <= 0) particles.splice(i,1);
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function endBattle(won) {
+  battle.over = true;
+  const overlay = document.getElementById('result-overlay');
+  overlay.classList.add('show');
+
+  if(won) {
+    Audio.sfxWin();
+    document.getElementById('resultTitle').textContent = FCLANG.win||'⚔️ Victory!';
+    document.getElementById('resultTitle').style.color = '#80ee60';
+    document.getElementById('resultSub').textContent = FCLANG.winSub||'Forest is safe...';
+    GS.wins++;
+    GS.battleLevel = Math.min(GS.battleLevel + 1, ENEMIES.length);
+    document.getElementById('resultScore').textContent = FCLANG.winScore(GS.battleLevel-1,GS.wins);
+    document.getElementById('btnNext').textContent = GS.battleLevel <= ENEMIES.length ? (FCLANG.nextBattle||'▶ Next Battle') : (FCLANG.completed||'🏆 Done!');
+    setTimeout(() => launchFireworks(5000), 100);
+    // Sync wyniku i postępu z serwerem po wygranej
+    pushScoreToServer();
+    pushProgressToServer();
+  } else {
+    Audio.sfxLose();
+    document.getElementById('resultTitle').textContent = FCLANG.lose||'💀 Defeat...';
+    document.getElementById('resultTitle').style.color = '#ff6060';
+    document.getElementById('resultSub').textContent = FCLANG.loseSub||'Darkness consumed the forest.';
+    GS.lives = Math.max(0, GS.lives - 1);
+    document.getElementById('resultScore').textContent = FCLANG.loseLives(GS.lives);
+    document.getElementById('btnNext').textContent = FCLANG.retry||'↺ Try Again';
+  }
+  saveSave();
+  updateMenuLives();
+}
+
+function nextBattle() {
+  document.getElementById('result-overlay').classList.remove('show');
+  if(GS.lives <= 0) { showScreen('menu'); return; }
+  if(GS.battleLevel > ENEMIES.length) { showEndScreen(); return; }
+  showPrebattle();
+}
+
+function continueCampaign() {
+  try { Audio.init(); } catch(e){}
+  GS.difficulty = FC_DIFF;
+  saveSave();
+  showPrebattle();
+}
+
+function showEndScreen() {
+  const overlay = document.getElementById('result-overlay');
+  overlay.classList.add('show');
+  document.getElementById('resultTitle').textContent = FCLANG.campaignDone||'🏆 Campaign Complete!';
+  document.getElementById('resultTitle').style.color = '#ffd060';
+  document.getElementById('resultSub').textContent = FCLANG.campaignSub||'You saved the forest!';
+  document.getElementById('resultScore').textContent = FCLANG.campaignScore(getPlayerScore(),GS.wins);
+  const btnNext = document.getElementById('btnNext');
+  btnNext.textContent = FCLANG.playAgain||'🔄 Play Again';
+  btnNext.onclick = () => {
+    // Reset kampanii ale zachowaj kolekcję i talię
+    GS.battleLevel = 1;
+    GS.wins = 0;
+    saveSave();
+    overlay.classList.remove('show');
+    showScreen('menu');
+  };
+  // Fajerwerki złote!
+  setTimeout(() => launchFireworks(8000), 200);
+  try{ Audio.sfxWin(); }catch(e){}
+}
+
+function updateHP() {
+  const ep = (battle.enemyHP / battle.enemyMaxHP * 100).toFixed(0);
+  // playerHP = proporcja żywych kart gracza
+  const alivePlayer = battle.playerHand.filter(c => c.currentHP > 0).length;
+  const totalPlayer = battle.playerHand.length;
+  battle.playerHP = alivePlayer; // używamy jako licznik
+  battle.playerMaxHP = totalPlayer;
+  const pp = (alivePlayer / totalPlayer * 100).toFixed(0);
+  document.getElementById('enemyHP').style.width = ep + '%';
+  document.getElementById('playerHP').style.width = pp + '%';
+  document.getElementById('enemyHPText').textContent = `❤️ ${battle.enemyHP}/${battle.enemyMaxHP}`;
+  document.getElementById('playerHPText').textContent = FCLANG.cardsLbl(alivePlayer,totalPlayer);
+}
+
+function renderLives() {
+  const bar = document.getElementById('livesBar');
+  bar.innerHTML = '';
+  for(let i=0; i<3; i++) {
+    const h = document.createElement('span');
+    h.className = 'life-heart' + (i >= GS.lives ? ' lost' : '');
+    h.textContent = '❤️';
+    bar.appendChild(h);
+  }
+  const lbl = document.createElement('span');
+  lbl.className = 'lives-label';
+  lbl.textContent = FCLANG.livesLbl||'Lives';
+  bar.appendChild(lbl);
+}
+
+// ── ANIMACJE KART ────────────────────────────────
+function animatePlayerRecoil(cardIdx) {
+  battle.selectedCard = null;
+  battle.selectedTarget = null;
+  renderHand();
+  const el = document.querySelector(`#handArea .card[data-idx="${cardIdx}"]`);
+  if(el) {
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'cardRecoil .4s ease';
+    setTimeout(() => { if(el) el.style.animation = ''; }, 420);
+  }
+}
+
+function animateEnemyHit(cardIdx, isDying) {
+  const el = document.querySelector(`#enemyField .card[data-idx="${cardIdx}"]`);
+  if(!el) return;
+  if(isDying) {
+    el.style.animation = 'cardDie .5s ease forwards';
+  } else {
+    el.style.animation = 'cardHit .25s ease, cardShake .3s ease .1s';
+    setTimeout(() => { if(el) el.style.animation = ''; }, 450);
+  }
+}
+
+function animatePlayerCardHit(cardIdx) {
+  const el = document.querySelector(`#handArea .card[data-idx="${cardIdx}"]`);
+  if(el) {
+    el.style.animation = 'cardHit .25s ease, cardShake .3s ease .1s';
+    setTimeout(() => { if(el) el.style.animation = ''; }, 450);
+  }
+}
+
+function floatDamage(dmg, isEnemy) {
+  const div = document.createElement('div');
+  div.className = 'dmg-float';
+  div.textContent = '-' + dmg;
+  div.style.color = isEnemy ? '#ff6060' : '#ffaa40';
+  div.style.left = (isEnemy ? '55%' : '20%');
+  div.style.top = (isEnemy ? '20%' : '65%');
+  document.getElementById('battle').appendChild(div);
+  setTimeout(() => div.remove(), 900);
+}
+
+// ── LIGHTNING BOLT ANIMATION ─────────────────────
+// Przelicz indeks w enemyHand na indeks w DOM (pomijając martwe)
+function enemyHandToDomIdx(handIdx) {
+  let domIdx = 0;
+  for(let i = 0; i < battle.enemyHand.length; i++) {
+    if(battle.enemyHand[i].currentHP <= 0) continue;
+    if(i === handIdx) return domIdx;
+    domIdx++;
+  }
+  return domIdx;
+}
+
+// Przelicz indeks w playerHand na indeks w DOM (pomijając martwe)
+function playerHandToDomIdx(handIdx) {
+  let domIdx = 0;
+  for(let i = 0; i < battle.playerHand.length; i++) {
+    if(battle.playerHand[i].currentHP <= 0) continue;
+    if(i === handIdx) return domIdx;
+    domIdx++;
+  }
+  return domIdx;
+}
+
+function fireLightning(fromCardIdx, toCardIdx, color) {
+  const canvas = document.getElementById('lightningCanvas');
+  if(!canvas) return;
+  // Canvas jest fixed na viewport — rozdzielczość = rozmiar okna
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+
+  const fromEl = document.querySelector(`#handArea .card[data-idx="${fromCardIdx}"]`);
+  const toEl   = document.querySelector(`#enemyField .card[data-idx="${toCardIdx}"]`);
+  if(!fromEl || !toEl) return;
+
+  // Zatrzymaj wszystkie animacje kart przed pomiarem
+  const allCards = document.querySelectorAll('#handArea .card, #enemyField .card');
+  const savedAnims = [];
+  allCards.forEach(c => { savedAnims.push(c.style.animation); c.style.animation = 'none'; });
+  document.body.offsetHeight; // force reflow
+
+  function cardCenter(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width/2, y: r.top + r.height/2 };
+  }
+
+  const from = cardCenter(fromEl);
+  const to   = cardCenter(toEl);
+
+  // Przywróć animacje
+  allCards.forEach((c, i) => { c.style.animation = savedAnims[i]; });
+
+  let frame = 0;
+  const totalFrames = 60;
+
+  function zigzag(x1,y1,x2,y2,chaos) {
+    const pts = [[x1,y1]];
+    for(let i=1;i<9;i++){
+      const t=i/9;
+      pts.push([
+        x1+(x2-x1)*t+(Math.random()-.5)*chaos,
+        y1+(y2-y1)*t+(Math.random()-.5)*chaos
+      ]);
+    }
+    pts.push([x2,y2]);
+    return pts;
+  }
+
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const p = frame/totalFrames;
+    const alpha = p < 0.4 ? p/0.4 : 1-(p-0.4)/0.6;
+
+    ctx.globalAlpha = alpha;
+
+    // 3 pioruny — każdy trochę inny
+    [40,24,14].forEach((chaos,i) => {
+      const pts = zigzag(from.x,from.y,to.x,to.y,chaos);
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      pts.forEach(([x,y])=>ctx.lineTo(x,y));
+      ctx.strokeStyle = i===0 ? '#ffffff' : color;
+      ctx.lineWidth = i===0 ? 2 : 3-i*0.5;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 16-i*4;
+      ctx.stroke();
+      // Gałązka losowa
+      if(i===1 && Math.random()>.4) {
+        const bi = 3+Math.floor(Math.random()*4);
+        ctx.beginPath();
+        ctx.moveTo(pts[bi][0],pts[bi][1]);
+        ctx.lineTo(pts[bi][0]+(Math.random()-.5)*36, pts[bi][1]+(Math.random()-.5)*36);
+        ctx.lineWidth=1; ctx.stroke();
+      }
+    });
+
+    // Iskry przy uderzeniu
+    if(frame >= 8) {
+      const exp = (frame-8)/8;
+      ctx.shadowBlur=20;
+      for(let s=0;s<6;s++){
+        const ang = (s/6)*Math.PI*2;
+        const len = exp*22;
+        ctx.beginPath();
+        ctx.moveTo(to.x,to.y);
+        ctx.lineTo(to.x+Math.cos(ang)*len, to.y+Math.sin(ang)*len);
+        ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(to.x,to.y,exp*16,0,Math.PI*2);
+      ctx.fillStyle=color+'44'; ctx.fill();
+    }
+
+    // Blask przy źródle
+    if(frame<6) {
+      ctx.shadowBlur=0;
+      ctx.beginPath();
+      ctx.arc(from.x,from.y,12*(1-p),0,Math.PI*2);
+      ctx.fillStyle=color+'33'; ctx.fill();
+    }
+
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
+    frame++;
+    if(frame<totalFrames) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  animate();
+}
+
+// Kolor pioruna zależny od typu karty
+const TYPE_LIGHTNING = {
+  earth:'#80ff60', water:'#60c0ff', fire:'#ff8030',
+  wind:'#c0ff60', shadow:'#c060ff', magic:'#ffffff'
+};
+
+// ── PIORUN PRZECIWNIKA — czerwona plazma z góry w dół ──
+function fireEnemyLightning(fromEnemyIdx, toPlayerIdx) {
+  const canvas = document.getElementById('lightningCanvas');
+  if(!canvas) return;
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+
+  const fromEl = document.querySelector(`#enemyField .card[data-idx="${fromEnemyIdx}"]`);
+  const toEl   = document.querySelector(`#handArea .card[data-idx="${toPlayerIdx}"]`);
+  if(!fromEl || !toEl) return;
+
+  // Zatrzymaj WSZYSTKIE animacje na czas pomiaru
+  const allCards = document.querySelectorAll('#enemyField .card, #handArea .card');
+  const savedAnims = [];
+  allCards.forEach(c => { savedAnims.push(c.style.animation); c.style.animation = 'none'; });
+  // Force pełny reflow — czekamy na stabilny layout
+  document.body.offsetHeight;
+
+  function center(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width/2, y: r.top + r.height/2 };
+  }
+
+  const from = center(fromEl);
+  const to   = center(toEl);
+
+  // Przywróć animacje
+  allCards.forEach((c, i) => { c.style.animation = savedAnims[i]; });
+
+  let frame = 0;
+  const totalFrames = 60;
+  // Kolory plazmy wroga — czerwień/purpura
+  const coreColor   = '#ff2040';
+  const glowColor   = '#cc0030';
+  const outerColor  = '#880020';
+
+  function plasma(x1,y1,x2,y2,chaos) {
+    // Zygzak jak wąż — faluje bardziej niż piorun gracza
+    const segs = 12;
+    const pts = [[x1,y1]];
+    for(let i=1;i<segs;i++){
+      const t=i/segs;
+      // Falisty wzór — sinusoidalny chaos
+      const perp = { x: -(y2-y1), y: (x2-x1) };
+      const plen = Math.sqrt(perp.x**2+perp.y**2)||1;
+      const wave = Math.sin(t*Math.PI*3+frame*0.4)*chaos;
+      pts.push([
+        x1+(x2-x1)*t + (perp.x/plen)*wave + (Math.random()-.5)*chaos*0.4,
+        y1+(y2-y1)*t + (perp.y/plen)*wave + (Math.random()-.5)*chaos*0.4,
+      ]);
+    }
+    pts.push([x2,y2]);
+    return pts;
+  }
+
+  function animate() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const p = frame/totalFrames;
+    const alpha = p < 0.3 ? p/0.3 : 1-(p-0.3)/0.7;
+
+    ctx.globalAlpha = alpha;
+
+    // Poświata źródła (karta wroga)
+    if(frame < 10) {
+      const pulse = 1-frame/10;
+      ctx.beginPath();
+      ctx.arc(from.x, from.y, 20*pulse, 0, Math.PI*2);
+      ctx.fillStyle = '#ff000033';
+      ctx.fill();
+    }
+
+    // 3 warstwy plazmy — grubsza i bardziej falista niż piorun gracza
+    [[30, outerColor, 4], [18, glowColor, 2.5], [8, coreColor, 1.5]].forEach(([chaos, color, lw]) => {
+      const pts = plasma(from.x,from.y,to.x,to.y,chaos);
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      pts.forEach(([x,y])=>ctx.lineTo(x,y));
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lw;
+      ctx.shadowColor = coreColor;
+      ctx.shadowBlur = 20;
+      ctx.stroke();
+    });
+
+    // Biały rdzeń — bardzo cienki
+    const corePts = plasma(from.x,from.y,to.x,to.y,5);
+    ctx.beginPath();
+    ctx.moveTo(corePts[0][0],corePts[0][1]);
+    corePts.forEach(([x,y])=>ctx.lineTo(x,y));
+    ctx.strokeStyle = '#ffffff88';
+    ctx.lineWidth = 0.8;
+    ctx.shadowBlur = 0;
+    ctx.stroke();
+
+    // Uderzenie — rozbłysk przy karcie gracza
+    if(frame >= 35) {
+      const exp = (frame-35)/25;
+      // Krwawy krąg
+      ctx.shadowBlur=25; ctx.shadowColor=coreColor;
+      ctx.beginPath();
+      ctx.arc(to.x, to.y, exp*24, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,0,40,${0.35*(1-exp)})`;
+      ctx.fill();
+      // Szprychy
+      const spokes = 8;
+      for(let s=0;s<spokes;s++){
+        const ang = (s/spokes)*Math.PI*2 + frame*0.1;
+        ctx.beginPath();
+        ctx.moveTo(to.x,to.y);
+        ctx.lineTo(to.x+Math.cos(ang)*exp*30, to.y+Math.sin(ang)*exp*30);
+        ctx.strokeStyle=coreColor; ctx.lineWidth=1.5; ctx.stroke();
+      }
+      ctx.shadowBlur=0;
+    }
+
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
+    frame++;
+    if(frame<totalFrames) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  animate();
+}
+
+function setLog(msg) {
+  const el = document.getElementById('battleLog');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    const parts = msg.split('\n');
+    if(parts.length >= 2) {
+      el.innerHTML = `<span style="display:block;min-height:1.3em;">${parts[0]}</span><span style="display:block;min-height:1.3em;">${parts[1]}</span>`;
+    } else {
+      el.innerHTML = `<span style="display:block;min-height:1.3em;"></span><span style="display:block;min-height:1.3em;">${msg}</span>`;
+    }
+    el.style.opacity = '1';
+  }, 150);
+}
+
+// ── COLLECTION ───────────────────────────────────
+function renderCollection() {
+  const grid = document.getElementById('collGrid');
+  grid.innerHTML = '';
+  CARD_DB.forEach(card => {
+    const owned = GS.collection.find(c => c.id === card.id);
+    const count = owned ? owned.count : 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'coll-card-wrap';
+    wrap.style.opacity = count > 0 ? '1' : '0.3';
+    const canvas = drawCard(card.id, 90, 135);
+    wrap.appendChild(canvas);
+    const cnt = document.createElement('div');
+    cnt.className = 'coll-count';
+    cnt.textContent = count > 0 ? `×${count}` : (FCLANG.notOwned||'Not owned');
+    cnt.style.color = count > 0 ? '#5a9a5a' : '#3a4a3a';
+    wrap.appendChild(cnt);
+    grid.appendChild(wrap);
+  });
+}
+
+function addToCollection(id) {
+  const existing = GS.collection.find(c => c.id === id);
+  if(existing) existing.count++;
+  else GS.collection.push({id, count:1});
+  // Auto-add to deck if deck < 20
+  if(GS.deck.length < 20) GS.deck.push(id);
+  saveSave();
+  renderCollection();
+}
+
+function getRandomCard(minRarity='common') {
+  const weights = {common:50, rare:30, epic:15, legendary:4, mythic:1};
+  const rarityOrder = ['common','rare','epic','legendary','mythic'];
+  const minIdx = rarityOrder.indexOf(minRarity);
+  const pool = CARD_DB.filter(c => rarityOrder.indexOf(c.rarity) >= minIdx);
+  const totalWeight = pool.reduce((s,c) => s + weights[c.rarity], 0);
+  let r = Math.random() * totalWeight;
+  for(const card of pool) {
+    r -= weights[card.rarity];
+    if(r <= 0) return card;
+  }
+  return pool[pool.length-1];
+}
+
+// ── SHOP ─────────────────────────────────────────
+// ── SKLEP 🍄 ──────────────────────────────────────
+function renderShop() {
+  updateMushroomDisplay();
+  const shopMush = document.getElementById('shopMushroomCount');
+  if(shopMush) shopMush.textContent = FCLANG.shopMush(GS.mushrooms||0);
+
+  const grid = document.getElementById('shopCardGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  const sorted = [...CARD_DB].sort((a,b) => cardPrice(a.id) - cardPrice(b.id));
+
+  sorted.forEach(card => {
+    const price = cardPrice(card.id);
+    const owned = GS.collection.find(c => c.id === card.id);
+    const ownedCount = owned ? owned.count : 0;
+    const canAfford = (GS.mushrooms || 0) >= price;
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `position:relative;transition:transform .15s;`;
+
+    if(canAfford) {
+      wrap.style.cursor = 'pointer';
+      wrap.addEventListener('mouseenter', () => wrap.style.transform='scale(1.05)');
+      wrap.addEventListener('mouseleave', () => wrap.style.transform='scale(1)');
+      wrap.addEventListener('click', () => buyCard(card.id, price));
+      wrap.title = FCLANG.buyCardTip((FCLANG.cardNames||{})[card.id]||card.name,price);
+    } else {
+      wrap.style.cursor = 'not-allowed';
+      wrap.title = FCLANG.needMush(price,GS.mushrooms||0);
+    }
+
+    // Karta (wyszarzona gdy za mało grzybków)
+    const cv = drawCard(card.id, 72, 108);
+    if(!canAfford) cv.style.filter = 'grayscale(60%) brightness(0.7)';
+    wrap.appendChild(cv);
+
+    // Cena — zielona gdy stać, czerwona gdy nie stać
+    const priceTag = document.createElement('div');
+    priceTag.style.cssText = `text-align:center;font-family:'Cinzel',cursive;font-size:11px;
+      color:${canAfford ? '#80ee60' : '#ff6060'};margin-top:3px;font-weight:bold;`;
+    priceTag.textContent = `🍄 ${price}`;
+    wrap.appendChild(priceTag);
+
+    // Komunikat "za mało" pod ceną
+    if(!canAfford) {
+      const lack = document.createElement('div');
+      lack.style.cssText = `text-align:center;font-size:9px;color:#aa4040;font-style:italic;margin-top:1px;`;
+      lack.textContent = FCLANG.lackMush(price-(GS.mushrooms||0));
+      wrap.appendChild(lack);
+    }
+
+    // Posiadane kopie
+    if(ownedCount > 0) {
+      const badge = document.createElement('div');
+      badge.style.cssText = `position:absolute;top:3px;right:3px;background:#1a5a1a;
+        border:1px solid #3aaa2a;border-radius:8px;padding:1px 5px;
+        font-family:'Cinzel',cursive;font-size:9px;color:#b8ffa0;pointer-events:none;`;
+      badge.textContent = `✓${ownedCount}`;
+      wrap.appendChild(badge);
+    }
+
+    grid.appendChild(wrap);
+  });
+}
+
+function buyCard(cardId, price) {
+  if((GS.mushrooms || 0) < price) {
+    showToast(FCLANG.notEnough||'🍄 Not enough!');
+    return;
+  }
+  const card = CARD_DB.find(c => c.id === cardId);
+  GS.mushrooms -= price;
+  const owned = GS.collection.find(c => c.id === cardId);
+  if(owned) owned.count++;
+  else GS.collection.push({id: cardId, count: 1});
+  saveSave();
+  updateMushroomDisplay();
+  renderShop();
+  showToast(FCLANG.bought(card.emoji,(FCLANG.cardNames||{})[card.id]||card.name));
+  try{ Audio.sfxDeckAdd(); }catch(e){}
+}
+
+function showTopup() {
+  document.getElementById('topupOverlay').style.display = 'flex';
+}
+function hideTopup() {
+  document.getElementById('topupOverlay').style.display = 'none';
+}
+
+function buyMushrooms(amount, price) {
+  const token = getToken();
+  if(!token){
+    showToast(FCLANG.loginRequired||'🔑 Sign in to buy!');
+    hideTopup();
+    setTimeout(updateAuthUI, 100);
+    return;
+  }
+
+  // Mapowanie ilości na package_id
+  const pkgMap = { 10:'fc_pack_10', 25:'fc_pack_25', 50:'fc_pack_50' };
+  const package_id = pkgMap[amount];
+  if(!package_id){ showToast(FCLANG.unknownPkg||'Unknown package.'); return; }
+
+  // Google Play Billing (TWA)
+  const IS_TWA = document.referrer.includes('android-app://') || navigator.userAgent.includes('wv');
+  if(IS_TWA && 'getDigitalGoodsService' in window){
+    (async () => {
+      try {
+        const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+        const details = await service.getDetails([package_id]);
+        if(!details || !details.length){ _buyWithPaddle(package_id, token); return; }
+        const request = new PaymentRequest(
+          [{ supportedMethods:'https://play.google.com/billing', data:{ sku: package_id } }],
+          { total:{ label: details[0].title || package_id, amount:{ currency:'EUR', value:'0' } } }
+        );
+        const response = await request.show();
+        const r = await fetch('/api/gplay/verify', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ package_id, purchase_token: response.details.token }),
+        });
+        const data = await r.json();
+        if(data.ok){
+          await response.complete('success');
+          GS.mushrooms = data.mushrooms;
+          saveSave();
+          updateMushroomDisplay();
+          hideTopup();
+          renderShop();
+          showToast(`🍄 +${amount} ${FCLANG.shopMush?'':' mushrooms'} ✅`);
+        } else {
+          await response.complete('fail');
+        }
+      } catch(e) {
+        if(e.name !== 'AbortError') _buyWithPaddle(package_id, token);
+      }
+    })();
+    return;
+  }
+
+  // Paddle (web)
+  _buyWithPaddle(package_id, token);
+
+  function _buyWithPaddle(pkg, tok){
+    fetch('/api/buy', {
+      method: 'POST',
+      headers: { Authorization:'Bearer '+tok, 'Content-Type':'application/json' },
+      body: JSON.stringify({ package_id: pkg }),
+    })
+    .then(r => r.json())
+    .then(d => {
+      if(!d.price_id || !window.Paddle){ showToast(FCLANG.payError||'Payment error'); return; }
+      Paddle.Checkout.open({
+        items: [{ priceId: d.price_id, quantity: 1 }],
+        customData: { user_id: String(d.user_id), package_id: d.package_id },
+        settings: { successUrl: window.location.origin + '/?purchase=success' },
+      });
+    })
+    .catch(() => showToast(FCLANG.connError||'Connection error'));
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────
+function showToast(msg, duration=2800) {
+  let toast = document.getElementById('fc-toast');
+  if(!toast) {
+    toast = document.createElement('div');
+    toast.id = 'fc-toast';
+    toast.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+      background:rgba(20,40,20,.95);border:1px solid #3a8a3a;border-radius:20px;
+      padding:10px 22px;font-family:'Cinzel',cursive;font-size:13px;color:#b8ffa0;
+      z-index:9999;pointer-events:none;white-space:nowrap;
+      animation:toastIn .25s ease;box-shadow:0 4px 20px rgba(0,0,0,.5);`;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.style.transition = 'opacity .4s';
+    toast.style.opacity = '0';
+    setTimeout(() => { toast.style.display = 'none'; toast.style.transition = ''; }, 400);
+  }, duration);
+}
+
+// ── MENU PARTICLES ────────────────────────────────
+function initMenuParticles() {
+  const canvas = document.getElementById('menuCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    const menu = document.getElementById('menu');
+    canvas.width  = menu.offsetWidth  || window.innerWidth;
+    canvas.height = menu.offsetHeight || window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = Array.from({length:50}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2.5 + 0.5,
+    vy: -(Math.random() * 0.6 + 0.15),
+    vx: (Math.random() - 0.5) * 0.2,
+    alpha: Math.random() * 0.5 + 0.15,
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.y += p.vy;
+      p.x += p.vx;
+      if(p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+      if(p.x < -10) p.x = canvas.width + 10;
+      if(p.x > canvas.width + 10) p.x = -10;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(128,238,96,${p.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── UI HELPERS ────────────────────────────────────
+function showScreen(name) {
+  try { Audio.init(); Audio.sfxMenuClick(); } catch(e){}
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  if(name === 'collection') renderCollection();
+  if(name === 'deckbuilder') renderDeckBuilder();
+  if(name === 'menu') { updateMenuLives(); try{ Audio.playTheme(0); }catch(e){} }
+  if(name === 'shop') { renderShop(); try{ Audio.playTheme(2); }catch(e){} }
+  if(name === 'ranking') renderRanking();
+}
+
+// ═══════════════════════════════════════════════
+//  AKTYWNY TIMER — darmowe życie co 30 min gry
+// ═══════════════════════════════════════════════
+const FREE_LIFE_SECONDS = 30 * 60; // 30 minut aktywnej gry
+let _activeTimer = null;
+let _activeSeconds = 0;
+let _pageVisible = true;
+
+function startActiveTimer() {
+  if(_activeTimer) return;
+  _activeSeconds = parseInt(localStorage.getItem('fc_activeSeconds') || '0');
+  _activeTimer = setInterval(() => {
+    if(!_pageVisible) return; // Nie liczy gdy karta przeglądarki niewidoczna
+    // Nie liczy gdy pauza lub nie-battle screen
+    const battleActive = document.getElementById('battle')?.classList.contains('active');
+    const pauseOpen = document.getElementById('pause-overlay')?.style.display !== 'none';
+    if(!battleActive || pauseOpen) return;
+
+    _activeSeconds++;
+    localStorage.setItem('fc_activeSeconds', _activeSeconds);
+
+    if(_activeSeconds >= FREE_LIFE_SECONDS) {
+      _activeSeconds = 0;
+      localStorage.setItem('fc_activeSeconds', '0');
+      if(GS.lives < 10) {
+        GS.lives++;
+        saveSave();
+        updateMenuLives();
+        showFreeLifeToast();
+      }
+    }
+  }, 1000);
+}
+
+function showFreeLifeToast() {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,#1a4a1a,#2a8a2a);border:2px solid #4aaa3a;
+    color:#b8ffa0;font-family:'Cinzel',cursive;font-size:14px;padding:12px 24px;
+    border-radius:30px;z-index:999;box-shadow:0 0 20px rgba(60,200,40,.4);
+    animation:toastIn .3s ease;`;
+  t.textContent = FCLANG.freeLife||'🎁 Free life! +1 ❤️';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+// Wykryj czy karta jest widoczna
+document.addEventListener('visibilitychange', () => {
+  _pageVisible = !document.hidden;
+});
+
+// Ile czasu do następnego życia (w sekundach)
+function getSecondsToNextLife() {
+  return FREE_LIFE_SECONDS - _activeSeconds;
+}
+
+// ═══════════════════════════════════════════════
+//  PAUZA
+// ═══════════════════════════════════════════════
+let _paused = false;
+
+function openPause() {
+  _paused = true;
+  const overlay = document.getElementById('pause-overlay');
+  overlay.style.display = 'flex';
+  // Pokaż info o życiach
+  const secs = getSecondsToNextLife();
+  const mins = Math.floor(secs/60);
+  const s = secs%60;
+  const info = document.getElementById('pauseLivesInfo');
+  if(info) {
+    if(GS.lives >= 10) {
+      info.textContent = FCLANG.maxLives||'Max lives (10)';
+    } else {
+      info.textContent = FCLANG.nextLife(mins,s);
+    }
+  }
+}
+
+function closePause() {
+  _paused = false;
+  const overlay = document.getElementById('pause-overlay');
+  overlay.style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════
+//  RANKING
+// ═══════════════════════════════════════════════
+// Boty do rankingu
+function getPlayerScore() {
+  return (GS.wins||0) * 200 + (GS.battleLevel||1) * 50;
+}
+
+async function renderRanking() {
+  const list = document.getElementById('rankingList');
+  if(!list) return;
+  list.innerHTML = `<div style="text-align:center;color:#5a7a5a;padding:20px;font-style:italic;">${FCLANG.rankLoading||'Loading...'}</div>`;
+
+  const medals = ['🥇','🥈','🥉'];
+  const myNick = getUser()?.nick || null;
+  const myScore = getPlayerScore();
+
+  let entries = [];
+  try {
+    entries = await fetch('/api/leaderboard').then(r => r.json());
+  } catch(e) {
+    list.innerHTML = `<div style="text-align:center;color:#7a4a4a;padding:20px;font-style:italic;">${FCLANG.rankNoConn||'No connection.'}</div>`;
+    return;
+  }
+
+  // Dodaj lokalnego gracza jeśli go nie ma w rankingu
+  const myEntry = { name: FCLANG.rankYou||'⭐ You', wins: GS.wins||0, score: myScore, isPlayer:true };
+  const alreadyIn = myNick && entries.some(e => e.nick === myNick);
+  if(!alreadyIn) entries = [...entries, myEntry].sort((a,b) => b.score - a.score);
+
+  list.innerHTML = '';
+  entries.slice(0, 20).forEach((entry, i) => {
+    const isMe = entry.isPlayer || (myNick && entry.nick === myNick);
+    const name = entry.isPlayer ? (FCLANG.rankYou||'⭐ You') : (entry.nick || 'Guest');
+    const avatar = entry.avatar_url
+      ? `<img src="${entry.avatar_url}" style="width:28px;height:28px;border-radius:50%;flex-shrink:0;">`
+      : `<div style="width:28px;height:28px;border-radius:50%;background:rgba(40,80,40,.6);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🌿</div>`;
+
+    const row = document.createElement('div');
+    row.className = 'rank-row';
+    if(isMe) row.style.cssText += ';border-color:rgba(128,238,96,.5);background:rgba(10,40,10,.9);';
+    const num = medals[i] || `#${i+1}`;
+    row.innerHTML = `
+      <div class="rank-num">${num}</div>
+      ${avatar}
+      <div style="flex:1;min-width:0;">
+        <div class="rank-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+        <div class="rank-wins">${FCLANG.rankWins(entry.wins||0)}</div>
+      </div>
+      <div class="rank-score">${FCLANG.rankPts(entry.score||0)}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  if(!entries.length){
+    list.innerHTML = `<div style="text-align:center;color:#5a7a5a;padding:20px;font-style:italic;">${FCLANG.rankEmpty||'Be the first!'}</div>`;
+  }
+}
+
+function updateMenuLives() {
+  const el = document.getElementById('menuLives');
+  if(!el) return;
+  el.innerHTML = '';
+  // Jak w Wisp: ❤️ ×91  (jedno serduszko + liczba)
+  const heart = document.createElement('span');
+  heart.textContent = '❤️';
+  heart.style.fontSize = '16px';
+  el.appendChild(heart);
+  if(GS.lives !== 1) {
+    const x = document.createElement('span');
+    x.style.cssText = 'color:#ff8080;font-family:Cinzel,serif;font-size:13px;margin-left:2px;margin-right:8px;';
+    x.textContent = `×${GS.lives}`;
+    el.appendChild(x);
+  } else {
+    el.appendChild(document.createTextNode(' '));
+  }
+  const lbl = document.createElement('span');
+  lbl.textContent = FCLANG.livesInfo(GS.lives,GS.battleLevel,FC_DIFF_CONFIG[FC_DIFF]?.label||'');
+  el.appendChild(lbl);
+  updateMenuContinue();
+}
+
+function shuffle(arr) {
+  for(let i=arr.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+let _adminClicks = 0;
+function adminAddLives() {
+  _adminClicks++;
+  if(_adminClicks >= 3) {
+    _adminClicks = 0;
+    GS.lives += 100;
+    // Odblokuj wszystkie karty
+    ['wisp','oak','fairy','fog','heart','wolf','mushroom','river','night','frost',
+     'seed','storm','bear','firefly','crow','thorn','moonspirit','lava'].forEach(id => {
+      const ex = GS.collection.find(c=>c.id===id);
+      if(ex) ex.count = Math.max(ex.count, 3);
+      else GS.collection.push({id, count:3});
+      if(!GS.deck.includes(id)) GS.deck.push(id);
+    });
+    saveSave();
+    updateMenuLives();
+    document.getElementById('adminBtn').textContent = '✅ +100 żyć!';
+    setTimeout(()=>{ document.getElementById('adminBtn').textContent = 'v10'; }, 2000);
+  } else {
+    document.getElementById('adminBtn').textContent = `v10 (${_adminClicks}/3)`;
+    setTimeout(()=>{ _adminClicks=0; document.getElementById('adminBtn').textContent='v10'; }, 1500);
+  }
+}
+window.adminAddLives = adminAddLives;
+function toggleMute() {
+  _muted = !_muted;
+  Audio.setMute(_muted);
+  const btn = document.getElementById('muteBtn');
+  if(btn) btn.textContent = _muted ? '🔇' : '🔊';
+}
+
+// ── INIT ──────────────────────────────────────────
+window.addEventListener('load', async () => {
+  // Wyczyść stary zapis jeśli pochodzi z poprzedniej wersji
+  try {
+    const old = localStorage.getItem('fc_save');
+    if(old) {
+      const p = JSON.parse(old);
+      if(p.wins === undefined) { localStorage.removeItem('fc_save'); }
+    }
+  } catch(e) { try{ localStorage.removeItem('fc_save'); }catch(e2){} }
+
+  initGame();
+  applyFCLang();
+  setTimeout(initMenuParticles, 50);
+  startActiveTimer();
+
+  // ── Obsługa URL params po OAuth / zakupie ────────
+  const params = new URLSearchParams(window.location.search);
+
+  // Token po logowaniu Google
+  const urlToken = params.get('token');
+  if(urlToken){
+    setToken(urlToken);
+    history.replaceState({}, '', window.location.pathname);
+  }
+
+  // Komunikat po udanym zakupie Paddle
+  const purchase = params.get('purchase');
+  if(purchase === 'success'){
+    history.replaceState({}, '', window.location.pathname);
+    setTimeout(async () => {
+      if(getToken()){
+        try {
+          const sv = await apiGet('/api/progress');
+          if(sv.mushrooms !== undefined){
+            GS.mushrooms = sv.mushrooms;
+            saveSave();
+            updateMushroomDisplay();
+          }
+        } catch(e){}
+      }
+      showToast(FCLANG.purchaseOk||'✅ Purchase complete!');
+    }, 3000);
+  }
+
+  // ── Sync z serwerem jeśli zalogowany ────────────
+  if(getToken()){
+    const user = await syncMe();
+    if(user){
+      await syncProgressFromServer();
+      updateMushroomDisplay();
+      updateMenuContinue();
+    } else {
+      clearAuth(); // token wygasł
+    }
+  }
+
+  updateAuthUI();
+
+  // Rejestracja Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  }
+
+  // Próba auto-startu muzyki — działa na wielu przeglądarkach
+  (async () => {
+    try {
+      Audio.init();
+      // Niektóre przeglądarki pozwalają na autoplay po krótkiej chwili
+      await new Promise(r => setTimeout(r, 300));
+      Audio.playTheme(0);
+    } catch(e) {}
+  })();
+
+  // Fallback — przy pierwszym dotyku/kliknięciu na pewno startuje
+  function ensureMusic() {
+    try { Audio.init(); Audio.playTheme(0); } catch(e){}
+    document.removeEventListener('click', ensureMusic);
+    document.removeEventListener('touchstart', ensureMusic);
+  }
+  document.addEventListener('click', ensureMusic);
+  document.addEventListener('touchstart', ensureMusic, {passive:true});
+
+  // Ukryty skrót klawiszowy — N = następna plansza (tylko PC, tylko podczas walki)
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'n' || e.key === 'N') {
+      const battleActive = document.getElementById('battle')?.classList.contains('active');
+      if(!battleActive || battle.over) return;
+      battle.over = true;
+      GS.wins++;
+      GS.battleLevel = Math.min(GS.battleLevel + 1, ENEMIES.length + 1);
+      saveSave();
+      showPrebattle();
+    }
+  });
+});
+</script>
+</body>
+</html>

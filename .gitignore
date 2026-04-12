@@ -1,0 +1,8 @@
+node_modules/
+database/
+.env
+*.log
+twa/android/app/build/
+twa/android/local.properties
+twa/android/.gradle/
+dla sklepu Google Play/gotowe/
