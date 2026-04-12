@@ -209,6 +209,7 @@ app.get('/api/admin/purchases', adminAuth, (_req, res) => {
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public'), {
+  dotfiles: 'allow',
   setHeaders(res, filePath) {
     if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-store');

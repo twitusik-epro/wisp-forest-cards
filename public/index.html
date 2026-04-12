@@ -372,7 +372,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <button id="fc-pb-start-btn" onclick="prebattleStart()"
       style="width:100%;padding:13px;border-radius:16px;background:linear-gradient(135deg,#1a4a1a,#2a7a2a);border:2px solid #4a9a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:15px;cursor:pointer;letter-spacing:1px;display:none;">
     </button>
-    <button onclick="showScreen('menu')" id="fc-pb-back-btn" style="margin-top:6px;background:none;border:none;color:#3a5a3a;font-size:11px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
+    <button onclick="showScreen('menu')" id="fc-pb-back-btn" style="margin-top:6px;background:none;border:none;color:#5a7a5a;font-size:22px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
   </div>
 
 
@@ -418,16 +418,19 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
       </div>
       <div id="selectedLabel" style="display:none;"></div>
 
-      <!-- Dolny pasek — tylko dźwięk i pauza -->
-      <div style="padding:4px 12px 14px;display:flex;gap:6px;flex-shrink:0;justify-content:flex-end;">
-        <button onclick="toggleMute()" id="muteBtn"
-          style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;">
-          🔊
-        </button>
-        <button onclick="openPause()"
-          style="padding:12px 14px;border-radius:16px;background:rgba(20,30,40,.7);border:1px solid #2a4a6a;color:#80b0e0;font-family:'Cinzel',cursive;font-size:16px;cursor:pointer;">
-          ⏸
-        </button>
+      <!-- Dolny pasek — wynik + dźwięk i pauza -->
+      <div style="padding:4px 12px 14px;display:flex;gap:6px;flex-shrink:0;justify-content:space-between;align-items:center;">
+        <div id="battleScore" style="font-family:'Cinzel',cursive;font-size:13px;color:#ffd060;letter-spacing:.5px;padding:4px 2px;">🏆 0</div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="toggleMute()" id="muteBtn"
+            style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;">
+            🔊
+          </button>
+          <button onclick="openPause()"
+            style="padding:12px 14px;border-radius:16px;background:rgba(20,30,40,.7);border:1px solid #2a4a6a;color:#80b0e0;font-family:'Cinzel',cursive;font-size:16px;cursor:pointer;">
+            ⏸
+          </button>
+        </div>
       </div>
     </div>
 
@@ -2417,7 +2420,7 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
 
   // ── TYP — kolorowy badge ──
   const badgeY = H*0.72;
-  const badgeH = Math.max(14, H*0.085);
+  const badgeH = Math.max(11, H*0.075);
   const badgeW = W*0.82;
   const badgeX = (W-badgeW)/2;
   // Badge tło
@@ -2436,13 +2439,13 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
   c.fillText((FCLANG.typeNames||TYPE_NAMES)[card.type]||card.type, W/2, badgeY+badgeH/2);
 
   // ── STATYSTYKI ATK / DEF ──
-  const statY = H*0.822;
-  const statFontSize = Math.max(8, Math.floor(W*0.11));
+  const statY = badgeY + badgeH + 3;
+  const statFontSize = Math.max(9, Math.floor(W*0.185));
   // Tło statystyk
   c.fillStyle='rgba(0,0,0,.4)';
-  c.fillRect(0, statY-3, W, statFontSize+8);
+  c.fillRect(0, statY-2, W, statFontSize+6);
   // ATK
-  c.font=`500 ${statFontSize}px Cinzel, serif`;
+  c.font=`700 ${statFontSize}px Cinzel, serif`;
   c.fillStyle='#ff7070';
   c.textAlign='left'; c.textBaseline='top';
   c.fillText(`⚔ ${card.atk}`, W*0.08, statY);
@@ -2452,8 +2455,8 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
   c.fillText(`${card.def} 🛡`, W*0.92, statY);
 
   // ── PASEK ŻYCIA — zmniejsza się po obrażeniach ──
-  const lifeBarY = H*0.905;
   const lifeBarH = Math.max(4, H*0.028);
+  const lifeBarY = Math.max(H*0.965, statY + statFontSize + 2);
   const lifeBarW = W*0.84;
   const lifeBarX = (W-lifeBarW)/2;
   const curHP  = currentHP !== null ? currentHP : card.hp;
@@ -2474,12 +2477,6 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
     c.fillStyle=lifeGrad;
     roundRect(c,lifeBarX,lifeBarY,lifeBarW*ratio,lifeBarH,lifeBarH/2); c.fill();
   }
-  // Tekst HP
-  const lifeFontSize = Math.max(7, Math.floor(W*0.09));
-  c.fillStyle = ratio > 0.5 ? 'rgba(200,255,180,.9)' : ratio > 0.25 ? 'rgba(255,220,150,.9)' : 'rgba(255,160,160,.9)';
-  c.font=`${lifeFontSize}px Cinzel, serif`;
-  c.textAlign='center'; c.textBaseline='top';
-  c.fillText(`❤ ${curHP}/${card.hp}`, W/2, lifeBarY+lifeBarH+1);
 
   // ── OBRAMOWANIE — grube, świecące ──
   const borderColors = {
@@ -3231,6 +3228,12 @@ function renderLives() {
   lbl.className = 'lives-label';
   lbl.textContent = FCLANG.livesLbl||'Lives';
   bar.appendChild(lbl);
+  updateBattleScore();
+}
+
+function updateBattleScore() {
+  const el = document.getElementById('battleScore');
+  if(el) el.textContent = `🏆 ${getPlayerScore()}`;
 }
 
 // ── ANIMACJE KART ────────────────────────────────
