@@ -2638,6 +2638,14 @@ document.getElementById('prebattleEnemyName').textContent = `${enemy.avatar} ${_
   // Od razu losuj karty gracza — gracz może je zmienić
   document.getElementById('fc-pb-start-btn').style.display = 'none';
   document.getElementById('prebattleCollection').style.display = 'none';
+  // Odśwież napisy przycisków (na wypadek gdyby applyFCLang nie zdążył)
+  document.getElementById('fc-pb-title').textContent = FCLANG.pbTitle||'⚔️ Battle incoming!';
+  document.getElementById('fc-pb-enemy-lbl').textContent = FCLANG.pbEnemyLbl||'⚔️ ENEMY CARDS';
+  document.getElementById('fc-pb-your-lbl').textContent = FCLANG.pbYourLbl||'🌿 YOUR CARDS';
+  document.getElementById('fc-pb-random-btn').textContent = FCLANG.pbRandom||'🎲 Shuffle';
+  document.getElementById('fc-pb-manual-btn').textContent = FCLANG.pbManual||'🧠 Pick manually';
+  document.getElementById('fc-pb-start-btn').textContent = FCLANG.pbStart||'▶ FIGHT!';
+  document.getElementById('fc-pb-back-btn').textContent = FCLANG.pbBack||'↩ Back';
   prebattleRandom();
 }
 
