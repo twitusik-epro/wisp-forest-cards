@@ -7,7 +7,7 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1a3a1a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Uncial+Antiqua&family=Lora:ital,wght@0,400;1,300&display=swap" rel="stylesheet">
 <!-- Paddle.js -->
 <meta name="paddle-env" content="production">
 <meta name="paddle-token" content="live_2379064e4093798aaef64cc9d4f">
@@ -246,10 +246,10 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
 /* ── RANKING ── */
 .rank-row { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:12px; background:rgba(15,25,5,.8); border:1px solid rgba(80,140,20,.2); }
-.rank-num { font-family:'Cinzel',cursive; font-size:18px; width:32px; text-align:center; flex-shrink:0; }
-.rank-name { flex:1; font-family:'Cinzel',cursive; font-size:14px; color:#c0e0a0; }
-.rank-score { font-family:'Cinzel',cursive; font-size:15px; color:#ffd060; }
-.rank-wins { font-size:11px; color:#5a8a4a; font-family:'Crimson Pro',serif; font-style:italic; }
+.rank-num { font-family:'Uncial Antiqua',cursive; font-size:18px; width:32px; text-align:center; flex-shrink:0; }
+.rank-name { flex:1; font-family:'Uncial Antiqua',cursive; font-size:14px; color:#c0e0a0; }
+.rank-score { font-family:'Uncial Antiqua',cursive; font-size:15px; color:#ffd060; }
+.rank-wins { font-size:11px; color:#5a8a4a; font-family:'Lora',serif; font-style:italic; }
 </style>
 </head>
 <body>
@@ -588,7 +588,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
   <!-- RANKING -->
   <div id="ranking" class="screen" style="background:linear-gradient(160deg,#080a00,#060e06);flex-direction:column;">
     <div class="coll-header" style="border-color:rgba(200,160,0,.25);">
-      <div class="coll-title" style="color:#ffd060;" id="fc-rank-title"></div>
+      <div class="coll-title" style="color:#ffd060;font-family:'Uncial Antiqua',cursive;" id="fc-rank-title"></div>
       <button onclick="toggleFCLang()" id="fc-lang-ranking" class="menu-icon-btn" style="font-size:11px;padding:4px 8px;color:#d0b060;border-color:#6a5010;"></button>
       <button class="back-btn" id="fc-rank-back" onclick="showScreen('menu')" style="border-color:#5a4010;color:#aa8040;"></button>
     </div>
