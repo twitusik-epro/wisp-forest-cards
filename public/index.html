@@ -47,12 +47,12 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 /* Wisp brand ponad tytułem */
 .menu-wisp-brand { display:flex; align-items:center; gap:8px; margin-bottom:4px; position:relative; z-index:1; }
 .menu-wisp-logo { flex-shrink:0; filter:drop-shadow(0 0 8px rgba(80,220,40,.5)); animation:floatWisp 3s ease-in-out infinite; }
-.menu-wisp-name { font-family:'Cinzel',cursive; font-size:16px; color:#80ee60; letter-spacing:2px; opacity:.8; }
+.menu-wisp-name { font-family:'Cinzel',cursive; font-size:24px; color:#80ee60; letter-spacing:2px; opacity:.8; }
 /* Logo */
 .menu-logo-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; position:relative; z-index:1; }
 .menu-title-text { font-family:'Cinzel',cursive; font-size:36px; font-weight:700; color:var(--green); text-shadow:0 0 30px rgba(80,220,40,.6); letter-spacing:2px; }
-.menu-subtitle { font-style:italic; font-size:14px; color:#5a8a5a; margin-bottom:12px; text-align:center; line-height:1.5; position:relative; z-index:1; }
-.menu-choosediff { font-family:'Cinzel',cursive; font-size:12px; color:#5a8a5a; margin-bottom:8px; letter-spacing:1px; position:relative; z-index:1; }
+.menu-subtitle { font-style:italic; font-size:18px; color:#5a8a5a; margin-bottom:12px; text-align:center; line-height:1.5; position:relative; z-index:1; }
+.menu-choosediff { font-family:'Cinzel',cursive; font-size:16px; color:#5a8a5a; margin-bottom:8px; letter-spacing:1px; position:relative; z-index:1; }
 
 /* Przyciski trudności — identyczne jak w Wisp */
 .diff-row { display:flex; gap:8px; margin-bottom:14px; width:100%; position:relative; z-index:1; }
@@ -77,7 +77,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
 /* Pasek ikon — mały rząd jak w Wisp */
 .menu-icon-row { display:flex; gap:5px; margin-top:8px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
-.menu-icon-btn { background:rgba(20,40,20,.7); color:#80c070; border:1px solid #2a6a2a; border-radius:8px; padding:5px 8px; font-size:11px; cursor:pointer; font-family:'Crimson Pro',serif; transition:all .15s; }
+.menu-icon-btn { background:rgba(20,40,20,.7); color:#80c070; border:1px solid #2a6a2a; border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; font-family:'Crimson Pro',serif; transition:all .15s; }
 .menu-icon-btn:hover { background:rgba(30,60,30,.9); }
 
 /* Info i footer */
@@ -118,8 +118,8 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
 .field-enemy { display:flex; gap:6px; justify-content:center; width:100%; padding:0 10px; box-sizing:border-box; }
 .field-player { display:flex; gap:6px; }
-.battle-log { font-style:italic; font-size:clamp(13px,4.5vw,22px); color:#8acc7a; text-align:center; padding:4px 16px; line-height:1.3; min-height:2.6em; display:flex; flex-direction:column; justify-content:center; }
-.section-label { font-size:clamp(10px,3vw,15px); color:#5a8a5a; letter-spacing:1px; text-align:center; font-family:'Cinzel',cursive; }
+.battle-log { font-style:italic; font-size:clamp(20px,6.5vw,33px); color:#8acc7a; text-align:center; padding:4px 16px; line-height:1.3; min-height:2.6em; display:flex; flex-direction:column; justify-content:center; }
+.section-label { font-size:clamp(15px,4.5vw,23px); color:#5a8a5a; letter-spacing:1px; text-align:center; font-family:'Cinzel',cursive; }
 .lives-bar { padding:4px 14px 4px; display:flex; align-items:center; gap:4px; flex-shrink:0; }
 .life-heart { font-size:16px; }
 
@@ -262,7 +262,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <!-- Napis Wisp nad tytułem -->
     <div class="menu-wisp-brand">
       <div class="menu-wisp-logo">
-        <svg width="40" height="40" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+        <svg width="60" height="60" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
           <!-- Brak tła — tylko poświata i twarz -->
           <ellipse cx="26" cy="27" rx="12" ry="14" fill="#80ee60" filter="url(#glow)"/>
           <circle cx="22" cy="23" r="3" fill="#0a200a"/>
@@ -340,7 +340,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
   <!-- EKRAN WYBORU KART przed walką -->
   <div id="prebattle" class="screen" style="flex-direction:column;align-items:center;justify-content:flex-start;padding:14px 12px;overflow-y:auto;">
 
-    <div style="font-family:'Cinzel',cursive;font-size:34px;color:#80ee60;margin-bottom:8px;text-shadow:0 0 20px rgba(80,220,40,.4);" id="fc-pb-title"></div>
+    <div style="font-family:'Cinzel',cursive;font-size:20px;white-space:nowrap;color:#80ee60;margin-bottom:8px;text-shadow:0 0 20px rgba(80,220,40,.4);" id="fc-pb-title"></div>
 
     <!-- Przeciwnik — karty widoczne -->
     <div style="width:100%;background:rgba(80,10,10,.15);border:1px solid rgba(180,40,40,.2);border-radius:12px;padding:10px;margin-bottom:12px;">
@@ -357,7 +357,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     </div>
 
     <!-- Kolekcja do wyboru (tryb ręczny) -->
-    <div id="prebattleCollection" style="display:none;width:100%;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;max-height:180px;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:8px;padding:8px;"></div>
+    <div id="prebattleCollection" style="display:none;width:100%;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;background:rgba(0,0,0,.2);border-radius:8px;padding:8px;"></div>
 
     <!-- Przyciski trybu -->
     <div style="display:flex;gap:8px;margin-bottom:10px;width:100%;">
@@ -569,6 +569,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
       <button onclick="hideTopup()" id="fc-topup-cancel" style="margin-top:8px;background:none;border:none;color:#5a4a2a;font-size:13px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
     </div>
+
   </div>
 
   <!-- INSTRUKCJA -->
@@ -600,6 +601,25 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <div class="pack-open-title" id="packOpenTitle"></div>
     <div class="pack-cards-row" id="packCardsRow"></div>
     <button class="pack-continue" id="fc-pack-continue" onclick="showScreen('collection')"></button>
+  </div>
+
+  <!-- LIVES SHOP OVERLAY — fixed, widoczny z każdego ekranu -->
+  <div id="livesOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9998;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;">
+    <div style="font-size:48px;line-height:1;">❤️</div>
+    <div style="font-family:'Cinzel',cursive;font-size:20px;color:#ff8080;text-align:center;" id="fc-lives-title"></div>
+    <div style="font-size:13px;color:#7a5a5a;font-style:italic;text-align:center;margin-bottom:4px;" id="fc-lives-sub"></div>
+
+    <div onclick="buyLives()" style="width:100%;max-width:300px;padding:18px;border-radius:16px;background:linear-gradient(135deg,rgba(80,10,10,.9),rgba(120,20,20,.9));border:2px solid #aa3030;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-family:'Cinzel',cursive;font-size:18px;color:#ff8080;" id="fc-lives-pack-lbl"></div>
+        <div style="font-size:11px;color:#8a5a5a;margin-top:3px;" id="fc-lives-pack-sub"></div>
+      </div>
+      <div style="font-family:'Cinzel',cursive;font-size:20px;color:#ffd060;" id="fc-lives-price">0,99 €</div>
+    </div>
+
+    <button onclick="hideLivesShop();showTopup();" style="width:100%;max-width:300px;padding:12px;border-radius:12px;background:rgba(40,30,0,.8);border:1px solid #6a5020;color:#ffd060;font-family:'Cinzel',cursive;font-size:14px;cursor:pointer;" id="fc-lives-buy-mush"></button>
+
+    <button onclick="hideLivesShop()" style="margin-top:4px;background:none;border:none;color:#5a4a4a;font-size:13px;cursor:pointer;font-family:'Cinzel',cursive;" id="fc-lives-cancel"></button>
   </div>
 
 </div>
@@ -968,6 +988,12 @@ const FC_LANGS = {
     livesLbl:'Życia',
     livesInfo:(n,lvl,diff)=>`${n} żyć · Poziom ${lvl} · ${diff}`,
     noLives:'Nie masz żyć! Wróć później po darmowe życie.',
+    livesShopTitle:'Brak żyć',
+    livesShopSub:'Kup 3 życia i wróć do walki!',
+    livesPackLbl:'❤️❤️❤️ +3 Życia',
+    livesPackSub:'Natychmiastowe uzupełnienie',
+    livesBuyMush:'🍄 Kup Grzybki',
+    livesCancelBtn:'↩ Wróć do menu',
     resetConfirm:'Usunąć zapis i zacząć od nowa?',
     maxLives:'Masz maksymalną liczbę żyć (10)',
     nextLife:(m,s)=>`❤️ Następne darmowe życie za ${m}m ${s}s aktywnej gry`,
@@ -1108,6 +1134,12 @@ const FC_LANGS = {
     livesLbl:'Lives',
     livesInfo:(n,lvl,diff)=>`${n} lives · Level ${lvl} · ${diff}`,
     noLives:'No lives left! Come back later for a free life.',
+    livesShopTitle:'No lives left',
+    livesShopSub:'Buy 3 lives and get back to battle!',
+    livesPackLbl:'❤️❤️❤️ +3 Lives',
+    livesPackSub:'Instant replenishment',
+    livesBuyMush:'🍄 Buy Mushrooms',
+    livesCancelBtn:'↩ Back to menu',
     resetConfirm:'Delete save and start over?',
     maxLives:'You have the maximum lives (10)',
     nextLife:(m,s)=>`❤️ Next free life in ${m}m ${s}s of active play`,
@@ -1247,6 +1279,12 @@ const FC_LANGS = {
     livesLbl:'Leben',
     livesInfo:(n,lvl,diff)=>`${n} Leben · Level ${lvl} · ${diff}`,
     noLives:'Keine Leben mehr! Komm später zurück.',
+    livesShopTitle:'Keine Leben mehr',
+    livesShopSub:'Kauf 3 Leben und kämpfe weiter!',
+    livesPackLbl:'❤️❤️❤️ +3 Leben',
+    livesPackSub:'Sofortige Auffüllung',
+    livesBuyMush:'🍄 Pilze kaufen',
+    livesCancelBtn:'↩ Zurück zum Menü',
     resetConfirm:'Spielstand löschen und neu starten?',
     maxLives:'Maximale Anzahl Leben (10)',
     nextLife:(m,s)=>`❤️ Nächstes freies Leben in ${m}m ${s}s`,
@@ -1386,6 +1424,12 @@ const FC_LANGS = {
     livesLbl:'Vidas',
     livesInfo:(n,lvl,diff)=>`${n} vidas · Nivel ${lvl} · ${diff}`,
     noLives:'¡Sin vidas! Vuelve más tarde.',
+    livesShopTitle:'Sin vidas',
+    livesShopSub:'¡Compra 3 vidas y vuelve a luchar!',
+    livesPackLbl:'❤️❤️❤️ +3 Vidas',
+    livesPackSub:'Reposición inmediata',
+    livesBuyMush:'🍄 Comprar setas',
+    livesCancelBtn:'↩ Volver al menú',
     resetConfirm:'¿Borrar partida y empezar de nuevo?',
     maxLives:'Tienes el máximo de vidas (10)',
     nextLife:(m,s)=>`❤️ Próxima vida gratis en ${m}m ${s}s`,
@@ -1525,6 +1569,12 @@ const FC_LANGS = {
     livesLbl:'Vies',
     livesInfo:(n,lvl,diff)=>`${n} vies · Niveau ${lvl} · ${diff}`,
     noLives:'Plus de vies ! Revenez plus tard.',
+    livesShopTitle:'Plus de vies',
+    livesShopSub:'Achetez 3 vies et retournez au combat !',
+    livesPackLbl:'❤️❤️❤️ +3 Vies',
+    livesPackSub:'Reconstitution immédiate',
+    livesBuyMush:'🍄 Acheter des champignons',
+    livesCancelBtn:'↩ Retour au menu',
     resetConfirm:'Supprimer la sauvegarde et recommencer ?',
     maxLives:'Vous avez le maximum de vies (10)',
     nextLife:(m,s)=>`❤️ Prochaine vie gratuite dans ${m}m ${s}s`,
@@ -1641,6 +1691,14 @@ function applyFCLang() {
   setT('fc-pack-best', L.packBest);
   setT('fc-pack-large-lbl', L.packLarge);
   setT('fc-topup-cancel', L.topupCancel);
+
+  // Lives shop
+  setT('fc-lives-title', L.livesShopTitle);
+  setT('fc-lives-sub', L.livesShopSub);
+  setT('fc-lives-pack-lbl', L.livesPackLbl);
+  setT('fc-lives-pack-sub', L.livesPackSub);
+  setT('fc-lives-buy-mush', L.livesBuyMush);
+  setT('fc-lives-cancel', L.livesCancelBtn);
 
   // Guide
   setT('fc-guide-title', L.guideTitle);
@@ -2455,7 +2513,7 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
   c.fillText(`${card.def} 🛡`, W*0.92, statY);
 
   // ── PASEK ŻYCIA — zmniejsza się po obrażeniach ──
-  const lifeBarH = Math.max(8, H*0.056);
+  const lifeBarH = Math.max(16, H*0.112);
   const lifeBarY = Math.max(H*0.965, statY + statFontSize + 2);
   const lifeBarW = W*0.84;
   const lifeBarX = (W-lifeBarW)/2;
@@ -2594,7 +2652,7 @@ const ENEMIES = [
 function startCampaign() {
   try { Audio.init(); } catch(e){}
   if(GS.lives <= 0) {
-    alert(FCLANG.noLives||'No lives left!');
+    openLivesShop();
     return;
   }
   GS.difficulty = FC_DIFF;
@@ -3184,6 +3242,7 @@ function nextBattle() {
 
 function continueCampaign() {
   try { Audio.init(); } catch(e){}
+  if(GS.lives <= 0) { openLivesShop(); return; }
   GS.difficulty = FC_DIFF;
   saveSave();
   showPrebattle();
@@ -3699,6 +3758,77 @@ function hideTopup() {
   document.getElementById('topupOverlay').style.display = 'none';
 }
 
+function openLivesShop() {
+  const el = document.getElementById('livesOverlay');
+  if(el) el.style.display = 'flex';
+}
+function hideLivesShop() {
+  const el = document.getElementById('livesOverlay');
+  if(el) el.style.display = 'none';
+}
+
+async function buyLives() {
+  const token = localStorage.getItem('fc_token');
+  if(!token) { showToast(FCLANG.loginFirst||'Sign in first'); return; }
+  const package_id = 'fc_lives_3';
+
+  // Google Play Billing (TWA)
+  const IS_TWA = document.referrer.includes('android-app://') || navigator.userAgent.includes('wv');
+  if(IS_TWA && 'getDigitalGoodsService' in window) {
+    try {
+      const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+      const details = await service.getDetails([package_id]);
+      if(!details || !details.length){ _buyLivesWithPaddle(); return; }
+      const request = new PaymentRequest(
+        [{ supportedMethods:'https://play.google.com/billing', data:{ sku: package_id } }],
+        { total:{ label: details[0].title || package_id, amount:{ currency:'EUR', value:'0' } } }
+      );
+      const response = await request.show();
+      const r = await fetch('/api/gplay/verify', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ package_id, purchase_token: response.details.token }),
+      });
+      const data = await r.json();
+      if(data.ok) {
+        await response.complete('success');
+        GS.lives = Math.min(10, GS.lives + 3);
+        saveSave();
+        updateMenuLives();
+        hideLivesShop();
+        showToast('❤️❤️❤️ +3 ' + (FCLANG.livesLbl||'Lives') + ' ✅');
+      } else {
+        await response.complete('fail');
+        showToast(FCLANG.payError||'Payment error');
+      }
+    } catch(e) {
+      if(e.name !== 'AbortError') _buyLivesWithPaddle();
+    }
+    return;
+  }
+
+  // Paddle (web)
+  _buyLivesWithPaddle();
+
+  function _buyLivesWithPaddle() {
+    fetch('/api/buy', {
+      method: 'POST',
+      headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+      body: JSON.stringify({ package_id }),
+    })
+    .then(r => r.json())
+    .then(d => {
+      if(!d.price_id || !window.Paddle){ showToast(FCLANG.payError||'Payment error'); return; }
+      Paddle.Checkout.open({
+        items: [{ priceId: d.price_id, quantity: 1 }],
+        customData: { user_id: String(d.user_id), package_id: d.package_id },
+        settings: { successUrl: window.location.origin + '/?purchase=lives' },
+      });
+    })
+    .catch(() => showToast(FCLANG.connError||'Connection error'));
+  }
+}
+
 function buyMushrooms(amount, price) {
   const token = getToken();
   if(!token){
@@ -4097,6 +4227,15 @@ window.addEventListener('load', async () => {
       }
       showToast(FCLANG.purchaseOk||'✅ Purchase complete!');
     }, 3000);
+  }
+  if(purchase === 'lives'){
+    history.replaceState({}, '', window.location.pathname);
+    setTimeout(() => {
+      GS.lives = Math.min(10, GS.lives + 3);
+      saveSave();
+      updateMenuLives();
+      showToast('❤️❤️❤️ +3 ' + (FCLANG.livesLbl||'Lives') + ' ✅');
+    }, 2000);
   }
 
   // ── Sync z serwerem jeśli zalogowany ────────────
