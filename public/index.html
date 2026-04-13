@@ -340,20 +340,20 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
   <!-- EKRAN WYBORU KART przed walką -->
   <div id="prebattle" class="screen" style="flex-direction:column;align-items:center;justify-content:flex-start;padding:14px 12px;overflow-y:auto;">
 
-    <div style="font-family:'Cinzel',cursive;font-size:17px;color:#80ee60;margin-bottom:8px;text-shadow:0 0 20px rgba(80,220,40,.4);" id="fc-pb-title"></div>
+    <div style="font-family:'Cinzel',cursive;font-size:34px;color:#80ee60;margin-bottom:8px;text-shadow:0 0 20px rgba(80,220,40,.4);" id="fc-pb-title"></div>
 
     <!-- Przeciwnik — karty widoczne -->
     <div style="width:100%;background:rgba(80,10,10,.15);border:1px solid rgba(180,40,40,.2);border-radius:12px;padding:10px;margin-bottom:12px;">
-      <div id="prebattleEnemyName" style="font-family:'Cinzel',cursive;font-size:13px;color:#ff8080;text-align:center;margin-bottom:6px;"></div>
-      <div style="font-family:'Cinzel',cursive;font-size:11px;color:#cc4040;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-enemy-lbl"></div>
+      <div id="prebattleEnemyName" style="font-family:'Cinzel',cursive;font-size:26px;color:#ff8080;text-align:center;margin-bottom:6px;"></div>
+      <div style="font-family:'Cinzel',cursive;font-size:22px;color:#cc4040;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-enemy-lbl"></div>
       <div id="prebattleEnemyCards" style="display:flex;gap:6px;justify-content:center;"></div>
     </div>
 
     <!-- Karty gracza -->
     <div style="width:100%;background:rgba(10,60,10,.2);border:1px solid rgba(40,140,40,.2);border-radius:12px;padding:10px;margin-bottom:10px;">
-      <div style="font-family:'Cinzel',cursive;font-size:11px;color:#5a9a5a;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-your-lbl"></div>
+      <div style="font-family:'Cinzel',cursive;font-size:22px;color:#5a9a5a;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-your-lbl"></div>
       <div id="prebattleSelected" style="display:flex;gap:6px;justify-content:center;min-height:90px;align-items:center;"></div>
-      <div id="prebattleInfo" style="font-size:11px;color:#5a8a6a;font-style:italic;margin-top:6px;text-align:center;"></div>
+      <div id="prebattleInfo" style="font-size:22px;color:#5a8a6a;font-style:italic;margin-top:6px;text-align:center;"></div>
     </div>
 
     <!-- Kolekcja do wyboru (tryb ręczny) -->
@@ -362,17 +362,17 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <!-- Przyciski trybu -->
     <div style="display:flex;gap:8px;margin-bottom:10px;width:100%;">
       <button id="fc-pb-random-btn" onclick="prebattleRandom()"
-        style="flex:1;padding:10px;border-radius:12px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);border:2px solid #3a8a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:12px;cursor:pointer;">
+        style="flex:1;padding:10px;border-radius:12px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);border:2px solid #3a8a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:18px;cursor:pointer;">
       </button>
       <button id="fc-pb-manual-btn" onclick="prebattleManual()"
-        style="flex:1;padding:10px;border-radius:12px;background:rgba(20,30,50,.8);border:1px solid #3a5a8a;color:#80c0ff;font-family:'Cinzel',cursive;font-size:12px;cursor:pointer;">
+        style="flex:1;padding:10px;border-radius:12px;background:rgba(20,30,50,.8);border:1px solid #3a5a8a;color:#80c0ff;font-family:'Cinzel',cursive;font-size:18px;cursor:pointer;">
       </button>
     </div>
 
     <button id="fc-pb-start-btn" onclick="prebattleStart()"
-      style="width:100%;padding:13px;border-radius:16px;background:linear-gradient(135deg,#1a4a1a,#2a7a2a);border:2px solid #4a9a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:15px;cursor:pointer;letter-spacing:1px;display:none;">
+      style="width:100%;padding:13px;border-radius:16px;background:linear-gradient(135deg,#1a4a1a,#2a7a2a);border:2px solid #4a9a3a;color:#b8ffa0;font-family:'Cinzel',cursive;font-size:23px;cursor:pointer;letter-spacing:1px;display:none;">
     </button>
-    <button onclick="showScreen('menu')" id="fc-pb-back-btn" style="margin-top:6px;background:none;border:none;color:#5a7a5a;font-size:22px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
+    <button onclick="showScreen('menu')" id="fc-pb-back-btn" style="margin-top:6px;background:none;border:none;color:#5a7a5a;font-size:33px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
   </div>
 
 
@@ -2630,7 +2630,7 @@ document.getElementById('prebattleEnemyName').textContent = `${enemy.avatar} ${_
     wrap.appendChild(drawCard(id, pbW, pbH));
     // Typ karty jako podpis
     const typeLbl = document.createElement('div');
-    typeLbl.style.cssText = 'text-align:center;font-size:9px;color:#cc8080;font-family:Cinzel,serif;margin-top:2px;';
+    typeLbl.style.cssText = 'text-align:center;font-size:18px;color:#cc8080;font-family:Cinzel,serif;margin-top:2px;';
     typeLbl.textContent = card.emoji + ' ' + card.type;
     wrap.appendChild(typeLbl);
     enemyField.appendChild(wrap);
