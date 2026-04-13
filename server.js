@@ -170,8 +170,8 @@ app.use(express.json());
 app.use(passport.initialize());
 
 // ─── Admin Routes ───────────────────────────────────────────────────────────
-app.get('/admin',     adminAuth, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
-app.get('/admin.html', adminAuth, (_req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/admin',      (_req, res) => res.redirect(301, 'https://wispplay.com/admin'));
+app.get('/admin.html', (_req, res) => res.redirect(301, 'https://wispplay.com/admin'));
 
 app.get('/api/admin/stats', adminAuth, (_req, res) => {
   res.json({
