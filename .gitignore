@@ -5,4 +5,11 @@ database/
 twa/android/app/build/
 twa/android/local.properties
 twa/android/.gradle/
-dla sklepu Google Play/gotowe/
+twa/android/build/
+dla sklepu Google Play/
+*.keystore
+*service-account*.json
+twa/*.exp
+twa/*.aab
+twa/*.apk
+twa/*.idsig
