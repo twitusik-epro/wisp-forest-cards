@@ -185,7 +185,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 #result-overlay { position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,.92); z-index:60; }
 #result-overlay.show { display:flex; }
 .result-title { font-family:'Cinzel',cursive; font-size:32px; margin-bottom:10px; }
-.result-sub { font-style:italic; font-size:15px; color:#7aaa6a; margin-bottom:20px; }
+.result-sub { font-style:italic; font-size:30px; color:#7aaa6a; margin-bottom:20px; }
 .result-score { font-family:'Cinzel',cursive; font-size:20px; color:var(--gold); margin-bottom:20px; }
 .result-btn { padding:12px 32px; border-radius:30px; font-family:'Cinzel',cursive; font-size:14px; cursor:pointer; margin:6px; border:none; }
 .btn-next { background:linear-gradient(135deg,#1e5a1e,#2d8a2d); color:#b8ffa0; border:1px solid #4a9a3a; }
@@ -894,7 +894,7 @@ const FC_LANGS = {
     dmgSuffix:' obrażeń!',
     // Result
     win:'⚔️ Zwycięstwo!', winSub:'Las jest bezpieczny... na razie.',
-    winScore:(lvl,wins)=>`⭐ Poziom ${lvl} ukończony! Wygrane: ${wins}`,
+    winScore:(lvl,wins)=>`⭐ Poziom ${lvl} ukończony!<br>Wygrane: ${wins}`,
     lose:'💀 Porażka...', loseSub:'Ciemność pochłonęła las.',
     loseLives:(n)=>`Pozostało żyć: ${n} ❤️`,
     nextBattle:'▶ Następna walka', retry:'↺ Spróbuj ponownie',
@@ -1047,7 +1047,7 @@ const FC_LANGS = {
     skipTurn:'Turn skipped...',
     dmgSuffix:' damage!',
     win:'⚔️ Victory!', winSub:'The forest is safe... for now.',
-    winScore:(lvl,wins)=>`⭐ Level ${lvl} done! Wins: ${wins}`,
+    winScore:(lvl,wins)=>`⭐ Level ${lvl} done!<br>Wins: ${wins}`,
     lose:'💀 Defeat...', loseSub:'Darkness has consumed the forest.',
     loseLives:(n)=>`Lives remaining: ${n} ❤️`,
     nextBattle:'▶ Next Battle', retry:'↺ Try Again',
@@ -1192,7 +1192,7 @@ const FC_LANGS = {
     skipTurn:'Zug übersprungen...',
     dmgSuffix:' Schaden!',
     win:'⚔️ Sieg!', winSub:'Der Wald ist sicher... vorerst.',
-    winScore:(lvl,wins)=>`⭐ Level ${lvl} abgeschlossen! Siege: ${wins}`,
+    winScore:(lvl,wins)=>`⭐ Level ${lvl} abgeschlossen!<br>Siege: ${wins}`,
     lose:'💀 Niederlage...', loseSub:'Die Dunkelheit hat den Wald verschluckt.',
     loseLives:(n)=>`Verbleibende Leben: ${n} ❤️`,
     nextBattle:'▶ Nächster Kampf', retry:'↺ Erneut versuchen',
@@ -1337,7 +1337,7 @@ const FC_LANGS = {
     skipTurn:'Turno saltado...',
     dmgSuffix:' de daño!',
     win:'⚔️ ¡Victoria!', winSub:'El bosque está a salvo... por ahora.',
-    winScore:(lvl,wins)=>`⭐ ¡Nivel ${lvl} completado! Victorias: ${wins}`,
+    winScore:(lvl,wins)=>`⭐ ¡Nivel ${lvl} completado!<br>Victorias: ${wins}`,
     lose:'💀 Derrota...', loseSub:'La oscuridad ha consumido el bosque.',
     loseLives:(n)=>`Vidas restantes: ${n} ❤️`,
     nextBattle:'▶ Siguiente batalla', retry:'↺ Intentar de nuevo',
@@ -1482,7 +1482,7 @@ const FC_LANGS = {
     skipTurn:'Tour passé...',
     dmgSuffix:' dégâts !',
     win:'⚔️ Victoire !', winSub:'La forêt est en sécurité... pour l\'instant.',
-    winScore:(lvl,wins)=>`⭐ Niveau ${lvl} terminé ! Victoires : ${wins}`,
+    winScore:(lvl,wins)=>`⭐ Niveau ${lvl} terminé !<br>Victoires : ${wins}`,
     lose:'💀 Défaite...', loseSub:'Les ténèbres ont envahi la forêt.',
     loseLives:(n)=>`Vies restantes : ${n} ❤️`,
     nextBattle:'▶ Prochain combat', retry:'↺ Réessayer',
@@ -3214,7 +3214,7 @@ function endBattle(won) {
     document.getElementById('resultSub').textContent = FCLANG.winSub||'Forest is safe...';
     GS.wins++;
     GS.battleLevel = Math.min(GS.battleLevel + 1, ENEMIES.length);
-    document.getElementById('resultScore').textContent = FCLANG.winScore(GS.battleLevel-1,GS.wins);
+    document.getElementById('resultScore').innerHTML = FCLANG.winScore(GS.battleLevel-1,GS.wins);
     document.getElementById('btnNext').textContent = GS.battleLevel <= ENEMIES.length ? (FCLANG.nextBattle||'▶ Next Battle') : (FCLANG.completed||'🏆 Done!');
     setTimeout(() => launchFireworks(5000), 100);
     // Sync wyniku i postępu z serwerem po wygranej
@@ -3226,7 +3226,7 @@ function endBattle(won) {
     document.getElementById('resultTitle').style.color = '#ff6060';
     document.getElementById('resultSub').textContent = FCLANG.loseSub||'Darkness consumed the forest.';
     GS.lives = Math.max(0, GS.lives - 1);
-    document.getElementById('resultScore').textContent = FCLANG.loseLives(GS.lives);
+    document.getElementById('resultScore').innerHTML = FCLANG.loseLives(GS.lives);
     document.getElementById('btnNext').textContent = FCLANG.retry||'↺ Try Again';
   }
   saveSave();
@@ -3254,7 +3254,7 @@ function showEndScreen() {
   document.getElementById('resultTitle').textContent = FCLANG.campaignDone||'🏆 Campaign Complete!';
   document.getElementById('resultTitle').style.color = '#ffd060';
   document.getElementById('resultSub').textContent = FCLANG.campaignSub||'You saved the forest!';
-  document.getElementById('resultScore').textContent = FCLANG.campaignScore(getPlayerScore(),GS.wins);
+  document.getElementById('resultScore').innerHTML = FCLANG.campaignScore(getPlayerScore(),GS.wins);
   const btnNext = document.getElementById('btnNext');
   btnNext.textContent = FCLANG.playAgain||'🔄 Play Again';
   btnNext.onclick = () => {
