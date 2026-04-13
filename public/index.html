@@ -2455,7 +2455,7 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
   c.fillText(`${card.def} 🛡`, W*0.92, statY);
 
   // ── PASEK ŻYCIA — zmniejsza się po obrażeniach ──
-  const lifeBarH = Math.max(4, H*0.028);
+  const lifeBarH = Math.max(8, H*0.056);
   const lifeBarY = Math.max(H*0.965, statY + statFontSize + 2);
   const lifeBarW = W*0.84;
   const lifeBarX = (W-lifeBarW)/2;
@@ -2620,13 +2620,14 @@ document.getElementById('prebattleEnemyName').textContent = `${enemy.avatar} ${_
   // Pokaż karty przeciwnika (losujemy jak w walce żeby gracz widział skład)
   const enemyField = document.getElementById('prebattleEnemyCards');
   enemyField.innerHTML = '';
+  const {w: pbW, h: pbH} = calcCardSize(4);
   const enemyCards = shuffle([...enemy.deck, ...enemy.deck]).slice(0, 4);
   enemyCards.forEach(id => {
     const card = CARD_DB.find(c => c.id === id);
     if(!card) return;
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:relative;';
-    wrap.appendChild(drawCard(id, 68, 102));
+    wrap.appendChild(drawCard(id, pbW, pbH));
     // Typ karty jako podpis
     const typeLbl = document.createElement('div');
     typeLbl.style.cssText = 'text-align:center;font-size:9px;color:#cc8080;font-family:Cinzel,serif;margin-top:2px;';
@@ -2712,10 +2713,11 @@ function renderPrebattleSelected() {
     el.innerHTML = `<div style="color:#3a6a4a;font-style:italic;font-size:13px;padding:40px 0;">${FCLANG.pbNoCards||'No cards selected'}</div>`;
     return;
   }
+  const {w: psW, h: psH} = calcCardSize(4);
   prebattleHand.forEach((id, i) => {
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:relative;cursor:pointer;';
-    wrap.appendChild(drawCard(id, 72, 108));
+    wrap.appendChild(drawCard(id, psW, psH));
     if(prebattleMode === 'manual') {
       const x = document.createElement('div');
       x.style.cssText = 'position:absolute;top:2px;right:2px;background:rgba(120,20,20,.9);border-radius:50%;width:18px;height:18px;text-align:center;font-size:11px;line-height:18px;color:#ffaaaa;pointer-events:none;';
