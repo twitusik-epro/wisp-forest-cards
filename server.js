@@ -154,9 +154,11 @@ const paddle = PADDLE_API_KEY ? new Paddle(PADDLE_API_KEY, {
 
 // Uzupełnij price_id po dodaniu produktów w Paddle Dashboard
 const PACKAGES = {
-  fc_pack_10:  { mushrooms: 10, amount:  99, price_id: 'pri_01kp0pyrvhz6ejvv3ngg20e6t9', price_display: '0,99 €' },
-  fc_pack_25:  { mushrooms: 25, amount: 199, price_id: 'pri_01kp0q4j0v58xg561wreg8amjj', price_display: '1,99 €' },
-  fc_pack_50:  { mushrooms: 50, amount: 399, price_id: 'pri_01kp0q66jqd3hp0bf3h5dsh2np', price_display: '3,99 €' },
+  fc_pack_10:  { mushrooms: 10, lives: 0, amount:  99, price_id: 'pri_01kp0pyrvhz6ejvv3ngg20e6t9', price_display: '0,99 €' },
+  fc_pack_25:  { mushrooms: 25, lives: 0, amount: 199, price_id: 'pri_01kp0q4j0v58xg561wreg8amjj', price_display: '1,99 €' },
+  fc_pack_50:  { mushrooms: 50, lives: 0, amount: 399, price_id: 'pri_01kp0q66jqd3hp0bf3h5dsh2np', price_display: '3,99 €' },
+  // Życia — price_id do uzupełnienia po dodaniu produktu w Paddle Dashboard
+  fc_lives_3:  { mushrooms: 0,  lives: 3, amount:  99, price_id: '', price_display: '0,99 €' },
 };
 
 // ─── Express App ───────────────────────────────────────────────────────────
@@ -466,8 +468,8 @@ async function handlePaddleWebhook(req, res) {
         amount_eur_ct: pkg.amount,
       });
       if (result.changes > 0) {
-        stmts.addMushrooms.run(pkg.mushrooms, userId);
-        console.log(`✅ Dodano ${pkg.mushrooms} grzybków uid=${userId} (txn: ${txn.id})`);
+        if(pkg.mushrooms > 0) stmts.addMushrooms.run(pkg.mushrooms, userId);
+        console.log(`✅ uid=${userId} grzyby=${pkg.mushrooms} zycia=${pkg.lives||0} (txn: ${txn.id})`);
       } else {
         console.log(`ℹ️  Duplikat transakcji zignorowany: ${txn.id}`);
       }
@@ -512,15 +514,16 @@ app.post('/api/gplay/verify', requireAuth, async (req, res) => {
       mushrooms:     pkg.mushrooms,
       amount_eur_ct: pkg.amount,
     });
-    stmts.addMushrooms.run(pkg.mushrooms, req.user.id);
-    console.log(`✅ [GP] Dodano ${pkg.mushrooms} grzybków uid=${req.user.id} pkg=${package_id}`);
+    if(pkg.mushrooms > 0) stmts.addMushrooms.run(pkg.mushrooms, req.user.id);
+    const isLivesPkg = pkg.lives > 0;
+    console.log(`✅ [GP] uid=${req.user.id} pkg=${package_id} grzyby=${pkg.mushrooms} zycia=${pkg.lives}`);
     await publisher.purchases.products.consume({
       packageName: GP_PACKAGE,
       productId:   package_id,
       token:       purchase_token,
     });
     const user = stmts.getUserById.get(req.user.id);
-    res.json({ ok: true, mushrooms: user.mushrooms });
+    res.json({ ok: true, mushrooms: user.mushrooms, lives: isLivesPkg ? pkg.lives : 0 });
   } catch (err) {
     console.error('❌ [GP] verify error:', err.message);
     res.status(500).json({ error: 'Błąd weryfikacji zakupu' });

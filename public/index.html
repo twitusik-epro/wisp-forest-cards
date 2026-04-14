@@ -344,7 +344,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
     <!-- Przeciwnik — karty widoczne -->
     <div style="width:100%;background:rgba(80,10,10,.15);border:1px solid rgba(180,40,40,.2);border-radius:12px;padding:10px;margin-bottom:12px;">
-      <div id="prebattleEnemyName" style="font-family:'Cinzel',cursive;font-size:26px;color:#ff8080;text-align:center;margin-bottom:6px;"></div>
+      <div id="prebattleEnemyName" style="font-family:'Cinzel',cursive;font-size:18px;color:#ff8080;text-align:center;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
       <div style="font-family:'Cinzel',cursive;font-size:22px;color:#cc4040;text-align:center;margin-bottom:8px;letter-spacing:1px;" id="fc-pb-enemy-lbl"></div>
       <div id="prebattleEnemyCards" style="display:flex;gap:6px;justify-content:center;"></div>
     </div>
@@ -449,6 +449,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
       <div class="result-title" id="resultTitle" style="position:relative;z-index:2;"></div>
       <div class="result-sub" id="resultSub" style="position:relative;z-index:2;"></div>
       <div class="result-score" id="resultScore" style="position:relative;z-index:2;"></div>
+      <div id="resultCardReward" style="position:relative;z-index:2;margin:8px 0;"></div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;position:relative;z-index:2;">
         <button class="result-btn btn-next" id="btnNext" onclick="nextBattle()"></button>
         <button class="result-btn btn-menu" id="fc-result-menu" onclick="showScreen('menu')"></button>
@@ -945,9 +946,9 @@ const FC_LANGS = {
     guideHTML:`
       <div class="guide-section"><div class="guide-h">🎯 Cel gry</div><div class="guide-text">Zniszcz wszystkie karty przeciwnika i obniż jego punkty życia do zera. Kto pierwszy straci wszystkie punkty życia — przegrywa.</div></div>
       <div class="guide-section"><div class="guide-h">🎮 Jak grać — krok po kroku</div>
-        <div class="guide-step"><span class="guide-num">1</span><span>Wybierz swoją kartę — kliknij ją w dolnym rzędzie.</span></div>
-        <div class="guide-step"><span class="guide-num">2</span><span>Wybierz cel — kliknij kartę przeciwnika. Pojawi się 🎯 nad kartą.</span></div>
-        <div class="guide-step"><span class="guide-num">3</span><span>Kliknij ⚔️ ATAKUJ! — piorun poleci do celu.</span></div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Wybierz 4 karty do walki — <b>🎲 Losowo</b> (szybko) lub <b>🧠 Ręcznie</b> (sam wybierasz), potem kliknij ▶ DO WALKI!</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Wybierz swoją kartę — kliknij ją w dolnym rzędzie.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Wybierz cel — kliknij kartę przeciwnika. Pojawi się 🎯 nad kartą.</span></div>
         <div class="guide-step"><span class="guide-num">4</span><span>Przeciwnik automatycznie odpowiada atakiem.</span></div>
         <div class="guide-step"><span class="guide-num">5</span><span>Powtarzaj aż wygrasz lub przegrasz. Za wygraną dostajesz kartę!</span></div>
       </div>
@@ -974,7 +975,8 @@ const FC_LANGS = {
         <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendarna</span><span>Bardzo silna</span></div>
         <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mityczna</span><span>Najpotężniejsza</span></div>
       </div>
-      <div class="guide-section"><div class="guide-h">❤️ Życia</div><div class="guide-text">Tracisz życie za każdą przegraną walkę. Darmowe życie za 30 min aktywnej gry lub +1 każdego dnia.</div></div>
+      <div class="guide-section"><div class="guide-h">❤️ Życia</div><div class="guide-text">Tracisz życie za każdą przegraną walkę. Startowe życia: <b>Easy 5 · Medium 3 · Hard 1</b>. Nowe życia kupisz w sklepie.</div></div>
+      <div class="guide-section"><div class="guide-h">🎁 Nowe karty</div><div class="guide-text">Za każdą wygraną walkę dostajesz losową kartę — im wyższy poziom, tym rzadsza! Użyj grzybków 🍄 ze sklepu by kupić konkretną kartę.</div></div>
       <div class="guide-section"><div class="guide-h">🃏 Talia</div><div class="guide-text">Wybierz karty w zakładce Talia. Minimum 4 karty. Mieszaj typy — żebyś zawsze miał przewagę!</div></div>`,
     // Auth
     loginBtn:'🔑 Zaloguj przez Google',
@@ -987,7 +989,7 @@ const FC_LANGS = {
     // Lives
     livesLbl:'Życia',
     livesInfo:(n,lvl,diff)=>`${n} żyć · Poziom ${lvl} · ${diff}`,
-    noLives:'Nie masz żyć! Wróć później po darmowe życie.',
+    noLives:'Nie masz żyć! Kup nowe życia w sklepie.',
     livesShopTitle:'Brak żyć',
     livesShopSub:'Kup 3 życia i wróć do walki!',
     livesPackLbl:'❤️❤️❤️ +3 Życia',
@@ -999,6 +1001,8 @@ const FC_LANGS = {
     nextLife:(m,s)=>`❤️ Następne darmowe życie za ${m}m ${s}s aktywnej gry`,
     freeLife:'🎁 Darmowe życie! +1 ❤️',
     dailyMush:'🍄 +1 Grzybek za nowy dzień!',
+    winCard:'🎁 Nowa karta!',
+    rarityNames:{common:'pospolita',rare:'rzadka',epic:'epicka',legendary:'legendarna',mythic:'mityczna'},
     purchaseOk:'✅ Zakup udany! Grzybki dodane do konta.',
     payError:'Błąd płatności — spróbuj ponownie.',
     connError:'Błąd połączenia z serwerem.',
@@ -1093,9 +1097,9 @@ const FC_LANGS = {
     guideHTML:`
       <div class="guide-section"><div class="guide-h">🎯 Objective</div><div class="guide-text">Destroy all enemy cards and reduce their HP to zero. First one to lose all HP loses the battle.</div></div>
       <div class="guide-section"><div class="guide-h">🎮 How to play</div>
-        <div class="guide-step"><span class="guide-num">1</span><span>Select your card — click it in the bottom row.</span></div>
-        <div class="guide-step"><span class="guide-num">2</span><span>Pick target — click an enemy card. 🎯 appears above it.</span></div>
-        <div class="guide-step"><span class="guide-num">3</span><span>Attack! — lightning flies to the target.</span></div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Pick 4 cards for battle — <b>🎲 Random</b> (quick) or <b>🧠 Manual</b> (you choose), then tap ▶ FIGHT!</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Select your card — click it in the bottom row.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Pick target — click an enemy card. 🎯 appears above it.</span></div>
         <div class="guide-step"><span class="guide-num">4</span><span>Enemy automatically counterattacks.</span></div>
         <div class="guide-step"><span class="guide-num">5</span><span>Repeat until you win or lose. Wins earn new cards!</span></div>
       </div>
@@ -1122,7 +1126,8 @@ const FC_LANGS = {
         <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendary</span><span>Very powerful</span></div>
         <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mythic</span><span>Most powerful</span></div>
       </div>
-      <div class="guide-section"><div class="guide-h">❤️ Lives</div><div class="guide-text">Lose a life each defeat. Earn a free life every 30 min of active play or +1 daily.</div></div>
+      <div class="guide-section"><div class="guide-h">❤️ Lives</div><div class="guide-text">Lose a life each defeat. Starting lives: <b>Easy 5 · Medium 3 · Hard 1</b>. Buy more lives in the shop.</div></div>
+      <div class="guide-section"><div class="guide-h">🎁 New cards</div><div class="guide-text">Win a battle to earn a random card — the higher the level, the rarer! Use mushrooms 🍄 from the shop to buy a specific card.</div></div>
       <div class="guide-section"><div class="guide-h">🃏 Deck</div><div class="guide-text">Build your deck in the Deck tab. Min 4 cards. Mix types for advantages!</div></div>`,
     loginBtn:'🔑 Sign in with Google',
     logoutBtn:'✕ Sign Out',
@@ -1133,7 +1138,7 @@ const FC_LANGS = {
     nickPrompt:'New nick (max 20 chars):',
     livesLbl:'Lives',
     livesInfo:(n,lvl,diff)=>`${n} lives · Level ${lvl} · ${diff}`,
-    noLives:'No lives left! Come back later for a free life.',
+    noLives:'No lives left! Buy more in the shop.',
     livesShopTitle:'No lives left',
     livesShopSub:'Buy 3 lives and get back to battle!',
     livesPackLbl:'❤️❤️❤️ +3 Lives',
@@ -1145,6 +1150,8 @@ const FC_LANGS = {
     nextLife:(m,s)=>`❤️ Next free life in ${m}m ${s}s of active play`,
     freeLife:'🎁 Free life! +1 ❤️',
     dailyMush:'🍄 +1 Mushroom for a new day!',
+    winCard:'🎁 New card!',
+    rarityNames:{common:'common',rare:'rare',epic:'epic',legendary:'legendary',mythic:'mythic'},
     purchaseOk:'✅ Purchase complete! Mushrooms added.',
     payError:'Payment error — please try again.',
     connError:'Connection error.',
@@ -1238,9 +1245,9 @@ const FC_LANGS = {
     guideHTML:`
       <div class="guide-section"><div class="guide-h">🎯 Ziel</div><div class="guide-text">Zerstöre alle Gegnerkarten. Wer zuerst alle HP verliert, verliert den Kampf.</div></div>
       <div class="guide-section"><div class="guide-h">🎮 Wie spielen</div>
-        <div class="guide-step"><span class="guide-num">1</span><span>Eigene Karte wählen — in der unteren Reihe klicken.</span></div>
-        <div class="guide-step"><span class="guide-num">2</span><span>Ziel wählen — Gegnerkarte klicken. 🎯 erscheint.</span></div>
-        <div class="guide-step"><span class="guide-num">3</span><span>Angreifen! — Blitz fliegt zum Ziel.</span></div>
+        <div class="guide-step"><span class="guide-num">1</span><span>4 Karten wählen — <b>🎲 Zufällig</b> (schnell) oder <b>🧠 Manuell</b> (selbst auswählen), dann ▶ KÄMPFEN! tippen.</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Eigene Karte wählen — in der unteren Reihe klicken.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Ziel wählen — Gegnerkarte klicken. 🎯 erscheint.</span></div>
         <div class="guide-step"><span class="guide-num">4</span><span>Gegner antwortet automatisch.</span></div>
         <div class="guide-step"><span class="guide-num">5</span><span>Wiederholen bis Sieg oder Niederlage. Siege bringen Karten!</span></div>
       </div>
@@ -1267,7 +1274,8 @@ const FC_LANGS = {
         <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendär</span><span>Sehr mächtig</span></div>
         <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mythisch</span><span>Mächtigste</span></div>
       </div>
-      <div class="guide-section"><div class="guide-h">❤️ Leben</div><div class="guide-text">Verliere ein Leben bei jeder Niederlage. Alle 30 Min aktivem Spielen gibt es ein freies Leben oder +1 täglich.</div></div>
+      <div class="guide-section"><div class="guide-h">❤️ Leben</div><div class="guide-text">Verliere ein Leben bei jeder Niederlage. Startleben: <b>Easy 5 · Medium 3 · Hard 1</b>. Neue Leben im Shop kaufen.</div></div>
+      <div class="guide-section"><div class="guide-h">🎁 Neue Karten</div><div class="guide-text">Gewinne einen Kampf für eine zufällige Karte — je höher das Level, desto seltener! Mit Pilzen 🍄 aus dem Shop kannst du gezielt Karten kaufen.</div></div>
       <div class="guide-section"><div class="guide-h">🃏 Deck</div><div class="guide-text">Stelle dein Deck im Deck-Tab zusammen. Mindestens 4 Karten. Mische Typen — damit du immer einen Typvorteil hast!</div></div>`,
     loginBtn:'🔑 Mit Google anmelden',
     logoutBtn:'✕ Abmelden',
@@ -1278,7 +1286,7 @@ const FC_LANGS = {
     nickPrompt:'Neuer Nick (max. 20 Zeichen):',
     livesLbl:'Leben',
     livesInfo:(n,lvl,diff)=>`${n} Leben · Level ${lvl} · ${diff}`,
-    noLives:'Keine Leben mehr! Komm später zurück.',
+    noLives:'Keine Leben mehr! Kaufe neue im Shop.',
     livesShopTitle:'Keine Leben mehr',
     livesShopSub:'Kauf 3 Leben und kämpfe weiter!',
     livesPackLbl:'❤️❤️❤️ +3 Leben',
@@ -1290,6 +1298,8 @@ const FC_LANGS = {
     nextLife:(m,s)=>`❤️ Nächstes freies Leben in ${m}m ${s}s`,
     freeLife:'🎁 Freies Leben! +1 ❤️',
     dailyMush:'🍄 +1 Pilz für einen neuen Tag!',
+    winCard:'🎁 Neue Karte!',
+    rarityNames:{common:'gewöhnlich',rare:'selten',epic:'episch',legendary:'legendär',mythic:'mythisch'},
     purchaseOk:'✅ Kauf erfolgreich! Pilze hinzugefügt.',
     payError:'Zahlungsfehler — bitte erneut versuchen.',
     connError:'Verbindungsfehler.',
@@ -1383,9 +1393,9 @@ const FC_LANGS = {
     guideHTML:`
       <div class="guide-section"><div class="guide-h">🎯 Objetivo</div><div class="guide-text">Destruye todas las cartas enemigas. El primero en perder todos los HP pierde.</div></div>
       <div class="guide-section"><div class="guide-h">🎮 Cómo jugar</div>
-        <div class="guide-step"><span class="guide-num">1</span><span>Selecciona tu carta — haz clic en la fila inferior.</span></div>
-        <div class="guide-step"><span class="guide-num">2</span><span>Elige objetivo — haz clic en carta enemiga. Aparece 🎯.</span></div>
-        <div class="guide-step"><span class="guide-num">3</span><span>¡Ataca! — el rayo vuela al objetivo.</span></div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Elige 4 cartas — <b>🎲 Aleatorio</b> (rápido) o <b>🧠 Manual</b> (eliges tú), luego pulsa ▶ ¡LUCHAR!</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Selecciona tu carta — haz clic en la fila inferior.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Elige objetivo — haz clic en carta enemiga. Aparece 🎯.</span></div>
         <div class="guide-step"><span class="guide-num">4</span><span>El enemigo contraataca automáticamente.</span></div>
         <div class="guide-step"><span class="guide-num">5</span><span>¡Repite hasta ganar o perder! Las victorias otorgan nuevas cartas.</span></div>
       </div>
@@ -1412,7 +1422,8 @@ const FC_LANGS = {
         <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Legendaria</span><span>Muy poderosa</span></div>
         <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mítica</span><span>La más poderosa</span></div>
       </div>
-      <div class="guide-section"><div class="guide-h">❤️ Vidas</div><div class="guide-text">Pierdes una vida por cada derrota. Vida gratis cada 30 min de juego activo o +1 diaria.</div></div>
+      <div class="guide-section"><div class="guide-h">❤️ Vidas</div><div class="guide-text">Pierdes una vida por cada derrota. Vidas iniciales: <b>Easy 5 · Medium 3 · Hard 1</b>. Compra más vidas en la tienda.</div></div>
+      <div class="guide-section"><div class="guide-h">🎁 Nuevas cartas</div><div class="guide-text">¡Gana una batalla para obtener una carta aleatoria — más rara al subir de nivel! Usa setas 🍄 de la tienda para comprar una carta específica.</div></div>
       <div class="guide-section"><div class="guide-h">🃏 Mazo</div><div class="guide-text">Construye tu mazo en la pestaña Mazo. Mínimo 4 cartas. ¡Combina tipos para tener ventaja!</div></div>`,
     loginBtn:'🔑 Iniciar sesión con Google',
     logoutBtn:'✕ Cerrar sesión',
@@ -1423,7 +1434,7 @@ const FC_LANGS = {
     nickPrompt:'Nuevo nick (máx. 20 caracteres):',
     livesLbl:'Vidas',
     livesInfo:(n,lvl,diff)=>`${n} vidas · Nivel ${lvl} · ${diff}`,
-    noLives:'¡Sin vidas! Vuelve más tarde.',
+    noLives:'¡Sin vidas! Compra más en la tienda.',
     livesShopTitle:'Sin vidas',
     livesShopSub:'¡Compra 3 vidas y vuelve a luchar!',
     livesPackLbl:'❤️❤️❤️ +3 Vidas',
@@ -1435,6 +1446,8 @@ const FC_LANGS = {
     nextLife:(m,s)=>`❤️ Próxima vida gratis en ${m}m ${s}s`,
     freeLife:'🎁 ¡Vida gratis! +1 ❤️',
     dailyMush:'🍄 +1 Seta por nuevo día!',
+    winCard:'🎁 ¡Carta nueva!',
+    rarityNames:{common:'común',rare:'rara',epic:'épica',legendary:'legendaria',mythic:'mítica'},
     purchaseOk:'✅ ¡Compra exitosa! Setas añadidas.',
     payError:'Error de pago — inténtalo de nuevo.',
     connError:'Error de conexión.',
@@ -1528,9 +1541,9 @@ const FC_LANGS = {
     guideHTML:`
       <div class="guide-section"><div class="guide-h">🎯 Objectif</div><div class="guide-text">Détruisez toutes les cartes ennemies. Celui qui perd tous ses HP en premier perd.</div></div>
       <div class="guide-section"><div class="guide-h">🎮 Comment jouer</div>
-        <div class="guide-step"><span class="guide-num">1</span><span>Choisissez votre carte — cliquez dans la rangée du bas.</span></div>
-        <div class="guide-step"><span class="guide-num">2</span><span>Choisissez la cible — cliquez sur une carte ennemie. 🎯 apparaît.</span></div>
-        <div class="guide-step"><span class="guide-num">3</span><span>Attaquez ! — la foudre vole vers la cible.</span></div>
+        <div class="guide-step"><span class="guide-num">1</span><span>Choisissez 4 cartes — <b>🎲 Aléatoire</b> (rapide) ou <b>🧠 Manuel</b> (vous choisissez), puis appuyez sur ▶ COMBATTRE !</span></div>
+        <div class="guide-step"><span class="guide-num">2</span><span>Choisissez votre carte — cliquez dans la rangée du bas.</span></div>
+        <div class="guide-step"><span class="guide-num">3</span><span>Choisissez la cible — cliquez sur une carte ennemie. 🎯 apparaît.</span></div>
         <div class="guide-step"><span class="guide-num">4</span><span>L'ennemi contre-attaque automatiquement.</span></div>
         <div class="guide-step"><span class="guide-num">5</span><span>Répétez jusqu'à la victoire ou la défaite ! Les victoires rapportent de nouvelles cartes.</span></div>
       </div>
@@ -1557,7 +1570,8 @@ const FC_LANGS = {
         <div class="guide-rarity-row"><span style="color:#cc80ff">🟪 Légendaire</span><span>Très puissante</span></div>
         <div class="guide-rarity-row"><span style="color:#ffaa00">🟨 Mythique</span><span>La plus puissante</span></div>
       </div>
-      <div class="guide-section"><div class="guide-h">❤️ Vies</div><div class="guide-text">Perdez une vie à chaque défaite. Vie gratuite toutes les 30 min de jeu actif ou +1 quotidienne.</div></div>
+      <div class="guide-section"><div class="guide-h">❤️ Vies</div><div class="guide-text">Perdez une vie à chaque défaite. Vies de départ : <b>Easy 5 · Medium 3 · Hard 1</b>. Achetez des vies supplémentaires dans la boutique.</div></div>
+      <div class="guide-section"><div class="guide-h">🎁 Nouvelles cartes</div><div class="guide-text">Gagnez un combat pour obtenir une carte aléatoire — plus rare à chaque niveau ! Utilisez des champignons 🍄 de la boutique pour acheter une carte précise.</div></div>
       <div class="guide-section"><div class="guide-h">🃏 Deck</div><div class="guide-text">Constituez votre deck dans l'onglet Deck. Minimum 4 cartes. Mélangez les types pour toujours avoir un avantage !</div></div>`,
     loginBtn:'🔑 Se connecter avec Google',
     logoutBtn:'✕ Se déconnecter',
@@ -1568,7 +1582,7 @@ const FC_LANGS = {
     nickPrompt:'Nouveau pseudo (max 20 caractères) :',
     livesLbl:'Vies',
     livesInfo:(n,lvl,diff)=>`${n} vies · Niveau ${lvl} · ${diff}`,
-    noLives:'Plus de vies ! Revenez plus tard.',
+    noLives:'Plus de vies ! Achetez-en dans la boutique.',
     livesShopTitle:'Plus de vies',
     livesShopSub:'Achetez 3 vies et retournez au combat !',
     livesPackLbl:'❤️❤️❤️ +3 Vies',
@@ -1580,6 +1594,8 @@ const FC_LANGS = {
     nextLife:(m,s)=>`❤️ Prochaine vie gratuite dans ${m}m ${s}s`,
     freeLife:'🎁 Vie gratuite ! +1 ❤️',
     dailyMush:'🍄 +1 Champignon pour un nouveau jour !',
+    winCard:'🎁 Nouvelle carte !',
+    rarityNames:{common:'commune',rare:'rare',epic:'épique',legendary:'légendaire',mythic:'mythique'},
     purchaseOk:'✅ Achat réussi ! Champignons ajoutés.',
     payError:'Erreur de paiement — réessayez.',
     connError:'Erreur de connexion.',
@@ -2686,11 +2702,6 @@ document.getElementById('prebattleEnemyName').textContent = `${enemy.avatar} ${_
     const wrap = document.createElement('div');
     wrap.style.cssText = 'position:relative;';
     wrap.appendChild(drawCard(id, pbW, pbH));
-    // Typ karty jako podpis
-    const typeLbl = document.createElement('div');
-    typeLbl.style.cssText = 'text-align:center;font-size:18px;color:#cc8080;font-family:Cinzel,serif;margin-top:2px;';
-    typeLbl.textContent = card.emoji + ' ' + card.type;
-    wrap.appendChild(typeLbl);
     enemyField.appendChild(wrap);
   });
 
@@ -2698,7 +2709,7 @@ document.getElementById('prebattleEnemyName').textContent = `${enemy.avatar} ${_
   document.getElementById('fc-pb-start-btn').style.display = 'none';
   document.getElementById('prebattleCollection').style.display = 'none';
   // Odśwież napisy przycisków (na wypadek gdyby applyFCLang nie zdążył)
-  document.getElementById('fc-pb-title').textContent = FCLANG.pbTitle||'⚔️ Battle incoming!';
+  document.getElementById('fc-pb-title').textContent = '';
   document.getElementById('fc-pb-enemy-lbl').textContent = FCLANG.pbEnemyLbl||'⚔️ ENEMY CARDS';
   document.getElementById('fc-pb-your-lbl').textContent = FCLANG.pbYourLbl||'🌿 YOUR CARDS';
   document.getElementById('fc-pb-random-btn').textContent = FCLANG.pbRandom||'🎲 Shuffle';
@@ -3202,6 +3213,35 @@ function launchFireworks(duration=5000) {
   animate();
 }
 
+// ── NAGRODA — losowa karta za wygraną walkę ───────
+function unlockRandomCard(levelReached) {
+  // Pula kart rośnie z poziomem: common→rare→epic→legendary/mythic
+  let rarities;
+  if(levelReached <= 5)       rarities = ['common','rare'];
+  else if(levelReached <= 12) rarities = ['rare','epic'];
+  else if(levelReached <= 25) rarities = ['epic','legendary'];
+  else                        rarities = ['legendary','mythic'];
+
+  const pool = CARD_DB.filter(c => rarities.includes(c.rarity));
+
+  // Preferuj karty których gracz jeszcze nie posiada
+  const unowned = pool.filter(c => !GS.collection.find(x => x.id === c.id));
+  const candidates = unowned.length > 0 ? unowned : pool;
+  if(!candidates.length) return null;
+
+  const card = candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Dodaj do kolekcji
+  const existing = GS.collection.find(c => c.id === card.id);
+  if(existing) {
+    existing.count = (existing.count || 1) + 1;
+  } else {
+    GS.collection.push({ id: card.id, count: 1 });
+  }
+  saveSave();
+  return card;
+}
+
 function endBattle(won) {
   battle.over = true;
   const overlay = document.getElementById('result-overlay');
@@ -3216,6 +3256,20 @@ function endBattle(won) {
     GS.battleLevel = Math.min(GS.battleLevel + 1, ENEMIES.length);
     document.getElementById('resultScore').innerHTML = FCLANG.winScore(GS.battleLevel-1,GS.wins);
     document.getElementById('btnNext').textContent = GS.battleLevel <= ENEMIES.length ? (FCLANG.nextBattle||'▶ Next Battle') : (FCLANG.completed||'🏆 Done!');
+    // Odblokuj losową kartę za wygraną
+    const _rewCard = unlockRandomCard(GS.battleLevel - 1);
+    const _rcEl = document.getElementById('resultCardReward');
+    if(_rewCard && _rcEl) {
+      const _cName = (FCLANG.cardNames||{})[_rewCard.id] || _rewCard.name;
+      const _rName = (FCLANG.rarityNames||{})[_rewCard.rarity] || _rewCard.rarity;
+      const _rColor = RARITY_COLORS[_rewCard.rarity] || '#aaa';
+      _rcEl.innerHTML = `<div style="display:inline-block;background:rgba(0,0,0,.5);border:1px solid ${_rColor};border-radius:14px;padding:8px 20px;font-family:'Cinzel',cursive;font-size:14px;color:#e0e0e0;line-height:1.6;">
+        ${FCLANG.winCard||'🎁 New card!'}<br>
+        <span style="font-size:22px;">${_rewCard.emoji}</span>
+        <span style="color:${_rColor};font-size:16px;"> ${_cName}</span>
+        <span style="font-size:11px;color:#888;"> (${_rName})</span>
+      </div>`;
+    } else if(_rcEl) { _rcEl.innerHTML = ''; }
     setTimeout(() => launchFireworks(5000), 100);
     // Sync wyniku i postępu z serwerem po wygranej
     pushScoreToServer();
@@ -3228,6 +3282,8 @@ function endBattle(won) {
     GS.lives = Math.max(0, GS.lives - 1);
     document.getElementById('resultScore').innerHTML = FCLANG.loseLives(GS.lives);
     document.getElementById('btnNext').textContent = FCLANG.retry||'↺ Try Again';
+    const _rcElL = document.getElementById('resultCardReward');
+    if(_rcElL) _rcElL.innerHTML = '';
   }
   saveSave();
   updateMenuLives();
@@ -3976,63 +4032,24 @@ function showScreen(name) {
   if(name === 'menu') { updateMenuLives(); try{ Audio.playTheme(0); }catch(e){} }
   if(name === 'shop') { renderShop(); try{ Audio.playTheme(2); }catch(e){} }
   if(name === 'ranking') renderRanking();
+  // Obsługa przycisku "Wstecz" na telefonie (Android TWA / przeglądarka)
+  if(name !== 'menu') {
+    history.pushState({fcScreen: name}, '');
+  }
 }
 
-// ═══════════════════════════════════════════════
-//  AKTYWNY TIMER — darmowe życie co 30 min gry
-// ═══════════════════════════════════════════════
-const FREE_LIFE_SECONDS = 30 * 60; // 30 minut aktywnej gry
-let _activeTimer = null;
-let _activeSeconds = 0;
-let _pageVisible = true;
-
-function startActiveTimer() {
-  if(_activeTimer) return;
-  _activeSeconds = parseInt(localStorage.getItem('fc_activeSeconds') || '0');
-  _activeTimer = setInterval(() => {
-    if(!_pageVisible) return; // Nie liczy gdy karta przeglądarki niewidoczna
-    // Nie liczy gdy pauza lub nie-battle screen
-    const battleActive = document.getElementById('battle')?.classList.contains('active');
-    const pauseOpen = document.getElementById('pause-overlay')?.style.display !== 'none';
-    if(!battleActive || pauseOpen) return;
-
-    _activeSeconds++;
-    localStorage.setItem('fc_activeSeconds', _activeSeconds);
-
-    if(_activeSeconds >= FREE_LIFE_SECONDS) {
-      _activeSeconds = 0;
-      localStorage.setItem('fc_activeSeconds', '0');
-      if(GS.lives < 10) {
-        GS.lives++;
-        saveSave();
-        updateMenuLives();
-        showFreeLifeToast();
-      }
-    }
-  }, 1000);
-}
-
-function showFreeLifeToast() {
-  const t = document.createElement('div');
-  t.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);
-    background:linear-gradient(135deg,#1a4a1a,#2a8a2a);border:2px solid #4aaa3a;
-    color:#b8ffa0;font-family:'Cinzel',cursive;font-size:14px;padding:12px 24px;
-    border-radius:30px;z-index:999;box-shadow:0 0 20px rgba(60,200,40,.4);
-    animation:toastIn .3s ease;`;
-  t.textContent = FCLANG.freeLife||'🎁 Free life! +1 ❤️';
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(), 3500);
-}
-
-// Wykryj czy karta jest widoczna
-document.addEventListener('visibilitychange', () => {
-  _pageVisible = !document.hidden;
+// Przycisk cofania na telefonie → zawsze wróć do menu głównego
+window.addEventListener('popstate', () => {
+  const nonMenuIds = ['guide','ranking','deckbuilder','shop','collection','prebattle'];
+  const isOnNonMenu = nonMenuIds.some(id => document.getElementById(id)?.classList.contains('active'));
+  if(isOnNonMenu) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('menu').classList.add('active');
+    updateMenuLives();
+    try{ Audio.playTheme(0); }catch(e){}
+  }
 });
 
-// Ile czasu do następnego życia (w sekundach)
-function getSecondsToNextLife() {
-  return FREE_LIFE_SECONDS - _activeSeconds;
-}
 
 // ═══════════════════════════════════════════════
 //  PAUZA
@@ -4043,18 +4060,6 @@ function openPause() {
   _paused = true;
   const overlay = document.getElementById('pause-overlay');
   overlay.style.display = 'flex';
-  // Pokaż info o życiach
-  const secs = getSecondsToNextLife();
-  const mins = Math.floor(secs/60);
-  const s = secs%60;
-  const info = document.getElementById('pauseLivesInfo');
-  if(info) {
-    if(GS.lives >= 10) {
-      info.textContent = FCLANG.maxLives||'Max lives (10)';
-    } else {
-      info.textContent = FCLANG.nextLife(mins,s);
-    }
-  }
 }
 
 function closePause() {
@@ -4198,7 +4203,6 @@ window.addEventListener('load', async () => {
   initGame();
   applyFCLang();
   setTimeout(initMenuParticles, 50);
-  startActiveTimer();
 
   // ── Obsługa URL params po OAuth / zakupie ────────
   const params = new URLSearchParams(window.location.search);
