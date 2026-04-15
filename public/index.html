@@ -56,9 +56,9 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
 /* Przyciski trudności — identyczne jak w Wisp */
 .diff-row { display:flex; gap:8px; margin-bottom:14px; width:100%; position:relative; z-index:1; }
-.diff-btn { flex:1; padding:10px 6px; border-radius:14px; border:2px solid transparent; font-family:'Cinzel',cursive; font-size:12px; cursor:pointer; transition:all .2s; text-align:center; line-height:1.5; }
-.diff-btn .diff-icon { font-size:22px; display:block; margin-bottom:3px; }
-.diff-btn .diff-lives { font-size:10px; font-style:italic; opacity:.8; display:block; margin-top:2px; font-family:'Crimson Pro',serif; }
+.diff-btn { flex:1; padding:15px 9px; border-radius:14px; border:2px solid transparent; font-family:'Cinzel',cursive; font-size:18px; cursor:pointer; transition:all .2s; text-align:center; line-height:1.5; }
+.diff-btn .diff-icon { font-size:33px; display:block; margin-bottom:3px; }
+.diff-btn .diff-lives { font-size:15px; font-style:italic; opacity:.8; display:block; margin-top:2px; font-family:'Crimson Pro',serif; }
 .diff-btn.easy { background:rgba(20,60,20,.8); border-color:#4a8a3a; color:#a0e080; }
 .diff-btn.easy:hover, .diff-btn.easy.selected { background:rgba(40,100,30,.9); border-color:#80cc50; box-shadow:0 0 14px rgba(80,200,50,.4); }
 .diff-btn.medium { background:rgba(50,40,10,.8); border-color:#8a6a20; color:#e0b060; }
@@ -76,7 +76,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 .fc-play-btn, .fc-continue-btn { width:100%; }
 
 /* Pasek ikon — mały rząd jak w Wisp */
-.menu-icon-row { display:flex; gap:5px; margin-top:8px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
+.menu-icon-row { display:flex; gap:5px; margin-top:8px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; width:100%; }
 .menu-icon-btn { background:rgba(20,40,20,.7); color:#80c070; border:1px solid #2a6a2a; border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; font-family:'Crimson Pro',serif; transition:all .15s; }
 .menu-icon-btn:hover { background:rgba(30,60,30,.9); }
 
@@ -186,7 +186,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 #result-overlay.show { display:flex; }
 .result-title { font-family:'Cinzel',cursive; font-size:32px; margin-bottom:10px; }
 .result-sub { font-style:italic; font-size:30px; color:#7aaa6a; margin-bottom:20px; }
-.result-score { font-family:'Cinzel',cursive; font-size:20px; color:var(--gold); margin-bottom:20px; }
+.result-score { font-family:'Cinzel',cursive; font-size:20px; color:var(--gold); margin-bottom:20px; text-align:center; }
 .result-btn { padding:12px 32px; border-radius:30px; font-family:'Cinzel',cursive; font-size:14px; cursor:pointer; margin:6px; border:none; }
 .btn-next { background:linear-gradient(135deg,#1e5a1e,#2d8a2d); color:#b8ffa0; border:1px solid #4a9a3a; }
 .btn-menu { background:rgba(20,40,20,.8); color:#7aaa6a; border:1px solid #2a5a2a; }
@@ -307,20 +307,16 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <button class="btn btn-gold fc-continue-btn" id="fc-btn-continue" style="display:none;" onclick="continueCampaign()"></button>
 
     <!-- Reset zapisu -->
-    <div id="fc-reset-link" style="display:none;font-size:11px;color:#3a6a3a;margin-top:4px;cursor:pointer;text-decoration:underline;" onclick="resetSaveConfirm()" id="fc-reset-lbl">🗑</div>
+    <div id="fc-reset-link" style="display:none;font-size:22px;color:#3a6a3a;margin-top:4px;cursor:pointer;text-decoration:underline;" onclick="resetSaveConfirm()"></div>
 
     <!-- Pasek ikon -->
     <div class="menu-icon-row">
-      <button class="menu-icon-btn" id="fc-btn-guide" onclick="showScreen('guide')"></button>
-      <button class="menu-icon-btn" id="fc-btn-ranking" onclick="showScreen('ranking')" style="color:#ffd060;border-color:#806020;"></button>
-      <button class="menu-icon-btn" id="fc-btn-deck" onclick="showScreen('deckbuilder')" style="color:#80c0ff;border-color:#205080;"></button>
-      <button class="menu-icon-btn" id="fc-btn-shop" onclick="showScreen('shop')" style="color:#ffcc60;border-color:#806020;"></button>
+      <button class="menu-icon-btn" id="fc-btn-guide" onclick="showScreen('guide')" style="flex:1;"></button>
+      <button class="menu-icon-btn" id="fc-btn-ranking" onclick="showScreen('ranking')" style="flex:1;color:#ffd060;border-color:#806020;"></button>
+      <button class="menu-icon-btn" id="fc-btn-deck" onclick="showScreen('deckbuilder')" style="flex:1;color:#80c0ff;border-color:#205080;"></button>
+      <button class="menu-icon-btn" id="fc-btn-shop" onclick="showScreen('shop')" style="flex:1;color:#ffcc60;border-color:#806020;"></button>
     </div>
 
-    <!-- Grzybki + Życia -->
-    <div style="display:flex;align-items:center;gap:16px;margin-top:8px;position:relative;z-index:1;">
-      <div id="mushroomCount" style="font-family:'Cinzel',cursive;font-size:16px;color:#ffcc60;cursor:pointer;letter-spacing:1px;" onclick="showScreen('shop')">🍄 0</div>
-    </div>
 
     <!-- Panel logowania -->
     <div id="auth-panel" style="margin-top:8px;position:relative;z-index:1;"></div>
@@ -681,7 +677,7 @@ async function syncProgressFromServer(){
   } catch(e) {}
 }
 
-async function pushProgressToServer(){
+async function pushProgressToServer(reset=false){
   try {
     await apiPost('/api/progress', {
       mushrooms:    GS.mushrooms    || 0,
@@ -690,6 +686,7 @@ async function pushProgressToServer(){
       score:        (GS.wins||0)*200 + (GS.battleLevel||1)*50,
       collection:   GS.collection   || [],
       ts:           Date.now(),
+      reset,
     });
     localStorage.setItem('fc_progressTs', String(Math.floor(Date.now()/1000)));
   } catch(e) {}
@@ -748,25 +745,25 @@ function updateAuthUI(){
 
   if(user && getToken()){
     const avatar = user.avatar_url
-      ? `<img src="${user.avatar_url}" style="width:22px;height:22px;border-radius:50%;flex-shrink:0;">`
+      ? `<img src="${user.avatar_url}" style="width:33px;height:33px;border-radius:50%;flex-shrink:0;">`
       : '';
     panel.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#90d090;
-        background:rgba(0,60,0,.4);border:1px solid #306030;border-radius:8px;padding:5px 12px;">
+      <div style="display:flex;align-items:center;gap:10px;font-size:18px;color:#90d090;
+        background:rgba(0,60,0,.4);border:1px solid #306030;border-radius:8px;padding:7px 18px;">
         ${avatar}
         <span>${user.nick || user.email || FCLANG.rankYou||'Player'}</span>
-        <button onclick="FCAuth.changeNick()" style="padding:3px 8px;font-size:10px;
+        <button onclick="FCAuth.changeNick()" style="padding:4px 12px;font-size:15px;
           background:rgba(20,60,20,.7);color:#90d090;border:1px solid #306030;border-radius:6px;cursor:pointer;">
           ${FCLANG.nickBtn||'✏️ Nick'}
         </button>
-        <button onclick="FCAuth.logout()" style="padding:3px 8px;font-size:10px;
+        <button onclick="FCAuth.logout()" style="padding:4px 12px;font-size:15px;
           background:rgba(80,20,20,.7);color:#e09090;border:1px solid #602020;border-radius:6px;cursor:pointer;">
           ${FCLANG.logoutBtn||'✕ Sign Out'}
         </button>
       </div>`;
   } else {
     panel.innerHTML = `
-      <button onclick="FCAuth.login()" style="padding:6px 16px;font-size:12px;
+      <button onclick="FCAuth.login()" style="padding:9px 24px;font-size:18px;
         background:rgba(255,255,255,.12);color:#c0e0c0;border:1px solid #4a7a4a;
         border-radius:8px;cursor:pointer;font-family:'Cinzel',cursive;">
         ${FCLANG.loginBtn||'🔑 Sign in'}
@@ -2311,11 +2308,12 @@ function selectDifficulty(d) {
 
 // continueCampaign — przeniesiona niżej
 
-function resetSaveConfirm() {
-  if(confirm(FCLANG.resetConfirm||'Delete save?')) {
-    try{ localStorage.removeItem('fc_save'); }catch(e){}
-    location.reload();
-  }
+async function resetSaveConfirm() {
+  try{ localStorage.removeItem('fc_save'); }catch(e){}
+  resetGS();
+  updateMenuContinue();
+  applyFCLang();
+  try{ await pushProgressToServer(true); }catch(e){}
 }
 
 function updateMenuContinue() {
@@ -2325,7 +2323,10 @@ function updateMenuContinue() {
   if(GS.wins > 0 || GS.battleLevel > 1) {
     btn.style.display = 'block';
     btn.textContent = FCLANG.continueBtn(GS.battleLevel,getPlayerScore());
-    if(reset) reset.style.display = 'block';
+    if(reset) {
+      reset.style.display = 'block';
+      reset.textContent = FCLANG.resetSave || '🗑 Delete save & start over';
+    }
   } else {
     btn.style.display = 'none';
     if(reset) reset.style.display = 'none';
@@ -2367,13 +2368,6 @@ function resetGS() {
 
 // ── GRZYBKI 🍄 ────────────────────────────────────
 function checkDailyLogin() {
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  if(GS.lastLogin !== today) {
-    GS.lastLogin = today;
-    GS.mushrooms = (GS.mushrooms || 0) + 1;
-    saveSave();
-    setTimeout(() => showToast(FCLANG.dailyMush||'🍄 +1 Mushroom!'), 800);
-  }
   updateMushroomDisplay();
 }
 
@@ -2529,8 +2523,8 @@ function drawCard(id, width=80, height=120, isBack=false, currentHP=null) {
   c.fillText(`${card.def} 🛡`, W*0.92, statY);
 
   // ── PASEK ŻYCIA — zmniejsza się po obrażeniach ──
-  const lifeBarH = Math.max(16, H*0.112);
-  const lifeBarY = Math.max(H*0.965, statY + statFontSize + 2);
+  const lifeBarH = Math.max(7, Math.floor(H * 0.053));
+  const lifeBarY = H - lifeBarH - 1; // zawsze przy dolnej krawędzi, w pełni widoczny
   const lifeBarW = W*0.84;
   const lifeBarX = (W-lifeBarW)/2;
   const curHP  = currentHP !== null ? currentHP : card.hp;
@@ -3446,13 +3440,13 @@ function fireLightning(fromCardIdx, toCardIdx, color) {
   allCards.forEach(c => { savedAnims.push(c.style.animation); c.style.animation = 'none'; });
   document.body.offsetHeight; // force reflow
 
-  function cardCenter(el) {
+  function cardCenter(el, yFrac=0.5) {
     const r = el.getBoundingClientRect();
-    return { x: r.left + r.width/2, y: r.top + r.height/2 };
+    return { x: r.left + r.width/2, y: r.top + r.height * yFrac };
   }
 
-  const from = cardCenter(fromEl);
-  const to   = cardCenter(toEl);
+  const from = cardCenter(fromEl, 0.38);
+  const to   = cardCenter(toEl, 0.38);
 
   // Przywróć animacje
   allCards.forEach((c, i) => { c.style.animation = savedAnims[i]; });
@@ -3559,13 +3553,13 @@ function fireEnemyLightning(fromEnemyIdx, toPlayerIdx) {
   // Force pełny reflow — czekamy na stabilny layout
   document.body.offsetHeight;
 
-  function center(el) {
+  function center(el, yFrac=0.5) {
     const r = el.getBoundingClientRect();
-    return { x: r.left + r.width/2, y: r.top + r.height/2 };
+    return { x: r.left + r.width/2, y: r.top + r.height * yFrac };
   }
 
-  const from = center(fromEl);
-  const to   = center(toEl);
+  const from = center(fromEl, 0.5);
+  const to   = center(toEl, 0.38);
 
   // Przywróć animacje
   allCards.forEach((c, i) => { c.style.animation = savedAnims[i]; });
@@ -4029,7 +4023,7 @@ function showScreen(name) {
   document.getElementById(name).classList.add('active');
   if(name === 'collection') renderCollection();
   if(name === 'deckbuilder') renderDeckBuilder();
-  if(name === 'menu') { updateMenuLives(); try{ Audio.playTheme(0); }catch(e){} }
+  if(name === 'menu') { updateMenuLives(); updateMenuContinue(); try{ Audio.playTheme(0); }catch(e){} }
   if(name === 'shop') { renderShop(); try{ Audio.playTheme(2); }catch(e){} }
   if(name === 'ranking') renderRanking();
   // Obsługa przycisku "Wstecz" na telefonie (Android TWA / przeglądarka)
