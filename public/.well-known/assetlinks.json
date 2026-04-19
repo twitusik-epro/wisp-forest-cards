@@ -1,10 +1,15 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.epro.forestcards",
-    "sha256_cert_fingerprints": [
-      "88:C2:C8:F9:C5:87:2B:F4:F8:02:AD:A7:78:05:93:51:B0:77:18:19:A2:55:75:4F:24:81:59:9B:5F:44:07:CB"
-    ]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.epro.forestcards",
+      "sha256_cert_fingerprints": [
+        "88:C2:C8:F9:C5:87:2B:F4:F8:02:AD:A7:78:05:93:51:B0:77:18:19:A2:55:75:4F:24:81:59:9B:5F:44:07:CB",
+        "ED:B9:19:19:92:49:29:29:20:AC:D1:70:AE:D3:92:91:58:65:C7:84:8A:88:F3:07:0D:8B:65:4C:68:6A:D8:C6"
+      ]
+    }
   }
-}]
+]

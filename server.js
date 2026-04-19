@@ -157,8 +157,10 @@ const PACKAGES = {
   fc_pack_10:  { mushrooms: 10, lives: 0, amount:  99, price_id: 'pri_01kp0pyrvhz6ejvv3ngg20e6t9', price_display: '0,99 €' },
   fc_pack_25:  { mushrooms: 25, lives: 0, amount: 199, price_id: 'pri_01kp0q4j0v58xg561wreg8amjj', price_display: '1,99 €' },
   fc_pack_50:  { mushrooms: 50, lives: 0, amount: 399, price_id: 'pri_01kp0q66jqd3hp0bf3h5dsh2np', price_display: '3,99 €' },
-  // Życia — price_id do uzupełnienia po dodaniu produktu w Paddle Dashboard
-  fc_lives_3:  { mushrooms: 0,  lives: 3, amount:  99, price_id: '', price_display: '0,99 €' },
+  // Życia — tymczasowo te same price_id co grzybki (identyczne ceny); webhook rozróżnia po customData.package_id
+  fc_lives_3:  { mushrooms: 0, lives:  3, amount:  99, price_id: 'pri_01kp0pyrvhz6ejvv3ngg20e6t9', price_display: '0,99 €' },
+  fc_lives_5:  { mushrooms: 0, lives:  5, amount: 199, price_id: 'pri_01kp0q4j0v58xg561wreg8amjj', price_display: '1,99 €' },
+  fc_lives_10: { mushrooms: 0, lives: 10, amount: 399, price_id: 'pri_01kp0q66jqd3hp0bf3h5dsh2np', price_display: '3,99 €' },
 };
 
 // ─── Express App ───────────────────────────────────────────────────────────
@@ -507,6 +509,12 @@ app.post('/api/gplay/verify', requireAuth, async (req, res) => {
     const purchase = result.data;
     if (purchase.purchaseState !== 0) return res.status(400).json({ error: 'Zakup nieważny' });
     if (stmts.getPurchaseByToken.get(purchase_token)) return res.status(409).json({ error: 'Token już wykorzystany' });
+    // Consume najpierw — zwalnia produkt w GP tak że można kupić ponownie
+    await publisher.purchases.products.consume({
+      packageName: GP_PACKAGE,
+      productId:   package_id,
+      token:       purchase_token,
+    });
     stmts.insertPurchase.run({
       user_id:       req.user.id,
       paddle_txn_id: purchase_token,
@@ -517,11 +525,6 @@ app.post('/api/gplay/verify', requireAuth, async (req, res) => {
     if(pkg.mushrooms > 0) stmts.addMushrooms.run(pkg.mushrooms, req.user.id);
     const isLivesPkg = pkg.lives > 0;
     console.log(`✅ [GP] uid=${req.user.id} pkg=${package_id} grzyby=${pkg.mushrooms} zycia=${pkg.lives}`);
-    await publisher.purchases.products.consume({
-      packageName: GP_PACKAGE,
-      productId:   package_id,
-      token:       purchase_token,
-    });
     const user = stmts.getUserById.get(req.user.id);
     res.json({ ok: true, mushrooms: user.mushrooms, lives: isLivesPkg ? pkg.lives : 0 });
   } catch (err) {
@@ -533,6 +536,12 @@ app.post('/api/gplay/verify', requireAuth, async (req, res) => {
 // ─── Health ──────────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', game: 'Forest Cards v1', env: NODE_ENV });
+});
+
+// ─── Debug billing ───────────────────────────────────────────────────────────
+app.post('/api/debug-billing', (req, res) => {
+  console.log('🔍 [debug-billing]', JSON.stringify(req.body));
+  res.json({ ok: true });
 });
 
 // ─── Cleanup ──────────────────────────────────────────────────────────────────

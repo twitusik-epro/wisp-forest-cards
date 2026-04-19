@@ -33,9 +33,41 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Crimson Pro',serif; color:#fff; touch-action:none; }
+body { display:flex; justify-content:center; align-items:stretch; }
+
+/* Desktop panels */
+#fc-desktop-left,#fc-desktop-right {
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  gap:24px;
+  padding:40px 28px;
+  width:220px;
+  flex-shrink:0;
+}
+#fc-desktop-left { align-items:flex-end; text-align:right; }
+#fc-desktop-right { align-items:flex-start; text-align:left; }
+.dp-logo { font-family:'Cinzel',cursive; font-size:24px; color:#80ee60; text-shadow:0 0 20px rgba(80,220,40,.5); line-height:1.3; }
+.dp-logo span { display:block; font-size:13px; color:#5a9a5a; font-family:'Crimson Pro',serif; font-style:italic; margin-top:4px; }
+.dp-feature { color:#5a8a5a; font-family:'Crimson Pro',serif; font-size:13px; line-height:1.7; }
+.dp-feature strong { display:block; color:#80c060; font-size:14px; margin-bottom:2px; }
+.dp-divider { width:1px; height:60px; background:linear-gradient(180deg,transparent,#1a4a1a,transparent); align-self:center; }
+.dp-badge { display:inline-block; background:#0a1a0a; border:1px solid #1a4a1a; border-radius:20px; padding:6px 14px; font-family:'Crimson Pro',serif; font-size:12px; color:#4a8a4a; }
+.dp-corner-btn { display:none; }
+@media(min-width:800px) {
+  body { background:#020802; }
+  #fc-desktop-left,#fc-desktop-right { display:flex; }
+  #fc-lang-btn { display:none !important; }
+  .dp-corner-btn { display:flex; }
+  #app { margin:0; width:480px; }
+}
+@media(min-width:1100px) {
+  #fc-desktop-left,#fc-desktop-right { width:280px; padding:40px; }
+  .dp-logo { font-size:30px; }
+}
 
 /* ── SCREENS ── */
-#app { width:100%; height:100%; position:relative; display:flex; flex-direction:column; align-items:center; max-width:480px; margin:0 auto; }
+#app { width:480px; max-width:100vw; height:100%; position:relative; display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
 .screen { position:absolute; inset:0; display:none; flex-direction:column; align-items:center; overflow:hidden; }
 .screen.active { display:flex; }
 
@@ -253,6 +285,18 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 </style>
 </head>
 <body>
+
+<!-- Panel lewy — widoczny tylko na desktopie -->
+<div id="fc-desktop-left">
+  <div class="dp-logo">🌿 Forest<br>Cards<span id="dp-left-sub">Gra karciana · Świat Wispa</span></div>
+  <div class="dp-divider"></div>
+  <div class="dp-feature"><strong id="dp-left-f1t">🃏 Strategia</strong><span id="dp-left-f1d">40 poziomów walk karcianymi taliami w świecie Wispa</span></div>
+  <div class="dp-feature"><strong id="dp-left-f2t">🚫 Zero reklam</strong><span id="dp-left-f2d">Żadnych przerw, banerów ani popupów</span></div>
+  <div class="dp-feature"><strong id="dp-left-f3t">🏆 Ranking globalny</strong><span id="dp-left-f3d">Rywalizuj z graczami z całego świata — Top 20</span></div>
+  <div class="dp-divider"></div>
+  <div class="dp-badge" id="dp-left-badge">🆓 Darmowa gra przeglądarkowa</div>
+</div>
+
 <div id="app">
 
   <!-- MENU -->
@@ -262,20 +306,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <!-- Napis Wisp nad tytułem -->
     <div class="menu-wisp-brand">
       <div class="menu-wisp-logo">
-        <svg width="60" height="60" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-          <!-- Brak tła — tylko poświata i twarz -->
-          <ellipse cx="26" cy="27" rx="12" ry="14" fill="#80ee60" filter="url(#glow)"/>
-          <circle cx="22" cy="23" r="3" fill="#0a200a"/>
-          <circle cx="30" cy="23" r="3" fill="#0a200a"/>
-          <circle cx="22.8" cy="22.2" r="1.2" fill="white"/>
-          <circle cx="30.8" cy="22.2" r="1.2" fill="white"/>
-          <defs>
-            <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="3" result="blur"/>
-              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-        </svg>
+        <img src="/fc-icon-menu.png" width="60" height="60" alt="Forest Cards">
       </div>
       <span class="menu-wisp-name">🌿 Wisp</span>
     </div>
@@ -329,6 +360,8 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
       <a href="/privacy.html" target="_blank" id="fc-privacy-lnk"></a>
       &nbsp;·&nbsp;
       <a href="/terms.html" target="_blank" id="fc-terms-lnk"></a>
+      &nbsp;·&nbsp;
+      <a href="#" id="fc-delete-lnk" onclick="fcDeleteAccount();return false;"></a>
     </div>
 
     <button onclick="toggleFCLang()" id="fc-lang-btn" class="menu-icon-btn" style="margin-top:6px;color:#c0e0c0;border-color:#4a7a4a;">🌍 EN</button>
@@ -418,8 +451,12 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
       <div style="padding:4px 12px 14px;display:flex;gap:6px;flex-shrink:0;justify-content:space-between;align-items:center;">
         <div id="battleScore" style="font-family:'Cinzel',cursive;font-size:13px;color:#ffd060;letter-spacing:.5px;padding:4px 2px;">🏆 0</div>
         <div style="display:flex;gap:6px;">
-          <button onclick="toggleMute()" id="muteBtn"
-            style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;">
+          <button onclick="toggleMusic()" id="musicBtn"
+            style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;" title="Muzyka">
+            🎵
+          </button>
+          <button onclick="toggleSfx()" id="sfxBtn"
+            style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;" title="Efekty">
             🔊
           </button>
           <button onclick="openPause()"
@@ -531,7 +568,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
 
     <!-- Zakładki: Karty / Doładowanie -->
     <div id="shopCards" style="flex:1;overflow-y:auto;padding:10px;">
-      <div style="font-size:11px;color:#7a6a3a;font-style:italic;margin-bottom:10px;text-align:center;" id="fc-shop-hint"></div>
+      <div style="font-size:14px;color:#9a8a5a;font-style:italic;margin-bottom:10px;text-align:center;width:100%;padding:0 4px;" id="fc-shop-hint"></div>
       <div id="shopCardGrid" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
     </div>
 
@@ -564,7 +601,7 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
         <div style="font-family:'Cinzel',cursive;font-size:18px;color:#ffd060;">3,99 €</div>
       </div>
 
-      <button onclick="hideTopup()" id="fc-topup-cancel" style="margin-top:8px;background:none;border:none;color:#5a4a2a;font-size:13px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
+      <button onclick="cancelTopup()" id="fc-topup-cancel" style="margin-top:8px;background:none;border:none;color:#5a4a2a;font-size:13px;cursor:pointer;font-family:'Cinzel',cursive;"></button>
     </div>
 
   </div>
@@ -600,25 +637,19 @@ html,body { height:100%; overflow:hidden; background:var(--bg); font-family:'Cri
     <button class="pack-continue" id="fc-pack-continue" onclick="showScreen('collection')"></button>
   </div>
 
-  <!-- LIVES SHOP OVERLAY — fixed, widoczny z każdego ekranu -->
-  <div id="livesOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9998;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;">
-    <div style="font-size:48px;line-height:1;">❤️</div>
-    <div style="font-family:'Cinzel',cursive;font-size:20px;color:#ff8080;text-align:center;" id="fc-lives-title"></div>
-    <div style="font-size:13px;color:#7a5a5a;font-style:italic;text-align:center;margin-bottom:4px;" id="fc-lives-sub"></div>
 
-    <div onclick="buyLives()" style="width:100%;max-width:300px;padding:18px;border-radius:16px;background:linear-gradient(135deg,rgba(80,10,10,.9),rgba(120,20,20,.9));border:2px solid #aa3030;cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-family:'Cinzel',cursive;font-size:18px;color:#ff8080;" id="fc-lives-pack-lbl"></div>
-        <div style="font-size:11px;color:#8a5a5a;margin-top:3px;" id="fc-lives-pack-sub"></div>
-      </div>
-      <div style="font-family:'Cinzel',cursive;font-size:20px;color:#ffd060;" id="fc-lives-price">0,99 €</div>
-    </div>
+</div>
 
-    <button onclick="hideLivesShop();showTopup();" style="width:100%;max-width:300px;padding:12px;border-radius:12px;background:rgba(40,30,0,.8);border:1px solid #6a5020;color:#ffd060;font-family:'Cinzel',cursive;font-size:14px;cursor:pointer;" id="fc-lives-buy-mush"></button>
-
-    <button onclick="hideLivesShop()" style="margin-top:4px;background:none;border:none;color:#5a4a4a;font-size:13px;cursor:pointer;font-family:'Cinzel',cursive;" id="fc-lives-cancel"></button>
-  </div>
-
+<!-- Panel prawy — widoczny tylko na desktopie -->
+<div id="fc-desktop-right">
+  <div class="dp-feature"><strong id="dp-ctrl-title">🖱️ Sterowanie PC</strong><span id="dp-ctrl-text">Klikaj myszką, podążaj za informacjami na kartach i na przyciskach</span></div>
+  <div class="dp-divider"></div>
+  <div class="dp-feature"><strong id="dp-mobile-title">📱 Też na telefonie</strong><span id="dp-mobile-text">Dotknij karty by zagrać. Działa offline jako PWA.</span></div>
+  <div class="dp-divider"></div>
+  <div class="dp-feature"><strong id="dp-mush-title">🍄 Jak zdobyć grzyby?</strong><span id="dp-mush-text">Wygraj bitwę: +1 karta · Sklep: pakiety grzybów 🍄</span></div>
+  <div class="dp-divider"></div>
+  <div class="dp-badge" id="dp-badge-dl">💚 Bez pobierania</div>
+  <button onclick="toggleFCLang()" id="dp-lang-btn-right" class="dp-corner-btn" style="margin-top:20px;background:rgba(20,20,40,.7);color:#a0a0e0;border:1px solid #404060;border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;align-self:center;display:flex;align-items:center;gap:4px;"><img src="https://flagcdn.com/20x15/pl.png" width="20" height="15" style="display:block;"> PL</button>
 </div>
 
 <script>
@@ -862,7 +893,10 @@ const FC_LANGS = {
     continueBtn:(lvl,sc)=>`▶ Kontynuuj (Poziom ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Usuń zapis i zacznij od nowa',
     guide:'❓ Instrukcja', ranking:'🏆 Ranking', deck:'⚔️ Talia', shop:'🍄 Sklep',
-    privacy:'Polityka prywatności', terms:'Regulamin',
+    privacy:'Polityka prywatności', terms:'Regulamin', deleteAccount:'Usuń konto',
+    deleteAccountMsg:'Spowoduje to trwałe usunięcie konta, postępów i grzybków. Tej operacji nie można cofnąć.',
+    deleteAccountYes:'Tak, usuń moje konto', deleteAccountCancel:'Anuluj',
+    deleteAccountDone:'Konto usunięte. Do widzenia!', deleteAccountError:'Błąd — spróbuj ponownie',
     back:'↩ Wróć',
     // Pre-battle
     pbTitle:'⚔️ Nadchodzi walka!', pbEnemyLbl:'⚔️ KARTY PRZECIWNIKA',
@@ -1021,7 +1055,10 @@ const FC_LANGS = {
     continueBtn:(lvl,sc)=>`▶ Continue (Level ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Delete save & start over',
     guide:'❓ Guide', ranking:'🏆 Ranking', deck:'⚔️ Deck', shop:'🍄 Shop',
-    privacy:'Privacy Policy', terms:'Terms of Service',
+    privacy:'Privacy Policy', terms:'Terms of Service', deleteAccount:'Delete Account',
+    deleteAccountMsg:'This will permanently delete your account, progress, and mushrooms. This cannot be undone.',
+    deleteAccountYes:'Yes, delete my account', deleteAccountCancel:'Cancel',
+    deleteAccountDone:'Account deleted. Goodbye!', deleteAccountError:'Error — try again',
     back:'↩ Back',
     pbTitle:'⚔️ Battle incoming!', pbEnemyLbl:'⚔️ ENEMY CARDS',
     pbYourLbl:'🌿 YOUR CARDS', pbRandom:'🎲 Shuffle again',
@@ -1169,7 +1206,7 @@ const FC_LANGS = {
     continueBtn:(lvl,sc)=>`▶ Weiter (Level ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Speicher löschen & neu starten',
     guide:'❓ Anleitung', ranking:'🏆 Rangliste', deck:'⚔️ Deck', shop:'🍄 Shop',
-    privacy:'Datenschutz', terms:'Nutzungsbedingungen',
+    privacy:'Datenschutz', terms:'Nutzungsbedingungen', deleteAccount:'Konto löschen',
     back:'↩ Zurück',
     pbTitle:'⚔️ Kampf beginnt!', pbEnemyLbl:'⚔️ GEGNERKARTEN',
     pbYourLbl:'🌿 DEINE KARTEN', pbRandom:'🎲 Neu mischen',
@@ -1317,7 +1354,7 @@ const FC_LANGS = {
     continueBtn:(lvl,sc)=>`▶ Continuar (Nivel ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Borrar partida y empezar',
     guide:'❓ Guía', ranking:'🏆 Ranking', deck:'⚔️ Mazo', shop:'🍄 Tienda',
-    privacy:'Privacidad', terms:'Términos',
+    privacy:'Privacidad', terms:'Términos', deleteAccount:'Eliminar cuenta',
     back:'↩ Volver',
     pbTitle:'⚔️ ¡Batalla inminente!', pbEnemyLbl:'⚔️ CARTAS ENEMIGAS',
     pbYourLbl:'🌿 TUS CARTAS', pbRandom:'🎲 Barajar de nuevo',
@@ -1465,7 +1502,7 @@ const FC_LANGS = {
     continueBtn:(lvl,sc)=>`▶ Continuer (Niveau ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Supprimer la sauvegarde',
     guide:'❓ Guide', ranking:'🏆 Classement', deck:'⚔️ Deck', shop:'🍄 Boutique',
-    privacy:'Confidentialité', terms:'Conditions',
+    privacy:'Confidentialité', terms:'Conditions', deleteAccount:'Supprimer le compte',
     back:'↩ Retour',
     pbTitle:'⚔️ Bataille imminente !', pbEnemyLbl:'⚔️ CARTES ENNEMIES',
     pbYourLbl:'🌿 VOS CARTES', pbRandom:'🎲 Redistribuer',
@@ -1606,8 +1643,9 @@ const FC_LANGS = {
 };
 
 const FC_LANG_CYCLE = ['pl','en','de','es','fr'];
-const FC_LANG_FLAGS = {pl:'🇵🇱',en:'🇬🇧',de:'🇩🇪',es:'🇪🇸',fr:'🇫🇷'};
+const FC_LANG_FLAGS = {pl:'🌍',en:'🌍',de:'🌍',es:'🌍',fr:'🌍'};
 const FC_LANG_ISO   = {pl:'pl',en:'gb',de:'de',es:'es',fr:'fr'};
+const _fcFlagHTML = code => `<img src="https://flagcdn.com/20x15/${FC_LANG_ISO[code]}.png" width="20" height="15" style="vertical-align:middle;margin-right:4px;">${code.toUpperCase()}`;
 
 // Detect browser language
 const _fcBrowserLang = (navigator.language||'en').slice(0,2).toLowerCase();
@@ -1632,9 +1670,73 @@ function applyFCLang() {
   const setT = (id,v) => { const e=$(id); if(e) e.textContent=v; };
   const setH = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
 
-  // Lang buttons (menu + all subpages)
-  const _langLabel = FC_LANG_FLAGS[FC_LANG_CODE]+' '+FC_LANG_CODE.toUpperCase();
-  ['fc-lang-btn','fc-lang-guide','fc-lang-ranking','fc-lang-deck','fc-lang-shop'].forEach(id => setT(id, _langLabel));
+  // Lang buttons (menu + all subpages + desktop panel)
+  const _flagHtml = _fcFlagHTML(FC_LANG_CODE);
+  ['fc-lang-btn','fc-lang-guide','fc-lang-ranking','fc-lang-deck','fc-lang-shop','dp-lang-btn-right'].forEach(id => {
+    const el = $(id); if(el) el.innerHTML = _flagHtml;
+  });
+
+  // Desktop right panel translations
+  const DP = {
+    pl:{ ctrlT:'🖱️ Sterowanie PC',   ctrlD:'Klikaj myszką, podążaj za informacjami na kartach i na przyciskach',
+         mobT:'📱 Też na telefonie',  mobD:'Dotknij karty by zagrać. Działa offline jako PWA.',
+         mushT:'🍄 Jak zdobyć grzyby?', mushD:'Wygraj bitwę: +1 karta · Sklep: pakiety grzybów 🍄',
+         badge:'💚 Bez pobierania' },
+    en:{ ctrlT:'🖱️ PC Controls',     ctrlD:'Click with your mouse, follow the info on cards and buttons',
+         mobT:'📱 Mobile too',        mobD:'Tap a card to play. Works offline as a PWA.',
+         mushT:'🍄 How to get mushrooms?', mushD:'Win a battle: +1 card · Shop: mushroom packs 🍄',
+         badge:'💚 No download' },
+    de:{ ctrlT:'🖱️ PC-Steuerung',    ctrlD:'Mit der Maus klicken, den Hinweisen auf Karten und Schaltflächen folgen',
+         mobT:'📱 Auch mobil',        mobD:'Karte antippen um zu spielen. Funktioniert offline als PWA.',
+         mushT:'🍄 Wie bekommt man Pilze?', mushD:'Kampf gewinnen: +1 Karte · Shop: Pilzpakete 🍄',
+         badge:'💚 Kein Download' },
+    es:{ ctrlT:'🖱️ Controles PC',    ctrlD:'Haz clic con el ratón, sigue las indicaciones en las cartas y botones',
+         mobT:'📱 También en móvil',  mobD:'Toca una carta para jugar. Funciona sin conexión como PWA.',
+         mushT:'🍄 ¿Cómo conseguir setas?', mushD:'Gana batalla: +1 carta · Tienda: packs de setas 🍄',
+         badge:'💚 Sin descarga' },
+    fr:{ ctrlT:'🖱️ Contrôles PC',    ctrlD:'Cliquez avec la souris, suivez les infos sur les cartes et boutons',
+         mobT:'📱 Aussi sur mobile',  mobD:'Appuyez sur une carte pour jouer. Fonctionne hors ligne en PWA.',
+         mushT:'🍄 Comment obtenir des champignons ?', mushD:'Victoire: +1 carte · Boutique: packs de champignons 🍄',
+         badge:'💚 Sans téléchargement' },
+  }[FC_LANG_CODE] || {};
+  setT('dp-ctrl-title',  DP.ctrlT);   setT('dp-ctrl-text',   DP.ctrlD);
+  setT('dp-mobile-title',DP.mobT);    setT('dp-mobile-text', DP.mobD);
+  setT('dp-mush-title',  DP.mushT);   setT('dp-mush-text',   DP.mushD);
+  setT('dp-badge-dl',    DP.badge);
+
+  // Desktop left panel translations
+  const DPL = {
+    pl:{ sub:'Gra karciana · Świat Wispa',
+         f1t:'🃏 Strategia',   f1d:'40 poziomów walk karcianymi taliami w świecie Wispa',
+         f2t:'🚫 Zero reklam', f2d:'Żadnych przerw, banerów ani popupów',
+         f3t:'🏆 Ranking globalny', f3d:'Rywalizuj z graczami z całego świata — Top 20',
+         badge:'🆓 Darmowa gra przeglądarkowa' },
+    en:{ sub:'Card Game · Wisp\'s World',
+         f1t:'🃏 Strategy',    f1d:'40 levels of card battles in Wisp\'s world',
+         f2t:'🚫 No ads',      f2d:'No interruptions, banners or popups',
+         f3t:'🏆 Global ranking', f3d:'Compete with players worldwide — Top 20',
+         badge:'🆓 Free browser game' },
+    de:{ sub:'Kartenspiel · Wisps Welt',
+         f1t:'🃏 Strategie',   f1d:'40 Ebenen Kartenkämpfe in Wisps Welt',
+         f2t:'🚫 Keine Werbung', f2d:'Keine Unterbrechungen, Banner oder Popups',
+         f3t:'🏆 Globales Ranking', f3d:'Rivalisiere mit Spielern weltweit — Top 20',
+         badge:'🆓 Kostenloses Browserspiel' },
+    es:{ sub:'Juego de cartas · Mundo de Wisp',
+         f1t:'🃏 Estrategia',  f1d:'40 niveles de batallas con cartas en el mundo de Wisp',
+         f2t:'🚫 Sin anuncios', f2d:'Sin interrupciones, banners ni popups',
+         f3t:'🏆 Ranking global', f3d:'Compite con jugadores de todo el mundo — Top 20',
+         badge:'🆓 Juego gratuito en navegador' },
+    fr:{ sub:'Jeu de cartes · Monde de Wisp',
+         f1t:'🃏 Stratégie',   f1d:'40 niveaux de combats de cartes dans le monde de Wisp',
+         f2t:'🚫 Sans pub',    f2d:'Aucune interruption, bannière ou popup',
+         f3t:'🏆 Classement mondial', f3d:'Rivalise avec des joueurs du monde entier — Top 20',
+         badge:'🆓 Jeu gratuit en navigateur' },
+  }[FC_LANG_CODE] || {};
+  setT('dp-left-sub',   DPL.sub);
+  setT('dp-left-f1t',   DPL.f1t);  setT('dp-left-f1d',  DPL.f1d);
+  setT('dp-left-f2t',   DPL.f2t);  setT('dp-left-f2d',  DPL.f2d);
+  setT('dp-left-f3t',   DPL.f3t);  setT('dp-left-f3d',  DPL.f3d);
+  setT('dp-left-badge', DPL.badge);
 
   // Menu
   setH('fc-subtitle', L.subtitle);
@@ -1652,6 +1754,7 @@ function applyFCLang() {
   setT('fc-btn-shop', L.shop);
   setT('fc-privacy-lnk', L.privacy);
   setT('fc-terms-lnk', L.terms);
+  setT('fc-delete-lnk', L.deleteAccount);
   // reset label
   const rl = $('fc-reset-link');
   if(rl && (GS.wins>0||GS.battleLevel>1)) rl.textContent = L.resetSave;
@@ -1747,7 +1850,7 @@ function applyFCLang() {
 // ═══════════════════════════════════════════════
 const Audio = (() => {
   let actx = null, masterGain = null, musicGain = null, sfxGain = null;
-  let musicNodes = [], currentTheme = -1, muted = false;
+  let musicNodes = [], currentTheme = -1, sfxMuted = false, musicMuted = false;
   let musicTimer = null;
 
   function init() {
@@ -1762,7 +1865,7 @@ const Audio = (() => {
 
   // ── Low-level primitives ──────────────────────
   function osc(freq, type, vol, att, sus, rel, delay=0, dest=null, detune=0) {
-    if(!actx||muted) return null;
+    if(!actx||sfxMuted) return null;
     const o=actx.createOscillator(), g=actx.createGain();
     o.type=type; o.frequency.value=freq; if(detune) o.detune.value=detune;
     const t=now()+delay;
@@ -1776,7 +1879,7 @@ const Audio = (() => {
   }
 
   function oscSlide(f1, f2, type, vol, dur, delay=0, dest=null) {
-    if(!actx||muted) return;
+    if(!actx||sfxMuted) return;
     const o=actx.createOscillator(), g=actx.createGain();
     o.type=type;
     const t=now()+delay;
@@ -1789,7 +1892,7 @@ const Audio = (() => {
   }
 
   function noise(vol, dur, freq, q, delay=0, dest=null) {
-    if(!actx||muted) return;
+    if(!actx||sfxMuted) return;
     const buf=actx.createBuffer(1,actx.sampleRate*dur,actx.sampleRate);
     const d=buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
     const src=actx.createBufferSource();
@@ -1834,7 +1937,7 @@ const Audio = (() => {
   // Atak — potężne uderzenie z impact
   // Atak — trzask pioruna (prosta, pewna metoda)
   function sfxAttack() {
-    if(!actx||muted) return;
+    if(!actx||sfxMuted) return;
     // Wypełnij bufor czystym szumem z eksponencjalnym zanikaniem
     const sr = actx.sampleRate;
     const dur = 0.08;
@@ -1856,7 +1959,7 @@ const Audio = (() => {
     src.start();
     // Drugi krótki trzask jako echo
     setTimeout(()=>{
-      if(!actx||muted) return;
+      if(!actx||sfxMuted) return;
       const buf2 = actx.createBuffer(1, Math.floor(sr*0.04), sr);
       const d2 = buf2.getChannelData(0);
       for(let i=0;i<d2.length;i++) d2[i]=(Math.random()*2-1)*Math.exp(-i/(sr*0.006));
@@ -1871,6 +1974,37 @@ const Audio = (() => {
   // Trafienie w kartę — ból / impact
   function sfxHit() {
     noise(.08,.05,400,1.5);
+  }
+
+  // Atak wroga — głośniejszy niż sfxAttack gracza, bezpośrednio do destination
+  function sfxEnemyAttack() {
+    if(!actx||sfxMuted) return;
+    const sr = actx.sampleRate;
+    const dest = actx.destination;
+    // Główny boom — pełne spektrum, bardzo krótkie zanikanie
+    const dur = 0.12;
+    const buf = actx.createBuffer(1, Math.floor(sr*dur), sr);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)
+      d[i] = (Math.random()*2-1) * Math.exp(-i/(sr*0.018));
+    const src = actx.createBufferSource();
+    const g = actx.createGain();
+    g.gain.value = 0.32;
+    src.buffer=buf; src.connect(g); g.connect(dest);
+    src.start();
+    // Drugi silniejszy uderzenie z lekkim opóźnieniem — podwójny grzmot
+    setTimeout(() => {
+      if(!actx||sfxMuted) return;
+      const buf2 = actx.createBuffer(1, Math.floor(sr*0.08), sr);
+      const d2 = buf2.getChannelData(0);
+      for(let i=0;i<d2.length;i++)
+        d2[i] = (Math.random()*2-1) * Math.exp(-i/(sr*0.025));
+      const s2 = actx.createBufferSource();
+      const g2 = actx.createGain();
+      g2.gain.value = 0.24;
+      s2.buffer=buf2; s2.connect(g2); g2.connect(dest);
+      s2.start();
+    }, 55);
   }
 
   // Przewaga typu — magiczny efekt żywiołu
@@ -1966,7 +2100,7 @@ const Audio = (() => {
   }
 
   function playTheme(idx) {
-    if(!actx||muted) return;
+    if(!actx||musicMuted) return;
     if(currentTheme===idx) return;
     stopMusic(); currentTheme=idx;
     if(idx===0) menuTheme();
@@ -2023,46 +2157,48 @@ const Audio = (() => {
   // ── BATTLE: Mroczny Las — klimat Wispa poziomy 4-7 ──
   // Niskie pady sinusowe + wolne arpeggio moll + niepokojące piny
   function battleTheme() {
-    const darkScale = [220,247,277,294,330,370,415,440];
+    // Identyczna struktura co menuTheme — moll zamiast dur
+    const scale = [233,277,311,349,392,440,466,523];
     let t = now() + 0.1;
     const loop = () => {
       if(currentTheme!==1) return;
-
-      // Mroczne arpeggio moll triangle — jak w Wisp ale wolniejsze
-      for(let i=0;i<6;i++){
-        const f=darkScale[Math.floor(Math.random()*darkScale.length)];
-        const o=actx.createOscillator(), g=actx.createGain();
-        o.type='triangle'; o.frequency.value=f;
-        const st=t+i*.45+Math.random()*.08;
-        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.032,st+.06);
-        g.gain.exponentialRampToValueAtTime(.0001,st+.38);
-        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.45); musicNodes.push(o);
-      }
-
-      // Niepokojący wysoki ton — jak duch
-      if(Math.random()>.45){
-        const f=440+Math.random()*220;
-        const st=t+.8+Math.random()*2;
+      // Akordy basowe moll (jak menu ale ciemniejsze częstotliwości)
+      [233,311,370].forEach((f) => {
         const o=actx.createOscillator(), g=actx.createGain();
         o.type='sine'; o.frequency.value=f;
-        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.025,st+.15);
-        g.gain.setValueAtTime(.025,st+.5); g.gain.exponentialRampToValueAtTime(.0001,st+1.2);
-        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+1.3); musicNodes.push(o);
+        g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.055,t+.35);
+        g.gain.setValueAtTime(.055,t+1.9); g.gain.exponentialRampToValueAtTime(.0001,t+2.5);
+        o.connect(g); g.connect(musicGain); o.start(t); o.stop(t+2.6); musicNodes.push(o);
+      });
+      // Arpeggio mroczne (identyczne gain co menu)
+      for(let i=0;i<8;i++){
+        const f=scale[Math.floor(Math.random()*scale.length)]*(Math.random()>.65?2:1);
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type='triangle'; o.frequency.value=f;
+        const st=t+i*.28+Math.random()*.05;
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.042,st+.04);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.24);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.3); musicNodes.push(o);
       }
-
-      // Dysonansowe uderzenie co kilka taktów
-      if(Math.random()>.55){
-        const st=t+1.5+Math.random();
-        [220,233].forEach((f,i) => {
-          const o=actx.createOscillator(), g=actx.createGain();
-          o.type='triangle'; o.frequency.value=f;
-          g.gain.setValueAtTime(.02,st+i*.05); g.gain.exponentialRampToValueAtTime(.0001,st+.6);
-          o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.65); musicNodes.push(o);
-        });
+      // Mroczne piny napięcia (zamiast ptaków)
+      if(Math.random()>.35){
+        const f=350+Math.random()*200, st=t+1.4+Math.random()*.5;
+        const o=actx.createOscillator(), g=actx.createGain(); o.type='sine';
+        o.frequency.setValueAtTime(f,st); o.frequency.linearRampToValueAtTime(f*.78,st+.3);
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.048,st+.05);
+        g.gain.setValueAtTime(.048,st+.28); g.gain.exponentialRampToValueAtTime(.0001,st+.38);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.45); musicNodes.push(o);
       }
-
-      t += 3.8;
-      musicTimer = setTimeout(()=>{ if(currentTheme===1) loop(); }, 3600);
+      if(Math.random()>.6){
+        const f=500+Math.random()*300, st=t+.6+Math.random()*.8;
+        const o=actx.createOscillator(), g=actx.createGain(); o.type='sine';
+        o.frequency.setValueAtTime(f,st); o.frequency.linearRampToValueAtTime(f*.85,st+.2);
+        g.gain.setValueAtTime(0,st); g.gain.linearRampToValueAtTime(.035,st+.03);
+        g.gain.exponentialRampToValueAtTime(.0001,st+.25);
+        o.connect(g); g.connect(musicGain); o.start(st); o.stop(st+.3); musicNodes.push(o);
+      }
+      t += 2.4;
+      musicTimer = setTimeout(()=>{ if(currentTheme===1) loop(); }, 2200);
     };
     loop();
   }
@@ -2101,14 +2237,30 @@ const Audio = (() => {
     };
     loop();
   }
-  function setMute(v) {
-    muted=v;
-    if(masterGain) masterGain.gain.value = v ? 0 : 0.8;
+  function setSfxMute(v) {
+    sfxMuted = v;
+    if(sfxGain) sfxGain.gain.value = v ? 0 : 0.7;
+  }
+  function setMusicMute(v) {
+    musicMuted = v;
+    if(v) {
+      const saved = currentTheme;
+      stopMusic();
+      currentTheme = saved; // zapamiętaj motyw żeby można było wrócić
+    } else {
+      if(musicGain) musicGain.gain.value = 0.28;
+      const theme = currentTheme;
+      currentTheme = -1; // resetuj żeby playTheme nie pominął przez currentTheme===idx
+      if(theme >= 0) playTheme(theme);
+    }
   }
 
+  function suspend() { if(actx && actx.state === 'running') actx.suspend(); }
+  function resume()  { if(actx && actx.state === 'suspended') actx.resume(); }
+
   return {
-    init, playTheme, stopMusic, setMute,
-    sfxCardSelect, sfxAttack, sfxHit, sfxTypeAdv,
+    init, playTheme, stopMusic, setSfxMute, setMusicMute, suspend, resume,
+    sfxCardSelect, sfxAttack, sfxHit, sfxEnemyAttack, sfxTypeAdv,
     sfxWin, sfxLose, sfxCardReveal, sfxLegendaryReveal,
     sfxDeckAdd, sfxDeckRemove, sfxMenuClick, sfxBuyPack
   };
@@ -2599,6 +2751,7 @@ let battle = {
   selectedTarget: null,
   turn: 'player',
   over: false,
+  score: 0,
 };
 
 const ENEMIES = [
@@ -2662,8 +2815,11 @@ const ENEMIES = [
 function startCampaign() {
   try { Audio.init(); } catch(e){}
   if(GS.lives <= 0) {
-    openLivesShop();
-    return;
+    GS.lives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
+    GS.wins = 0;
+    GS.battleLevel = 1;
+    updateMenuLives();
+    updateMenuContinue();
   }
   GS.difficulty = FC_DIFF;
   saveSave();
@@ -2842,6 +2998,7 @@ function initBattle(selectedHand) {
   battle.playerHP = 30;
   battle.over = false;
   battle.turn = 'player';
+  battle.score = 0;
   battle.selectedCard = null;
   battle.selectedTarget = null;
 
@@ -3002,10 +3159,12 @@ function endTurn() {
       setTimeout(() => {
         animateEnemyHit(targetIdx, isDying);
         try{ Audio.sfxHit(); }catch(e){}
-        floatDamage(dmg, true);
+        floatDamage(dmg, true, targetIdx);
         setTimeout(() => renderEnemyField(), isDying ? 520 : 0);
       }, 300);
 
+      battle.score += dmg;
+      updateBattleScore();
       const _pN=(FCLANG.cardNames||{})[pCard.id]||pCard.name;
 const _tN2=(FCLANG.cardNames||{})[target.id]||target.name;
 setLog(`${_pN} → ${_tN2}: -${dmg}${FCLANG.dmgSuffix||'!'} ${getTypeMsg(pCard.type,target.type)}`);
@@ -3059,8 +3218,8 @@ setLog(`${attacker.emoji||'👾'} ${_aName}\n${FCLANG.counterattack||'💥 count
     // Piorun wroga — z opóźnieniem żeby DOM był w pełni wyrenderowany
     setTimeout(() => fireEnemyLightning(attackerIdx, targetIdx), 50);
     setTimeout(()=>{
-      floatDamage(dmg, false);
-      try{ Audio.sfxHit(); }catch(e){}
+      floatDamage(dmg, false, targetIdx);
+      try{ Audio.sfxEnemyAttack(); }catch(e){}
       // Animacja trafienia / śmierci karty gracza
       const playerCardDying = battle.playerHand[targetIdx]?.currentHP <= 0;
       animatePlayerCardHit(targetIdx);
@@ -3285,7 +3444,7 @@ function endBattle(won) {
 
 function nextBattle() {
   document.getElementById('result-overlay').classList.remove('show');
-  if(GS.lives <= 0) { showScreen('menu'); return; }
+  if(GS.lives <= 0) { openLivesShop(); return; }
   if(GS.battleLevel > ENEMIES.length) { showEndScreen(); return; }
   showPrebattle();
 }
@@ -3321,16 +3480,17 @@ function showEndScreen() {
 }
 
 function updateHP() {
-  const ep = (battle.enemyHP / battle.enemyMaxHP * 100).toFixed(0);
-  // playerHP = proporcja żywych kart gracza
+  const aliveEnemy  = battle.enemyHand.filter(c => c.currentHP > 0).length;
+  const totalEnemy  = battle.enemyHand.length;
   const alivePlayer = battle.playerHand.filter(c => c.currentHP > 0).length;
   const totalPlayer = battle.playerHand.length;
-  battle.playerHP = alivePlayer; // używamy jako licznik
+  battle.playerHP = alivePlayer;
   battle.playerMaxHP = totalPlayer;
-  const pp = (alivePlayer / totalPlayer * 100).toFixed(0);
+  const ep = totalEnemy  > 0 ? (aliveEnemy  / totalEnemy  * 100).toFixed(0) : 0;
+  const pp = totalPlayer > 0 ? (alivePlayer / totalPlayer * 100).toFixed(0) : 0;
   document.getElementById('enemyHP').style.width = ep + '%';
   document.getElementById('playerHP').style.width = pp + '%';
-  document.getElementById('enemyHPText').textContent = `❤️ ${battle.enemyHP}/${battle.enemyMaxHP}`;
+  document.getElementById('enemyHPText').textContent = `❤️ ${aliveEnemy}/${totalEnemy}`;
   document.getElementById('playerHPText').textContent = FCLANG.cardsLbl(alivePlayer,totalPlayer);
 }
 
@@ -3352,7 +3512,7 @@ function renderLives() {
 
 function updateBattleScore() {
   const el = document.getElementById('battleScore');
-  if(el) el.textContent = `🏆 ${getPlayerScore()}`;
+  if(el) el.textContent = `⚔️ ${battle.score}`;
 }
 
 // ── ANIMACJE KART ────────────────────────────────
@@ -3388,14 +3548,36 @@ function animatePlayerCardHit(cardIdx) {
   }
 }
 
-function floatDamage(dmg, isEnemy) {
+function floatDamage(dmg, isEnemy, cardIdx) {
   const div = document.createElement('div');
   div.className = 'dmg-float';
   div.textContent = '-' + dmg;
   div.style.color = isEnemy ? '#ff6060' : '#ffaa40';
-  div.style.left = (isEnemy ? '55%' : '20%');
-  div.style.top = (isEnemy ? '20%' : '65%');
-  document.getElementById('battle').appendChild(div);
+
+  const battleEl = document.getElementById('battle');
+  const bRect = battleEl.getBoundingClientRect();
+  let left = isEnemy ? '55%' : '20%';
+  let top  = isEnemy ? '20%' : '65%';
+
+  if(cardIdx !== undefined) {
+    const containerId = isEnemy ? 'enemyField' : 'handArea';
+    const container = document.getElementById(containerId);
+    if(container) {
+      const domIdx = isEnemy ? enemyHandToDomIdx(cardIdx) : playerHandToDomIdx(cardIdx);
+      const cards = container.querySelectorAll('.card');
+      const cardEl = cards[domIdx];
+      if(cardEl) {
+        const r = cardEl.getBoundingClientRect();
+        left = (r.left - bRect.left + r.width / 2) + 'px';
+        top  = (r.top  - bRect.top  + r.height * 0.2) + 'px';
+        div.style.transform = 'translateX(-50%)';
+      }
+    }
+  }
+
+  div.style.left = left;
+  div.style.top  = top;
+  battleEl.appendChild(div);
   setTimeout(() => div.remove(), 900);
 }
 
@@ -3808,71 +3990,150 @@ function hideTopup() {
   document.getElementById('topupOverlay').style.display = 'none';
 }
 
+let _livesShopContext = false;
 function openLivesShop() {
-  const el = document.getElementById('livesOverlay');
-  if(el) el.style.display = 'flex';
+  _livesShopContext = true;
+  showScreen('shop');
+  showTopup();
 }
-function hideLivesShop() {
-  const el = document.getElementById('livesOverlay');
-  if(el) el.style.display = 'none';
-}
+function hideLivesShop() {}
 
-async function buyLives() {
-  const token = localStorage.getItem('fc_token');
-  if(!token) { showToast(FCLANG.loginFirst||'Sign in first'); return; }
-  const package_id = 'fc_lives_3';
-
-  // Google Play Billing (TWA)
-  const IS_TWA = document.referrer.includes('android-app://') || navigator.userAgent.includes('wv');
-  if(IS_TWA && 'getDigitalGoodsService' in window) {
+function fcDeleteAccount() {
+  const token = getToken();
+  if(!token){ showToast(FCLANG.loginRequired||'🔑 Sign in first'); return; }
+  const existing = document.getElementById('fc-delete-modal');
+  if(existing){ existing.remove(); return; }
+  const L = FCLANG;
+  const m = document.createElement('div');
+  m.id = 'fc-delete-modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  m.innerHTML = `
+    <div style="background:#1a0a0a;border:1px solid #6a2020;border-radius:14px;padding:28px;max-width:320px;width:90%;text-align:center;">
+      <div style="font-size:28px;margin-bottom:10px;">⚠️</div>
+      <div style="color:#f08080;font-size:17px;font-weight:bold;margin-bottom:10px;">${L.deleteAccount||'Delete Account'}?</div>
+      <div style="color:#a08080;font-size:13px;margin-bottom:22px;" id="fc-del-msg">${L.deleteAccountMsg||'This will permanently delete your account, progress, and mushrooms. This cannot be undone.'}</div>
+      <button id="fc-del-confirm" style="background:#8a1010;color:#ffd0d0;border:none;border-radius:8px;padding:10px 24px;font-size:14px;cursor:pointer;width:100%;margin-bottom:8px;">${L.deleteAccountYes||'Yes, delete my account'}</button>
+      <button onclick="document.getElementById('fc-delete-modal').remove()" style="background:transparent;color:#6a8a6a;border:1px solid #2a4a2a;border-radius:8px;padding:8px 24px;font-size:13px;cursor:pointer;width:100%;">${L.deleteAccountCancel||'Cancel'}</button>
+    </div>`;
+  document.body.appendChild(m);
+  m.querySelector('#fc-del-confirm').onclick = async () => {
+    const btn = m.querySelector('#fc-del-confirm');
+    btn.textContent = '...';
+    btn.disabled = true;
     try {
-      const service = await window.getDigitalGoodsService('https://play.google.com/billing');
-      const details = await service.getDetails([package_id]);
-      if(!details || !details.length){ _buyLivesWithPaddle(); return; }
-      const request = new PaymentRequest(
-        [{ supportedMethods:'https://play.google.com/billing', data:{ sku: package_id } }],
-        { total:{ label: details[0].title || package_id, amount:{ currency:'EUR', value:'0' } } }
-      );
-      const response = await request.show();
-      const r = await fetch('/api/gplay/verify', {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify({ package_id, purchase_token: response.details.token }),
-      });
-      const data = await r.json();
-      if(data.ok) {
-        await response.complete('success');
-        GS.lives = Math.min(10, GS.lives + 3);
-        saveSave();
-        updateMenuLives();
-        hideLivesShop();
-        showToast('❤️❤️❤️ +3 ' + (FCLANG.livesLbl||'Lives') + ' ✅');
+      const r = await fetch('/api/account', { method: 'DELETE', headers: { Authorization: 'Bearer ' + token } });
+      if(r.ok) {
+        localStorage.removeItem('fc_jwt');
+        localStorage.removeItem('fc_save');
+        m.querySelector('#fc-del-msg').textContent = L.deleteAccountDone||'Account deleted. Goodbye!';
+        btn.style.display = 'none';
+        setTimeout(() => { m.remove(); location.reload(); }, 2000);
       } else {
-        await response.complete('fail');
-        showToast(FCLANG.payError||'Payment error');
+        btn.textContent = L.deleteAccountError||'Error — try again';
+        btn.disabled = false;
       }
     } catch(e) {
-      if(e.name !== 'AbortError') _buyLivesWithPaddle();
+      btn.textContent = L.deleteAccountError||'Error — try again';
+      btn.disabled = false;
     }
+  };
+}
+
+function cancelTopup() {
+  hideTopup();
+  if(_livesShopContext) {
+    _livesShopContext = false;
+    showScreen('menu');
+  }
+}
+
+async function buyLives(package_id) {
+  const token = getToken();
+  if(!token) {
+    showToast(FCLANG.loginFirst||'🔑 Sign in first');
+    hideLivesShop();
+    setTimeout(updateAuthUI, 100);
+    return;
+  }
+  if(!package_id) package_id = 'fc_lives_3';
+
+  const livesMap = { fc_lives_3:3, fc_lives_5:5, fc_lives_10:10 };
+  const livesCount = livesMap[package_id] || 3;
+
+  const IS_TWA = ('getDigitalGoodsService' in window) || document.referrer.startsWith('android-app://') || navigator.userAgent.includes('wv');
+
+  // ── Google Play Billing (TWA) ──────────────────────────────
+  if(IS_TWA && 'getDigitalGoodsService' in window) {
+    (async () => {
+      let service;
+      try {
+        service = await window.getDigitalGoodsService('https://play.google.com/billing');
+      } catch(e) {
+        const info = { step:'getDigitalGoodsService', name:e.name, message:e.message, ua:navigator.userAgent };
+        fetch('/api/debug-billing', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(info)}).catch(()=>{});
+        if(confirm('Błąd Play Store (' + e.message + '). Użyć płatności kartą?')) _buyWithPaddle();
+        return;
+      }
+      let details;
+      try {
+        details = await service.getDetails([package_id]);
+      } catch(e) {
+        if(confirm('Błąd pobierania produktu (' + e.message + '). Użyć płatności kartą?')) _buyWithPaddle();
+        return;
+      }
+      if(!details || !details.length) {
+        if(confirm('Produkt nie znaleziony (SKU: ' + package_id + '). Użyć płatności kartą?')) _buyWithPaddle();
+        return;
+      }
+      let response;
+      try {
+        const req = new PaymentRequest(
+          [{ supportedMethods:'https://play.google.com/billing', data:{ sku: package_id } }],
+          { total:{ label: details[0].title || package_id, amount:{ currency:(details[0].price?.currency)||'EUR', value:'0' } } }
+        );
+        response = await req.show();
+      } catch(e) {
+        if(e.name !== 'AbortError')
+          if(confirm('Błąd okna płatności (' + e.message + '). Użyć płatności kartą?')) _buyWithPaddle();
+        return;
+      }
+      try {
+        const r = await fetch('/api/gplay/verify', {
+          method:'POST', headers: authHeaders(),
+          body: JSON.stringify({ package_id, purchase_token: response.details.token }),
+        });
+        const data = await r.json();
+        if(data.ok) {
+          await response.complete('success');
+          GS.lives = data.lives;
+          saveSave();
+          updateMenuLives();
+          hideLivesShop();
+          showToast('❤️ +' + livesCount + ' ' + (FCLANG.livesLbl||'Lives') + ' ✅');
+        } else {
+          await response.complete('fail');
+          showToast(FCLANG.payError||'Payment error');
+        }
+      } catch(e) { console.error('GP verify error:', e); }
+    })();
     return;
   }
 
-  // Paddle (web)
-  _buyLivesWithPaddle();
+  // ── Paddle (web) ───────────────────────────────────────────
+  _buyWithPaddle();
 
-  function _buyLivesWithPaddle() {
+  function _buyWithPaddle() {
     fetch('/api/buy', {
-      method: 'POST',
-      headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+      method:'POST', headers: authHeaders(),
       body: JSON.stringify({ package_id }),
     })
     .then(r => r.json())
     .then(d => {
-      if(!d.price_id || !window.Paddle){ showToast(FCLANG.payError||'Payment error'); return; }
+      if(!d.price_id || !window.Paddle){ showToast(FCLANG.payError||'Payment error. Try again later.'); return; }
       Paddle.Checkout.open({
         items: [{ priceId: d.price_id, quantity: 1 }],
         customData: { user_id: String(d.user_id), package_id: d.package_id },
-        settings: { successUrl: window.location.origin + '/?purchase=lives' },
+        settings: { successUrl: window.location.origin + '/?purchase=lives&pkg=' + package_id },
       });
     })
     .catch(() => showToast(FCLANG.connError||'Connection error'));
@@ -3894,37 +4155,71 @@ function buyMushrooms(amount, price) {
   if(!package_id){ showToast(FCLANG.unknownPkg||'Unknown package.'); return; }
 
   // Google Play Billing (TWA)
-  const IS_TWA = document.referrer.includes('android-app://') || navigator.userAgent.includes('wv');
+  const IS_TWA = ('getDigitalGoodsService' in window) || document.referrer.startsWith('android-app://') || navigator.userAgent.includes('wv');
   if(IS_TWA && 'getDigitalGoodsService' in window){
     (async () => {
+      let service;
       try {
-        const service = await window.getDigitalGoodsService('https://play.google.com/billing');
-        const details = await service.getDetails([package_id]);
-        if(!details || !details.length){ _buyWithPaddle(package_id, token); return; }
+        service = await window.getDigitalGoodsService('https://play.google.com/billing');
+      } catch(e) {
+        if(confirm('Błąd połączenia z Play Store (' + e.message + '). Użyć płatności kartą?')) _buyWithPaddle(package_id, token);
+        return;
+      }
+      let details;
+      try {
+        details = await service.getDetails([package_id]);
+      } catch(e) {
+        if(confirm('Błąd pobierania produktu (' + e.message + '). Użyć płatności kartą?')) _buyWithPaddle(package_id, token);
+        return;
+      }
+      if(!details || !details.length) {
+        if(confirm('Produkt nie znaleziony w Play Store. Użyć płatności kartą?')) _buyWithPaddle(package_id, token);
+        return;
+      }
+      let response;
+      try {
         const request = new PaymentRequest(
           [{ supportedMethods:'https://play.google.com/billing', data:{ sku: package_id } }],
           { total:{ label: details[0].title || package_id, amount:{ currency:'EUR', value:'0' } } }
         );
-        const response = await request.show();
+        response = await request.show();
+      } catch(e) {
+        if(e.name !== 'AbortError') {
+          if(confirm('Błąd okna płatności (' + e.message + '). Użyć płatności kartą?')) _buyWithPaddle(package_id, token);
+        }
+        return;
+      }
+      try {
+        const purchaseToken = response.details.token;
         const r = await fetch('/api/gplay/verify', {
           method: 'POST',
           headers: authHeaders(),
-          body: JSON.stringify({ package_id, purchase_token: response.details.token }),
+          body: JSON.stringify({ package_id, purchase_token: purchaseToken }),
         });
         const data = await r.json();
         if(data.ok){
-          await response.complete('success');
+          // Aktualizuj UI natychmiast — zanim response.complete może rzucić AbortError
           GS.mushrooms = data.mushrooms;
+          if(GS.lives === 0){
+            GS.lives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
+            updateMenuLives();
+            updateMenuContinue();
+          }
           saveSave();
-          updateMushroomDisplay();
           hideTopup();
-          renderShop();
-          showToast(`🍄 +${amount} ${FCLANG.shopMush?'':' mushrooms'} ✅`);
+          setTimeout(() => {
+            renderShop();
+            updateMushroomDisplay();
+            const el = document.getElementById('shopMushroomCount');
+            if(el) el.textContent = FCLANG.shopMush(GS.mushrooms||0);
+          }, 300);
+          showToast(`🍄 +${amount} = ${GS.mushrooms} ✅`);
+          try { await response.complete('success'); } catch(e2) {}
         } else {
-          await response.complete('fail');
+          try { await response.complete('fail'); } catch(e2) {}
         }
       } catch(e) {
-        if(e.name !== 'AbortError') _buyWithPaddle(package_id, token);
+        try { await response.complete('fail'); } catch(e2) {}
       }
     })();
     return;
@@ -4176,11 +4471,18 @@ function adminAddLives() {
   }
 }
 window.adminAddLives = adminAddLives;
-function toggleMute() {
-  _muted = !_muted;
-  Audio.setMute(_muted);
-  const btn = document.getElementById('muteBtn');
-  if(btn) btn.textContent = _muted ? '🔇' : '🔊';
+let _musicMuted = false, _sfxMuted = false;
+function toggleMusic() {
+  _musicMuted = !_musicMuted;
+  Audio.setMusicMute(_musicMuted);
+  const btn = document.getElementById('musicBtn');
+  if(btn) btn.textContent = _musicMuted ? '🔕' : '🎵';
+}
+function toggleSfx() {
+  _sfxMuted = !_sfxMuted;
+  Audio.setSfxMute(_sfxMuted);
+  const btn = document.getElementById('sfxBtn');
+  if(btn) btn.textContent = _sfxMuted ? '🔇' : '🔊';
 }
 
 // ── INIT ──────────────────────────────────────────
@@ -4223,16 +4525,26 @@ window.addEventListener('load', async () => {
           }
         } catch(e){}
       }
+      if(GS.lives === 0){
+        const defaultLives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
+        GS.lives = defaultLives;
+        saveSave();
+        updateMenuLives();
+        updateMenuContinue();
+      }
       showToast(FCLANG.purchaseOk||'✅ Purchase complete!');
     }, 3000);
   }
   if(purchase === 'lives'){
+    const livesMap = { fc_lives_3:3, fc_lives_5:5, fc_lives_10:10 };
+    const livesPkg = params.get('pkg') || 'fc_lives_3';
+    const livesCount = livesMap[livesPkg] || 3;
     history.replaceState({}, '', window.location.pathname);
     setTimeout(() => {
-      GS.lives = Math.min(10, GS.lives + 3);
+      GS.lives = Math.min(10, GS.lives + livesCount);
       saveSave();
       updateMenuLives();
-      showToast('❤️❤️❤️ +3 ' + (FCLANG.livesLbl||'Lives') + ' ✅');
+      showToast('❤️ +' + livesCount + ' ' + (FCLANG.livesLbl||'Lives') + ' ✅');
     }, 2000);
   }
 
@@ -4285,6 +4597,20 @@ window.addEventListener('load', async () => {
       saveSave();
       showPrebattle();
     }
+  });
+
+  // Wycisz audio gdy aplikacja schodzi w tło (przycisk Home na Androidzie / TWA)
+  document.addEventListener('visibilitychange', () => {
+    try {
+      if(document.hidden) {
+        if(Audio && typeof Audio.suspend === 'function') Audio.suspend();
+      } else {
+        if(Audio && typeof Audio.resume === 'function') Audio.resume();
+      }
+    } catch(e){}
+  });
+  window.addEventListener('pagehide', () => {
+    try { if(Audio && typeof Audio.suspend === 'function') Audio.suspend(); } catch(e){}
   });
 });
 </script>
