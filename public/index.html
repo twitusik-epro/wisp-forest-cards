@@ -918,7 +918,7 @@ const FC_LANGS = {
     easy:'Łatwy', easyLives:'5 żyć · 40 poziomów',
     medium:'Średni', mediumLives:'3 życia · 40 poziomów',
     hard:'Trudny', hardLives:'1 życie · 40 poziomów',
-    play:'▶ ZAGRAJ', installBtn:'Zainstaluj',
+    play:'▶ ZAGRAJ OD NOWA', installBtn:'Zainstaluj',
     continueBtn:(lvl,sc)=>`▶ Kontynuuj (Poziom ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Usuń zapis i zacznij od nowa',
     guide:'❓ Instrukcja', ranking:'🏆 Ranking', deck:'⚔️ Talia', shop:'🍄 Sklep',
@@ -1082,7 +1082,7 @@ const FC_LANGS = {
     easy:'Easy', easyLives:'5 lives · 40 levels',
     medium:'Medium', mediumLives:'3 lives · 40 levels',
     hard:'Hard', hardLives:'1 life · 40 levels',
-    play:'▶ PLAY', installBtn:'Install',
+    play:'▶ NEW GAME', installBtn:'Install',
     continueBtn:(lvl,sc)=>`▶ Continue (Level ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Delete save & start over',
     guide:'❓ Guide', ranking:'🏆 Ranking', deck:'⚔️ Deck', shop:'🍄 Shop',
@@ -1235,7 +1235,7 @@ const FC_LANGS = {
     easy:'Einfach', easyLives:'5 Leben · 40 Level',
     medium:'Mittel', mediumLives:'3 Leben · 40 Level',
     hard:'Schwer', hardLives:'1 Leben · 40 Level',
-    play:'▶ SPIELEN', installBtn:'Installieren',
+    play:'▶ NEU STARTEN', installBtn:'Installieren',
     continueBtn:(lvl,sc)=>`▶ Weiter (Level ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Speicher löschen & neu starten',
     guide:'❓ Anleitung', ranking:'🏆 Rangliste', deck:'⚔️ Deck', shop:'🍄 Shop',
@@ -1385,7 +1385,7 @@ const FC_LANGS = {
     easy:'Fácil', easyLives:'5 vidas · 40 niveles',
     medium:'Medio', mediumLives:'3 vidas · 40 niveles',
     hard:'Difícil', hardLives:'1 vida · 40 niveles',
-    play:'▶ JUGAR', installBtn:'Instalar',
+    play:'▶ NUEVA PARTIDA', installBtn:'Instalar',
     continueBtn:(lvl,sc)=>`▶ Continuar (Nivel ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Borrar partida y empezar',
     guide:'❓ Guía', ranking:'🏆 Ranking', deck:'⚔️ Mazo', shop:'🍄 Tienda',
@@ -1535,7 +1535,7 @@ const FC_LANGS = {
     easy:'Facile', easyLives:'5 vies · 40 niveaux',
     medium:'Moyen', mediumLives:'3 vies · 40 niveaux',
     hard:'Difficile', hardLives:'1 vie · 40 niveaux',
-    play:'▶ JOUER', installBtn:'Installer',
+    play:'▶ NOUVELLE PARTIE', installBtn:'Installer',
     continueBtn:(lvl,sc)=>`▶ Continuer (Niveau ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Supprimer la sauvegarde',
     guide:'❓ Guide', ranking:'🏆 Classement', deck:'⚔️ Deck', shop:'🍄 Boutique',
@@ -2854,15 +2854,14 @@ const ENEMIES = [
 
 function startCampaign() {
   try { Audio.init(); } catch(e){}
-  if(GS.lives <= 0) {
-    GS.lives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
-    GS.wins = 0;
-    GS.battleLevel = 1;
-    updateMenuLives();
-    updateMenuContinue();
-  }
+  // Zawsze zaczynaj od poziomu 1 — zachowaj kolekcję, talię i grzybki
+  GS.lives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
+  GS.wins = 0;
+  GS.battleLevel = 1;
   GS.difficulty = FC_DIFF;
   saveSave();
+  updateMenuLives();
+  updateMenuContinue();
   showPrebattle();
 }
 
