@@ -576,6 +576,7 @@ body { display:flex; justify-content:center; align-items:stretch; }
 
     <!-- Zakładki: Karty / Doładowanie -->
     <div id="shopCards" style="flex:1;overflow-y:auto;padding:10px;">
+      <div id="shopLivesSection" style="margin-bottom:10px;"></div>
       <div style="font-size:14px;color:#9a8a5a;font-style:italic;margin-bottom:10px;text-align:center;width:100%;padding:0 4px;" id="fc-shop-hint"></div>
       <div id="shopCardGrid" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
     </div>
@@ -1035,6 +1036,8 @@ const FC_LANGS = {
     livesPackSub:'Natychmiastowe uzupełnienie',
     livesBuyMush:'🍄 Kup Grzybki',
     livesCancelBtn:'↩ Wróć do menu',
+    buyLifeBtn:'❤️ +1 Życie — 10 🍄',
+    buyLifeSub:'Odzyskaj jedno życie',
     resetConfirm:'Usunąć zapis i zacząć od nowa?',
     maxLives:'Masz maksymalną liczbę żyć (10)',
     nextLife:(m,s)=>`❤️ Następne darmowe życie za ${m}m ${s}s aktywnej gry`,
@@ -1187,6 +1190,8 @@ const FC_LANGS = {
     livesPackSub:'Instant replenishment',
     livesBuyMush:'🍄 Buy Mushrooms',
     livesCancelBtn:'↩ Back to menu',
+    buyLifeBtn:'❤️ +1 Life — 10 🍄',
+    buyLifeSub:'Restore one life',
     resetConfirm:'Delete save and start over?',
     maxLives:'You have the maximum lives (10)',
     nextLife:(m,s)=>`❤️ Next free life in ${m}m ${s}s of active play`,
@@ -1335,6 +1340,8 @@ const FC_LANGS = {
     livesPackSub:'Sofortige Auffüllung',
     livesBuyMush:'🍄 Pilze kaufen',
     livesCancelBtn:'↩ Zurück zum Menü',
+    buyLifeBtn:'❤️ +1 Leben — 10 🍄',
+    buyLifeSub:'Ein Leben zurückgewinnen',
     resetConfirm:'Spielstand löschen und neu starten?',
     maxLives:'Maximale Anzahl Leben (10)',
     nextLife:(m,s)=>`❤️ Nächstes freies Leben in ${m}m ${s}s`,
@@ -1483,6 +1490,8 @@ const FC_LANGS = {
     livesPackSub:'Reposición inmediata',
     livesBuyMush:'🍄 Comprar setas',
     livesCancelBtn:'↩ Volver al menú',
+    buyLifeBtn:'❤️ +1 Vida — 10 🍄',
+    buyLifeSub:'Recupera una vida',
     resetConfirm:'¿Borrar partida y empezar de nuevo?',
     maxLives:'Tienes el máximo de vidas (10)',
     nextLife:(m,s)=>`❤️ Próxima vida gratis en ${m}m ${s}s`,
@@ -1631,6 +1640,8 @@ const FC_LANGS = {
     livesPackSub:'Reconstitution immédiate',
     livesBuyMush:'🍄 Acheter des champignons',
     livesCancelBtn:'↩ Retour au menu',
+    buyLifeBtn:'❤️ +1 Vie — 10 🍄',
+    buyLifeSub:'Récupérez une vie',
     resetConfirm:'Supprimer la sauvegarde et recommencer ?',
     maxLives:'Vous avez le maximum de vies (10)',
     nextLife:(m,s)=>`❤️ Prochaine vie gratuite dans ${m}m ${s}s`,
@@ -3914,6 +3925,21 @@ function renderShop() {
   const shopMush = document.getElementById('shopMushroomCount');
   if(shopMush) shopMush.textContent = FCLANG.shopMush(GS.mushrooms||0);
 
+  const livesSection = document.getElementById('shopLivesSection');
+  if(livesSection) {
+    const canBuy = (GS.mushrooms || 0) >= 10 && GS.lives < 10;
+    livesSection.innerHTML = `<div style="padding:12px 14px;border:1px solid rgba(200,80,80,.3);border-radius:14px;background:rgba(50,5,5,.6);">
+      <div style="font-family:'Cinzel',cursive;font-size:11px;color:#c07070;margin-bottom:8px;letter-spacing:1px;">❤️ ${FCLANG.livesLbl||'Lives'}</div>
+      <div onclick="buyLifeWithMushrooms()" style="cursor:pointer;padding:12px;border-radius:12px;background:rgba(80,20,20,.8);border:1px solid ${canBuy?'#aa4040':'#4a2020'};display:flex;align-items:center;justify-content:space-between;gap:10px;opacity:${canBuy?1:.5};transition:opacity .2s;">
+        <div>
+          <div style="font-family:'Cinzel',cursive;font-size:14px;color:${canBuy?'#ff9090':'#886060'};">${FCLANG.buyLifeBtn||'❤️ +1 Life — 10 🍄'}</div>
+          <div style="font-size:12px;color:#7a5a5a;font-style:italic;margin-top:3px;">${FCLANG.buyLifeSub||'Restore one life'}</div>
+        </div>
+        <div style="font-size:26px;">❤️</div>
+      </div>
+    </div>`;
+  }
+
   const grid = document.getElementById('shopCardGrid');
   if(!grid) return;
   grid.innerHTML = '';
@@ -3992,6 +4018,25 @@ function buyCard(cardId, price) {
   try{ Audio.sfxDeckAdd(); }catch(e){}
 }
 
+function buyLifeWithMushrooms() {
+  const cost = 10;
+  if((GS.mushrooms || 0) < cost) {
+    showToast(FCLANG.notEnough || '🍄 Not enough mushrooms!');
+    return;
+  }
+  if(GS.lives >= 10) {
+    showToast(FCLANG.maxLives || 'Max lives (10)');
+    return;
+  }
+  GS.mushrooms -= cost;
+  GS.lives += 1;
+  saveSave();
+  pushProgressToServer();
+  renderShop();
+  updateMenuLives();
+  showToast('❤️ +1 ' + (FCLANG.livesLbl || 'Life') + '!');
+}
+
 function showTopup() {
   document.getElementById('topupOverlay').style.display = 'flex';
 }
@@ -4003,7 +4048,7 @@ let _livesShopContext = false;
 function openLivesShop() {
   _livesShopContext = true;
   showScreen('shop');
-  showTopup();
+  renderShop();
 }
 function hideLivesShop() {}
 
@@ -4050,10 +4095,7 @@ function fcDeleteAccount() {
 
 function cancelTopup() {
   hideTopup();
-  if(_livesShopContext) {
-    _livesShopContext = false;
-    showScreen('menu');
-  }
+  _livesShopContext = false;
 }
 
 async function buyLives(package_id) {
