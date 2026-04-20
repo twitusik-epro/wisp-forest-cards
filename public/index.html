@@ -75,6 +75,21 @@ body { display:flex; justify-content:center; align-items:stretch; }
 #menu { background: radial-gradient(ellipse at 50% 30%, #1a3a0a 0%, #060e06 70%); justify-content:center; padding:0 20px; overflow-y:auto; }
 .menu-particles { position:absolute; inset:0; pointer-events:none; width:100%; height:100%; }
 @keyframes floatWisp { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes fcInstallGlow {
+  0%,100%{box-shadow:0 0 14px rgba(40,200,80,.45),0 3px 10px rgba(0,0,0,.4);}
+  50%{box-shadow:0 0 24px rgba(40,255,100,.8),0 3px 14px rgba(0,0,0,.5);}
+}
+#fc-btn-gplay {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#1a7a3a,#2db558);
+  color:#fff;border-radius:10px;padding:5px 9px;text-decoration:none;
+  border:1px solid rgba(80,230,120,.45);
+  animation:fcInstallGlow 2s ease-in-out infinite;
+  flex-shrink:0;min-width:62px;touch-action:manipulation;cursor:pointer;
+  transition:transform .15s;
+}
+#fc-btn-gplay:active{transform:scale(.95);}
+@media(min-width:800px){#fc-btn-gplay{display:none!important;}}
 
 /* Wisp brand ponad tytułem */
 .menu-wisp-brand { display:flex; align-items:center; gap:8px; margin-bottom:4px; position:relative; z-index:1; }
@@ -328,6 +343,11 @@ body { display:flex; justify-content:center; align-items:stretch; }
     <!-- Tytuł gry -->
     <div class="menu-logo-row">
       <span class="menu-title-text">Forest Cards</span>
+      <a href="https://play.google.com/store/apps/details?id=com.epro.forestcards" target="_blank" rel="noopener" id="fc-btn-gplay">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="margin-bottom:2px;"><path d="M3 20.5v-17c0-.83.94-1.3 1.6-.8l14 8.5c.6.37.6 1.23 0 1.6l-14 8.5c-.66.5-1.6.03-1.6-.8z"/></svg>
+        <span style="font-family:'Cinzel',cursive;font-size:11px;letter-spacing:.3px;" id="fc-gplay-lbl">Zainstaluj</span>
+        <span style="font-size:9px;opacity:.75;font-family:'Crimson Pro',serif;margin-top:1px;">Google Play</span>
+      </a>
     </div>
     <div class="menu-subtitle" id="fc-subtitle"></div>
 
@@ -898,7 +918,7 @@ const FC_LANGS = {
     easy:'Łatwy', easyLives:'5 żyć · 40 poziomów',
     medium:'Średni', mediumLives:'3 życia · 40 poziomów',
     hard:'Trudny', hardLives:'1 życie · 40 poziomów',
-    play:'▶ ZAGRAJ',
+    play:'▶ ZAGRAJ', installBtn:'Zainstaluj',
     continueBtn:(lvl,sc)=>`▶ Kontynuuj (Poziom ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Usuń zapis i zacznij od nowa',
     guide:'❓ Instrukcja', ranking:'🏆 Ranking', deck:'⚔️ Talia', shop:'🍄 Sklep',
@@ -1062,7 +1082,7 @@ const FC_LANGS = {
     easy:'Easy', easyLives:'5 lives · 40 levels',
     medium:'Medium', mediumLives:'3 lives · 40 levels',
     hard:'Hard', hardLives:'1 life · 40 levels',
-    play:'▶ PLAY',
+    play:'▶ PLAY', installBtn:'Install',
     continueBtn:(lvl,sc)=>`▶ Continue (Level ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Delete save & start over',
     guide:'❓ Guide', ranking:'🏆 Ranking', deck:'⚔️ Deck', shop:'🍄 Shop',
@@ -1215,7 +1235,7 @@ const FC_LANGS = {
     easy:'Einfach', easyLives:'5 Leben · 40 Level',
     medium:'Mittel', mediumLives:'3 Leben · 40 Level',
     hard:'Schwer', hardLives:'1 Leben · 40 Level',
-    play:'▶ SPIELEN',
+    play:'▶ SPIELEN', installBtn:'Installieren',
     continueBtn:(lvl,sc)=>`▶ Weiter (Level ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Speicher löschen & neu starten',
     guide:'❓ Anleitung', ranking:'🏆 Rangliste', deck:'⚔️ Deck', shop:'🍄 Shop',
@@ -1365,7 +1385,7 @@ const FC_LANGS = {
     easy:'Fácil', easyLives:'5 vidas · 40 niveles',
     medium:'Medio', mediumLives:'3 vidas · 40 niveles',
     hard:'Difícil', hardLives:'1 vida · 40 niveles',
-    play:'▶ JUGAR',
+    play:'▶ JUGAR', installBtn:'Instalar',
     continueBtn:(lvl,sc)=>`▶ Continuar (Nivel ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Borrar partida y empezar',
     guide:'❓ Guía', ranking:'🏆 Ranking', deck:'⚔️ Mazo', shop:'🍄 Tienda',
@@ -1515,7 +1535,7 @@ const FC_LANGS = {
     easy:'Facile', easyLives:'5 vies · 40 niveaux',
     medium:'Moyen', mediumLives:'3 vies · 40 niveaux',
     hard:'Difficile', hardLives:'1 vie · 40 niveaux',
-    play:'▶ JOUER',
+    play:'▶ JOUER', installBtn:'Installer',
     continueBtn:(lvl,sc)=>`▶ Continuer (Niveau ${lvl}, ⭐${sc})`,
     resetSave:'🗑 Supprimer la sauvegarde',
     guide:'❓ Guide', ranking:'🏆 Classement', deck:'⚔️ Deck', shop:'🍄 Boutique',
@@ -1767,6 +1787,7 @@ function applyFCLang() {
   setT('fc-diff-hard-lbl', L.hard);
   setH('fc-diff-hard-lives', L.hardLives);
   setT('fc-play-btn', L.play);
+  setT('fc-gplay-lbl', L.installBtn||'Install');
   setT('fc-btn-guide', L.guide);
   setT('fc-btn-ranking', L.ranking);
   setT('fc-btn-deck', L.deck);
