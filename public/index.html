@@ -3490,7 +3490,6 @@ function nextBattle() {
 
 function continueCampaign() {
   try { Audio.init(); } catch(e){}
-  if(GS.lives <= 0) { openLivesShop(); return; }
   GS.difficulty = FC_DIFF;
   saveSave();
   showPrebattle();
