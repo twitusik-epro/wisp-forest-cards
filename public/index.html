@@ -3516,11 +3516,22 @@ function updateHP() {
 function renderLives() {
   const bar = document.getElementById('livesBar');
   bar.innerHTML = '';
-  for(let i=0; i<3; i++) {
+  if(GS.lives > 3) {
     const h = document.createElement('span');
-    h.className = 'life-heart' + (i >= GS.lives ? ' lost' : '');
+    h.className = 'life-heart';
     h.textContent = '❤️';
     bar.appendChild(h);
+    const cnt = document.createElement('span');
+    cnt.style.cssText = 'font-family:\'Cinzel\',cursive;font-size:15px;color:#ff9090;margin-left:2px;';
+    cnt.textContent = '×' + GS.lives;
+    bar.appendChild(cnt);
+  } else {
+    for(let i=0; i<3; i++) {
+      const h = document.createElement('span');
+      h.className = 'life-heart' + (i >= GS.lives ? ' lost' : '');
+      h.textContent = '❤️';
+      bar.appendChild(h);
+    }
   }
   const lbl = document.createElement('span');
   lbl.className = 'lives-label';
