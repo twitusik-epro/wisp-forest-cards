@@ -702,11 +702,11 @@ async function syncProgressFromServer(){
     const sv = await apiGet('/api/progress');
     const localTs = Math.floor((parseInt(localStorage.getItem('fc_progressTs')||'0')));
     if(sv.progress_ts >= localTs){
-      // Serwer ma nowszy lub równy zapis — użyj go
-      GS.mushrooms    = sv.mushrooms    ?? GS.mushrooms;
-      GS.wins         = Math.max(GS.wins,         sv.wins ?? 0);
-      GS.battleLevel  = Math.max(GS.battleLevel,  sv.battle_level ?? 1);
-      if(Array.isArray(sv.collection) && sv.collection.length > GS.collection.length){
+      // Serwer ma nowszy lub równy zapis — ufamy mu w całości (też przy resecie)
+      GS.mushrooms   = sv.mushrooms    ?? GS.mushrooms;
+      GS.wins        = sv.wins         ?? GS.wins;
+      GS.battleLevel = sv.battle_level ?? GS.battleLevel;
+      if(Array.isArray(sv.collection) && sv.collection.length > 0){
         GS.collection = sv.collection;
       }
       saveSave();
