@@ -282,6 +282,8 @@ body { display:flex; justify-content:center; align-items:stretch; }
 .rank-name { flex:1; font-family:'Uncial Antiqua',cursive; font-size:14px; color:#c0e0a0; }
 .rank-score { font-family:'Uncial Antiqua',cursive; font-size:15px; color:#ffd060; }
 .rank-wins { font-size:11px; color:#5a8a4a; font-family:'Lora',serif; font-style:italic; }
+.snd-btn{padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;transition:all .15s;}
+.snd-btn.muted{background:rgba(90,0,0,.9);border-color:#cc2020;box-shadow:0 0 7px rgba(200,30,30,.6);}
 </style>
 </head>
 <body>
@@ -451,14 +453,8 @@ body { display:flex; justify-content:center; align-items:stretch; }
       <div style="padding:4px 12px 14px;display:flex;gap:6px;flex-shrink:0;justify-content:space-between;align-items:center;">
         <div id="battleScore" style="font-family:'Cinzel',cursive;font-size:13px;color:#ffd060;letter-spacing:.5px;padding:4px 2px;">🏆 0</div>
         <div style="display:flex;gap:6px;">
-          <button onclick="toggleMusic()" id="musicBtn"
-            style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;" title="Muzyka">
-            🎵
-          </button>
-          <button onclick="toggleSfx()" id="sfxBtn"
-            style="padding:12px 14px;border-radius:16px;background:rgba(20,40,20,.7);border:1px solid #2a6a2a;color:#7aaa6a;font-size:16px;cursor:pointer;" title="Efekty">
-            🔊
-          </button>
+          <button onclick="toggleMusic()" id="musicBtn" class="snd-btn" title="Muzyka">🎵</button>
+          <button onclick="toggleSfx()" id="sfxBtn" class="snd-btn" title="Efekty">🔔</button>
           <button onclick="openPause()"
             style="padding:12px 14px;border-radius:16px;background:rgba(20,30,40,.7);border:1px solid #2a4a6a;color:#80b0e0;font-family:'Cinzel',cursive;font-size:16px;cursor:pointer;">
             ⏸
@@ -4475,14 +4471,12 @@ let _musicMuted = false, _sfxMuted = false;
 function toggleMusic() {
   _musicMuted = !_musicMuted;
   Audio.setMusicMute(_musicMuted);
-  const btn = document.getElementById('musicBtn');
-  if(btn) btn.textContent = _musicMuted ? '🔕' : '🎵';
+  document.getElementById('musicBtn')?.classList.toggle('muted', _musicMuted);
 }
 function toggleSfx() {
   _sfxMuted = !_sfxMuted;
   Audio.setSfxMute(_sfxMuted);
-  const btn = document.getElementById('sfxBtn');
-  if(btn) btn.textContent = _sfxMuted ? '🔇' : '🔊';
+  document.getElementById('sfxBtn')?.classList.toggle('muted', _sfxMuted);
 }
 
 // ── INIT ──────────────────────────────────────────
