@@ -3973,6 +3973,7 @@ function buyCard(cardId, price) {
   if(owned) owned.count++;
   else GS.collection.push({id: cardId, count: 1});
   saveSave();
+  pushProgressToServer();
   updateMushroomDisplay();
   renderShop();
   showToast(FCLANG.bought(card.emoji,(FCLANG.cardNames||{})[card.id]||card.name));
