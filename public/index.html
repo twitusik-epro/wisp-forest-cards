@@ -288,6 +288,18 @@ body { display:flex; justify-content:center; align-items:stretch; }
 </head>
 <body>
 
+<!-- Splash screen — 1.2s przy starcie -->
+<div id="splash-screen" style="position:fixed;inset:0;z-index:9999;background:#0a1a0a;display:flex;align-items:center;justify-content:center;transition:opacity .6s;">
+  <img src="/fc-splash.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Forest Cards">
+</div>
+<script>
+  setTimeout(function(){
+    var s = document.getElementById('splash-screen');
+    s.style.opacity = '0';
+    setTimeout(function(){ s.style.display = 'none'; }, 650);
+  }, 1200);
+</script>
+
 <!-- Panel lewy — widoczny tylko na desktopie -->
 <div id="fc-desktop-left">
   <div class="dp-logo">🌿 Forest<br>Cards<span id="dp-left-sub">Gra karciana · Świat Wispa</span></div>
