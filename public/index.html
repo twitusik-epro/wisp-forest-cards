@@ -577,7 +577,7 @@ body { display:flex; justify-content:center; align-items:stretch; }
     <!-- Zakładki: Karty / Doładowanie -->
     <div id="shopCards" style="flex:1;overflow-y:auto;padding:10px;">
       <div id="shopLivesSection" style="margin-bottom:10px;"></div>
-      <div style="font-size:14px;color:#9a8a5a;font-style:italic;margin-bottom:10px;text-align:center;width:100%;padding:0 4px;" id="fc-shop-hint"></div>
+      <div style="font-size:21px;color:#9a8a5a;font-style:italic;margin-bottom:10px;text-align:center;width:100%;padding:0 4px;" id="fc-shop-hint"></div>
       <div id="shopCardGrid" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
     </div>
 
@@ -961,7 +961,7 @@ const FC_LANGS = {
     collTitle:'🃏 Kolekcja', notOwned:'Nie posiadasz',
     // Shop
     shopTitle:'🍄 Sklep', shopBuy:'+ Kup grzybki',
-    shopHint:'Kliknij kartę aby kupić • Twoje kopie: zaznaczone ✓',
+    shopHint:'Kliknij kartę aby wymienić za grzybki • Twoje kopie: zaznaczone ✓',
     topupTitle:'🍄 Kup Grzybki',
     topupSub:'Płatność przez Paddle — bezpieczna i szybka',
     packSmall:'Mały pakiet', packMed:'Średni pakiet', packLarge:'Duży pakiet',
@@ -1037,7 +1037,7 @@ const FC_LANGS = {
     livesBuyMush:'🍄 Kup Grzybki',
     livesCancelBtn:'↩ Wróć do menu',
     buyLifeBtn:'❤️ +1 Życie — 10 🍄',
-    buyLifeSub:'Odzyskaj jedno życie',
+    buyLifeSub:'Wymień grzybki na życie',
     resetConfirm:'Usunąć zapis i zacząć od nowa?',
     maxLives:'Masz maksymalną liczbę żyć (10)',
     nextLife:(m,s)=>`❤️ Następne darmowe życie za ${m}m ${s}s aktywnej gry`,
@@ -1119,7 +1119,7 @@ const FC_LANGS = {
     deckOwnedInDeck:(own,deck)=>`have:${own} deck:${deck}`,
     collTitle:'🃏 Collection', notOwned:'Not owned',
     shopTitle:'🍄 Shop', shopBuy:'+ Buy Mushrooms',
-    shopHint:'Click card to buy • Owned copies: marked ✓',
+    shopHint:'Click card to exchange for mushrooms • Owned copies: marked ✓',
     topupTitle:'🍄 Buy Mushrooms',
     topupSub:'Secure payment via Paddle',
     packSmall:'Small pack', packMed:'Medium pack', packLarge:'Large pack',
@@ -1191,7 +1191,7 @@ const FC_LANGS = {
     livesBuyMush:'🍄 Buy Mushrooms',
     livesCancelBtn:'↩ Back to menu',
     buyLifeBtn:'❤️ +1 Life — 10 🍄',
-    buyLifeSub:'Restore one life',
+    buyLifeSub:'Exchange mushrooms for a life',
     resetConfirm:'Delete save and start over?',
     maxLives:'You have the maximum lives (10)',
     nextLife:(m,s)=>`❤️ Next free life in ${m}m ${s}s of active play`,
@@ -1269,7 +1269,7 @@ const FC_LANGS = {
     deckOwnedInDeck:(own,deck)=>`besitzt:${own} deck:${deck}`,
     collTitle:'🃏 Sammlung', notOwned:'Nicht vorhanden',
     shopTitle:'🍄 Shop', shopBuy:'+ Pilze kaufen',
-    shopHint:'Karte klicken zum Kaufen • Eigene Kopien: ✓ markiert',
+    shopHint:'Karte klicken zum Tauschen gegen Pilze • Eigene Kopien: ✓',
     topupTitle:'🍄 Pilze kaufen',
     topupSub:'Sichere Zahlung über Paddle',
     packSmall:'Kleines Paket', packMed:'Mittleres Paket', packLarge:'Großes Paket',
@@ -1341,7 +1341,7 @@ const FC_LANGS = {
     livesBuyMush:'🍄 Pilze kaufen',
     livesCancelBtn:'↩ Zurück zum Menü',
     buyLifeBtn:'❤️ +1 Leben — 10 🍄',
-    buyLifeSub:'Ein Leben zurückgewinnen',
+    buyLifeSub:'Pilze gegen ein Leben tauschen',
     resetConfirm:'Spielstand löschen und neu starten?',
     maxLives:'Maximale Anzahl Leben (10)',
     nextLife:(m,s)=>`❤️ Nächstes freies Leben in ${m}m ${s}s`,
@@ -1419,7 +1419,7 @@ const FC_LANGS = {
     deckOwnedInDeck:(own,deck)=>`tienes:${own} mazo:${deck}`,
     collTitle:'🃏 Colección', notOwned:'No poseído',
     shopTitle:'🍄 Tienda', shopBuy:'+ Comprar setas',
-    shopHint:'Haz clic en carta para comprar • Copias propias: ✓',
+    shopHint:'Pulsa carta para canjear por setas • Copias propias: ✓',
     topupTitle:'🍄 Comprar setas',
     topupSub:'Pago seguro vía Paddle',
     packSmall:'Paquete pequeño', packMed:'Paquete mediano', packLarge:'Paquete grande',
@@ -1491,7 +1491,7 @@ const FC_LANGS = {
     livesBuyMush:'🍄 Comprar setas',
     livesCancelBtn:'↩ Volver al menú',
     buyLifeBtn:'❤️ +1 Vida — 10 🍄',
-    buyLifeSub:'Recupera una vida',
+    buyLifeSub:'Canjea setas por una vida',
     resetConfirm:'¿Borrar partida y empezar de nuevo?',
     maxLives:'Tienes el máximo de vidas (10)',
     nextLife:(m,s)=>`❤️ Próxima vida gratis en ${m}m ${s}s`,
@@ -1569,7 +1569,7 @@ const FC_LANGS = {
     deckOwnedInDeck:(own,deck)=>`possédé:${own} deck:${deck}`,
     collTitle:'🃏 Collection', notOwned:'Non possédé',
     shopTitle:'🍄 Boutique', shopBuy:'+ Acheter des champignons',
-    shopHint:'Cliquez sur une carte pour acheter • Copies possédées : ✓',
+    shopHint:'Cliquez sur une carte pour échanger contre des champignons • Copies : ✓',
     topupTitle:'🍄 Acheter des champignons',
     topupSub:'Paiement sécurisé via Paddle',
     packSmall:'Petit paquet', packMed:'Paquet moyen', packLarge:'Grand paquet',
@@ -1641,7 +1641,7 @@ const FC_LANGS = {
     livesBuyMush:'🍄 Acheter des champignons',
     livesCancelBtn:'↩ Retour au menu',
     buyLifeBtn:'❤️ +1 Vie — 10 🍄',
-    buyLifeSub:'Récupérez une vie',
+    buyLifeSub:'Échangez des champignons contre une vie',
     resetConfirm:'Supprimer la sauvegarde et recommencer ?',
     maxLives:'Vous avez le maximum de vies (10)',
     nextLife:(m,s)=>`❤️ Prochaine vie gratuite dans ${m}m ${s}s`,
@@ -3944,7 +3944,7 @@ function renderShop() {
       <div onclick="buyLifeWithMushrooms()" style="cursor:pointer;padding:12px;border-radius:12px;background:rgba(80,20,20,.8);border:1px solid ${canBuy?'#aa4040':'#4a2020'};display:flex;align-items:center;justify-content:space-between;gap:10px;opacity:${canBuy?1:.5};transition:opacity .2s;">
         <div>
           <div style="font-family:'Cinzel',cursive;font-size:14px;color:${canBuy?'#ff9090':'#886060'};">${FCLANG.buyLifeBtn||'❤️ +1 Life — 10 🍄'}</div>
-          <div style="font-size:12px;color:#7a5a5a;font-style:italic;margin-top:3px;">${FCLANG.buyLifeSub||'Restore one life'}</div>
+          <div style="font-size:18px;color:#7a5a5a;font-style:italic;margin-top:3px;">${FCLANG.buyLifeSub||'Exchange mushrooms for a life'}</div>
         </div>
         <div style="font-size:26px;">❤️</div>
       </div>
