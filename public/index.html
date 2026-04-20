@@ -2502,6 +2502,7 @@ function selectDifficulty(d) {
 
 async function resetSaveConfirm() {
   try{ localStorage.removeItem('fc_save'); }catch(e){}
+  clearPrevSave();
   resetGS();
   updateMenuContinue();
   applyFCLang();
@@ -2512,9 +2513,14 @@ function updateMenuContinue() {
   const btn = document.getElementById('fc-btn-continue');
   const reset = document.getElementById('fc-reset-link');
   if(!btn) return;
-  if(GS.wins > 0 || GS.battleLevel > 1) {
+  const hasProgress = GS.wins > 0 || GS.battleLevel > 1;
+  const prev = loadPrevSave();
+  const hasPrev = prev && (prev.wins > 0 || prev.battleLevel > 1);
+  if(hasProgress || hasPrev) {
+    const lvl = hasProgress ? GS.battleLevel : prev.battleLevel;
+    const sc  = hasProgress ? getPlayerScore() : (prev.wins || 0) * 100;
     btn.style.display = 'block';
-    btn.textContent = FCLANG.continueBtn(GS.battleLevel,getPlayerScore());
+    btn.textContent = FCLANG.continueBtn(lvl, sc);
     if(reset) {
       reset.style.display = 'block';
       reset.textContent = FCLANG.resetSave || '🗑 Delete save & start over';
@@ -2582,6 +2588,15 @@ function saveSave() {
 }
 function loadSave() {
   try { const d = localStorage.getItem('fc_save'); return d ? JSON.parse(d) : null; } catch(e){ return null; }
+}
+function savePrevSave(gs) {
+  try { localStorage.setItem('fc_prev_save', JSON.stringify(gs)); } catch(e){}
+}
+function loadPrevSave() {
+  try { const d = localStorage.getItem('fc_prev_save'); return d ? JSON.parse(d) : null; } catch(e){ return null; }
+}
+function clearPrevSave() {
+  try { localStorage.removeItem('fc_prev_save'); } catch(e){}
 }
 
 // ── CARD DRAWING ─────────────────────────────────
@@ -2854,7 +2869,14 @@ const ENEMIES = [
 
 function startCampaign() {
   try { Audio.init(); } catch(e){}
-  // Zawsze zaczynaj od poziomu 1 — zachowaj kolekcję, talię i grzybki
+  // Przed resetem — zachowaj stary postęp w fc_prev_save (żeby Kontynuuj działał)
+  if(GS.battleLevel > 1 || GS.wins > 0) {
+    const prev = loadPrevSave();
+    if(!prev || GS.battleLevel >= (prev.battleLevel || 1)) {
+      savePrevSave({...GS});
+    }
+  }
+  // Reset kampanii — zachowaj kolekcję, talię i grzybki
   GS.lives = (FC_DIFF_CONFIG[FC_DIFF] || FC_DIFF_CONFIG.easy).lives;
   GS.wins = 0;
   GS.battleLevel = 1;
@@ -3490,6 +3512,14 @@ function nextBattle() {
 
 function continueCampaign() {
   try { Audio.init(); } catch(e){}
+  // Jeśli nowa gra nie ma postępu, odtwórz poprzedni zapis
+  if(GS.battleLevel <= 1 && GS.wins === 0) {
+    const prev = loadPrevSave();
+    if(prev && (prev.battleLevel > 1 || prev.wins > 0)) {
+      GS = prev;
+      clearPrevSave();
+    }
+  }
   GS.difficulty = FC_DIFF;
   saveSave();
   showPrebattle();
